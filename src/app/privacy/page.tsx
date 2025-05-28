@@ -2,8 +2,8 @@
 
 // src/app/privacy/page.tsx
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import Link from "next/link";
 
 const Privacy: React.FC = () => {
@@ -23,7 +23,7 @@ const Privacy: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
               <p>
-                Welcome to Derek Shirley's portfolio website. I respect your privacy and am committed to protecting your personal data. This privacy policy will inform you about how I look after your personal data when you visit my website and tell you about your privacy rights and how the law protects you.
+                Welcome to Derek Shirley&apos;s portfolio website. I respect your privacy and am committed to protecting your personal data. This privacy policy will inform you about how I look after your personal data when you visit my website and tell you about your privacy rights and how the law protects you.
               </p>
               <p>
                 This privacy policy applies to all information collected through my website, as well as any related services, sales, marketing, or events.
@@ -51,7 +51,7 @@ const Privacy: React.FC = () => {
               
               <h3 className="text-xl font-semibold mt-6 mb-3">Usage Data</h3>
               <p>
-                I may also collect information on how the website is accessed and used. This usage data may include information such as your computer's Internet Protocol (IP) address, browser type, browser version, the pages of my website that you visit, the time and date of your visit, the time spent on those pages, and other diagnostic data.
+                I may also collect information on how the website is accessed and used. This usage data may include information such as your computer&apos;s Internet Protocol (IP) address, browser type, browser version, the pages of my website that you visit, the time and date of your visit, the time spent on those pages, and other diagnostic data.
               </p>
               
               <h3 className="text-xl font-semibold mt-6 mb-3">Tracking & Cookies Data</h3>
@@ -103,7 +103,7 @@ const Privacy: React.FC = () => {
               <ul className="list-disc pl-8 mb-4">
                 <li>I need to perform a contract with you</li>
                 <li>You have given me permission to do so</li>
-                <li>The processing is in my legitimate interests and it's not overridden by your rights</li>
+                <li>The processing is in my legitimate interests and it&apos;s not overridden by your rights</li>
                 <li>To comply with the law</li>
               </ul>
             </section>
@@ -206,7 +206,7 @@ const Privacy: React.FC = () => {
                   </ul>
                 </li>
                 <li><strong>To delete your personal information.</strong> If you make this request, I will delete the personal information I hold about you as of the date of your request from my records and direct any service providers to do the same. In some cases, deletion may be accomplished through de-identification of the information. If you choose to delete your personal information, you may not be able to use certain functions that require your personal information to operate.</li>
-                <li><strong>To stop selling your personal information.</strong> I don't sell or rent your personal information to any third parties for any purpose. I do not sell your personal information for monetary consideration. However, under some state laws, sharing your data through third-party cookies for online advertising may be considered a "sale" of information. You can opt out of these cookies through browser settings.</li>
+                <li><strong>To stop selling your personal information.</strong> I don&apos;t sell or rent your personal information to any third parties for any purpose. I do not sell your personal information for monetary consideration. However, under some state laws, sharing your data through third-party cookies for online advertising may be considered a &quot;sale&quot; of information. You can opt out of these cookies through browser settings.</li>
               </ul>
               <p>
                 Please note, you are entitled to ask me to provide you with this information up to two times in a rolling twelve-month period. When you make this request, the information provided may be limited to the personal information I collected about you in the previous 12 months.
@@ -222,7 +222,7 @@ const Privacy: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">11. Service Providers</h2>
               <p>
-                I may employ third-party companies and individuals to facilitate my website ("Service Providers"), to provide the website on my behalf, to perform website-related services or to assist me in analyzing how my website is used.
+                I may employ third-party companies and individuals to facilitate my website (&quot;Service Providers&quot;), to provide the website on my behalf, to perform website-related services or to assist me in analyzing how my website is used.
               </p>
               <p>
                 These third parties have access to your personal data only to perform these tasks on my behalf and are obligated not to disclose or use it for any other purpose.
@@ -239,7 +239,7 @@ const Privacy: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">12. Links to Other Websites</h2>
               <p>
-                My website may contain links to other websites that are not operated by me. If you click on a third-party link, you will be directed to that third party's site. I strongly advise you to review the Privacy Policy of every site you visit.
+                My website may contain links to other websites that are not operated by me. If you click on a third-party link, you will be directed to that third party&apos;s site. I strongly advise you to review the Privacy Policy of every site you visit.
               </p>
               <p>
                 I have no control over and assume no responsibility for the content, privacy policies or practices of any third-party sites or services.
@@ -247,9 +247,9 @@ const Privacy: React.FC = () => {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold mb-4">13. Children's Privacy</h2>
+              <h2 className="text-2xl font-semibold mb-4">13. Children&apos;s Privacy</h2>
               <p>
-                My website does not address anyone under the age of 18 ("Children").
+                My website does not address anyone under the age of 18 (&quot;Children&quot;).
               </p>
               <p>
                 I do not knowingly collect personally identifiable information from anyone under the age of 18. If you are a parent or guardian and you are aware that your Children has provided me with personal data, please contact me. If I become aware that I have collected personal data from children without verification of parental consent, I take steps to remove that information from my servers.
@@ -262,7 +262,7 @@ const Privacy: React.FC = () => {
                 I may update my privacy policy from time to time. I will notify you of any changes by posting the new privacy policy on this page.
               </p>
               <p>
-                I will let you know via email and/or a prominent notice on my website, prior to the change becoming effective and update the "Last Updated" date at the top of this privacy policy.
+                I will let you know via email and/or a prominent notice on my website, prior to the change becoming effective and update the &quot;Last Updated&quot; date at the top of this privacy policy.
               </p>
               <p>
                 You are advised to review this privacy policy periodically for any changes. Changes to this privacy policy are effective when they are posted on this page.

@@ -2,8 +2,8 @@
 
 // src/app/terms/page.tsx
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import Link from "next/link";
 
 const Terms: React.FC = () => {
@@ -23,7 +23,7 @@ const Terms: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
               <p>
-                Welcome to Derek Shirley's portfolio website. These Terms of Service ("Terms") govern your access to and use of this website, including any content, functionality, and services offered on or through this website (the "Website").
+                Welcome to Derek Shirley&apos;s portfolio website. These Terms of Service (&quot;Terms&quot;) govern your access to and use of this website, including any content, functionality, and services offered on or through this website (the &quot;Website&quot;).
               </p>
               <p>
                 Please read these Terms carefully before using the Website. By using the Website, you accept and agree to be bound by these Terms. If you do not agree to these Terms, you must not access or use the Website.
@@ -84,15 +84,15 @@ const Terms: React.FC = () => {
               </p>
               <ul className="list-disc pl-8 mb-4">
                 <li>In any way that violates any applicable federal, state, local, or international law or regulation.</li>
-                <li>To transmit, or procure the sending of, any advertising or promotional material, including any "junk mail," "chain letter," "spam," or any other similar solicitation.</li>
+                <li>To transmit, or procure the sending of, any advertising or promotional material, including any &quot;junk mail,&quot; &quot;chain letter,&quot; &quot;spam,&quot; or any other similar solicitation.</li>
                 <li>To impersonate or attempt to impersonate me, another user, or any other person or entity.</li>
-                <li>To engage in any other conduct that restricts or inhibits anyone's use or enjoyment of the Website, or which may harm me or users of the Website, or expose them to liability.</li>
+                <li>To engage in any other conduct that restricts or inhibits anyone&apos;s use or enjoyment of the Website, or which may harm me or users of the Website, or expose them to liability.</li>
               </ul>
               <p>
                 Additionally, you agree not to:
               </p>
               <ul className="list-disc pl-8 mb-4">
-                <li>Use the Website in any manner that could disable, overburden, damage, or impair the site or interfere with any other party's use of the Website.</li>
+                <li>Use the Website in any manner that could disable, overburden, damage, or impair the site or interfere with any other party&apos;s use of the Website.</li>
                 <li>Use any robot, spider, or other automatic device, process, or means to access the Website for any purpose, including monitoring or copying any of the material on the Website.</li>
                 <li>Use any manual process to monitor or copy any of the material on the Website, or for any other purpose not expressly authorized in these Terms, without our prior written consent.</li>
                 <li>Use any device, software, or routine that interferes with the proper working of the Website.</li>
@@ -129,7 +129,7 @@ const Terms: React.FC = () => {
                 TO THE FULLEST EXTENT PROVIDED BY LAW, I WILL NOT BE LIABLE FOR ANY LOSS OR DAMAGE CAUSED BY A DISTRIBUTED DENIAL-OF-SERVICE ATTACK, VIRUSES, OR OTHER TECHNOLOGICALLY HARMFUL MATERIAL THAT MAY INFECT YOUR COMPUTER EQUIPMENT, COMPUTER PROGRAMS, DATA, OR OTHER PROPRIETARY MATERIAL DUE TO YOUR USE OF THE WEBSITE OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE WEBSITE OR TO YOUR DOWNLOADING OF ANY MATERIAL POSTED ON IT, OR ON ANY WEBSITE LINKED TO IT.
               </p>
               <p className="font-medium">
-                YOUR USE OF THE WEBSITE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE WEBSITE IS AT YOUR OWN RISK. THE WEBSITE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE WEBSITE ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER I NOR ANY PERSON ASSOCIATED WITH ME MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE WEBSITE.
+                YOUR USE OF THE WEBSITE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE WEBSITE IS AT YOUR OWN RISK. THE WEBSITE, ITS CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE WEBSITE ARE PROVIDED ON AN &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER I NOR ANY PERSON ASSOCIATED WITH ME MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY, OR AVAILABILITY OF THE WEBSITE.
               </p>
             </section>
 
@@ -143,7 +143,7 @@ const Terms: React.FC = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold mb-4">10. Indemnification</h2>
               <p>
-                You agree to defend, indemnify, and hold harmless me, my affiliates, licensors, and service providers, and my and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the Website, including, but not limited to, any use of the Website's content, services, and products other than as expressly authorized in these Terms.
+                You agree to defend, indemnify, and hold harmless me, my affiliates, licensors, and service providers, and my and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys&apos; fees) arising out of or relating to your violation of these Terms or your use of the Website, including, but not limited to, any use of the Website&apos;s content, services, and products other than as expressly authorized in these Terms.
               </p>
             </section>
 
