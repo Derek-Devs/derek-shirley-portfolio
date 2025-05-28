@@ -331,7 +331,7 @@ const GameSalesDashboard: React.FC = () => {
         {!loading && !error && data.length === 0 && (
           <div role="alert" className="alert alert-warning mb-6">
             <IoWarningOutline className="stroke-current flex-shrink-0 h-6 h-6" />
-            <span>No data available. Processed 0 records. Please check if 'vgsales.csv' is in the 'public' folder and is not empty or corrupted.</span>
+            <span>No data available. Processed 0 records. Please check if &apos;vgsales.csv&apos; is in the &apos;public&apos; folder and is not empty or corrupted.</span>
           </div>
         )}
 
