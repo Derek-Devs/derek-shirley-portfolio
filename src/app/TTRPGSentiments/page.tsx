@@ -14,9 +14,11 @@ import {
   ArcElement,
   Filler,
   Colors,
+  TooltipItem,
+  ChartType,
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import Papa from 'papaparse';
+import Papa, { ParseError, ParseResult } from 'papaparse';
 import { IoCloseCircleOutline, IoPricetagsOutline, IoGameControllerOutline, IoColorPaletteOutline } from 'react-icons/io5';
 
 
@@ -33,6 +35,28 @@ ChartJS.register(
   Filler,
   Colors
 );
+
+interface RawSurveyRow {
+  'Timestamp'?: string;
+  'When did you start playing tabletop roleplaying games?'?: string;
+  'How often do you play tabletop roleplaying games?'?: string;
+  'How long do your sessions typically last?'?: string;
+  'Select your current main system.'?: string;
+  'How would you rate your satisfaction with your current main system?'?: string;
+  'How would you rate the complexity of your current main system?'?: string;
+  'What genre do you currently play in?'?: string;
+  'Would you describe yourself as a game master, player, both or neither?'?: string;
+  'What is the number of players in your current main group?'?: string;
+  'Rate the importance of these in your game sessions with 1 being the least important and 5 being the most important. [Combat]'?: string;
+  'Rate the importance of these in your game sessions with 1 being the least important and 5 being the most important. [Roleplaying]'?: string;
+  'Rate the importance of these in your game sessions with 1 being the least important and 5 being the most important. [Exploration]'?: string;
+  'How much have you spent on tabletop roleplaying within the past year?'?: string;
+  'What would be the maximum you would pay for a digital book?'?: string;
+  'What would be the maximum you would pay for a hardback book?'?: string;
+  'What would you be interested in purchasing for tabletop games?'?: string;
+  'What would you say is the main issue with your player group(s)?'?: string;
+  [key: string]: string | undefined;
+}
 
 interface SurveyData {
   timestamp: string;
@@ -53,10 +77,10 @@ interface SurveyData {
   maxHardbackPrice: number;
   purchaseInterests: string[];
   playerIssues: string;
-  [key: string]: any;
+  [key: string]: string | number | string[] | undefined;
 }
 
-const transformData = (rawData: any[]): SurveyData[] => {
+const transformData = (rawData: Partial<RawSurveyRow>[]): SurveyData[] => {
   return rawData.map(row => ({
     timestamp: row['Timestamp'] || '',
     experienceLevel: row['When did you start playing tabletop roleplaying games?'] || 'N/A',
@@ -76,10 +100,10 @@ const transformData = (rawData: any[]): SurveyData[] => {
     maxHardbackPrice: parseFloat(row['What would be the maximum you would pay for a hardback book?']?.replace('$', '') || '0'),
     purchaseInterests: row['What would you be interested in purchasing for tabletop games?']?.split(',') || [],
     playerIssues: row['What would you say is the main issue with your player group(s)?'] || 'N/A',
-  })).filter(row => row.timestamp);
+  })).filter(row => row.timestamp !== '');
 };
 
-const countOccurrences = (data: SurveyData[], field: keyof SurveyData, sortByValue: boolean = false) => {
+const countOccurrences = (data: SurveyData[], field: keyof SurveyData, sortByValue: boolean = false): { name: string; value: number }[] => {
   if (!data || data.length === 0) return [];
   const counts: Record<string, number> = {};
   data.forEach(item => {
@@ -99,33 +123,43 @@ const countOccurrences = (data: SurveyData[], field: keyof SurveyData, sortByVal
   return result;
 };
 
-const calculateAverageRatings = (data: SurveyData[]) => {
+interface AverageRating {
+  name: string;
+  value: number;
+}
+
+const calculateAverageRatings = (data: SurveyData[]): AverageRating[] => {
   if (!data || data.length === 0) return [];
-  const metrics = ['systemSatisfaction', 'systemComplexity', 'combatImportance', 'roleplayImportance', 'explorationImportance'];
+  const metrics: (keyof SurveyData)[] = ['systemSatisfaction', 'systemComplexity', 'combatImportance', 'roleplayImportance', 'explorationImportance'];
   const totals: Record<string, number> = {};
   const counts: Record<string, number> = {};
   
   metrics.forEach(metric => {
-    totals[metric] = 0;
-    counts[metric] = 0;
+    totals[metric as string] = 0;
+    counts[metric as string] = 0;
   });
   
   data.forEach(item => {
     metrics.forEach(metric => {
-      if (item[metric] > 0 && !isNaN(item[metric])) {
-        totals[metric] += item[metric];
-        counts[metric]++;
+      const value = item[metric];
+      if (typeof value === 'number' && value > 0 && !isNaN(value)) {
+        totals[metric as string] += value;
+        counts[metric as string]++;
       }
     });
   });
   
   return metrics.map(metric => ({
-    name: metric.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
-    value: counts[metric] > 0 ? parseFloat((totals[metric] / counts[metric]).toFixed(1)) : 0
+    name: (metric as string).replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
+    value: counts[metric as string] > 0 ? parseFloat((totals[metric as string] / counts[metric as string]).toFixed(1)) : 0
   }));
 };
 
-const groupSpendingData = (data: SurveyData[]) => {
+interface SpendingGroup {
+  name: string;
+  value: number;
+}
+const groupSpendingData = (data: SurveyData[]): SpendingGroup[] => {
   if (!data || data.length === 0) return [];
   const spendingGroups: Record<string, number> = {
     '0-50': 0,
@@ -147,15 +181,24 @@ const groupSpendingData = (data: SurveyData[]) => {
   return Object.entries(spendingGroups).map(([name, value]) => ({ name, value }));
 };
 
-const getSystemPreferencesData = (data: SurveyData[]) => {
+interface SystemPreference {
+  name: string;
+  value: number;
+}
+const getSystemPreferencesData = (data: SurveyData[]): SystemPreference[] => {
   if (!data || data.length === 0) return [];
   return countOccurrences(data, 'mainSystem', true)
     .slice(0, 10);
 };
 
-const getPriceSensitivityData = (data: SurveyData[]) => {
+interface PriceSensitivityRange {
+  range: string;
+  digital: number;
+  hardback: number;
+}
+const getPriceSensitivityData = (data: SurveyData[]): PriceSensitivityRange[] => {
     if (!data || data.length === 0) return [];
-    const priceRanges = [
+    const priceRanges: PriceSensitivityRange[] = [
         { range: '$0-$10', digital: 0, hardback: 0 },
         { range: '$11-$25', digital: 0, hardback: 0 },
         { range: '$26-$50', digital: 0, hardback: 0 },
@@ -182,12 +225,16 @@ const getPriceSensitivityData = (data: SurveyData[]) => {
     return priceRanges;
 };
 
-const calculateSystemSatisfactionByGenre = (data: SurveyData[]) => {
+interface SystemSatisfactionByGenre {
+    name: string;
+    satisfaction: number;
+}
+const calculateSystemSatisfactionByGenre = (data: SurveyData[]): SystemSatisfactionByGenre[] => {
   if (!data || data.length === 0) return [];
   const genreMap: Record<string, { total: number, count: number }> = {};
   
   data.forEach(item => {
-    if (item.genre && item.genre !== 'N/A' && item.systemSatisfaction > 0 && !isNaN(item.systemSatisfaction)) {
+    if (item.genre && item.genre !== 'N/A' && typeof item.systemSatisfaction === 'number' && item.systemSatisfaction > 0 && !isNaN(item.systemSatisfaction)) {
       if (!genreMap[item.genre]) {
         genreMap[item.genre] = { total: 0, count: 0 };
       }
@@ -206,7 +253,16 @@ const calculateSystemSatisfactionByGenre = (data: SurveyData[]) => {
     .slice(0, 10);
 };
 
-const getSystemDistributionByGenre = (data: SurveyData[]) => {
+interface TopSystemInfo {
+    system: string;
+    count: number;
+}
+interface SystemDistributionByGenre {
+    genre: string;
+    topSystems: TopSystemInfo[];
+    totalPlayers: number;
+}
+const getSystemDistributionByGenre = (data: SurveyData[]): SystemDistributionByGenre[] => {
   if (!data || data.length === 0) return [];
   const genreSystemMap: Record<string, Record<string, number>> = {};
   
@@ -253,24 +309,30 @@ const TTRPGDashboard: React.FC = () => {
         }
         const text = await response.text();
         
-        Papa.parse(text, {
+        Papa.parse<Partial<RawSurveyRow>>(text, {
           header: true,
           skipEmptyLines: true,
-          complete: (results) => {
+          complete: (results: ParseResult<Partial<RawSurveyRow>>) => {
             if (results.errors.length > 0) {
-              console.warn("CSV Parsing errors:", results.errors);
+              console.warn("CSV Parsing errors:", results.errors.map(err => err.message).join('\n'));
             }
-            const transformedData = transformData(results.data as any[]);
+            const transformedData = transformData(results.data);
             setSurveyData(transformedData);
             setIsLoading(false);
           },
-          error: (err: any) => {
+          error: (err: ParseError) => {
             setError('Error parsing CSV: ' + err.message);
             setIsLoading(false);
           }
         });
-      } catch (e: any) {
-        setError('Error loading data: ' + e.message);
+      } catch (e) {
+        let message = 'An unknown error occurred';
+        if (e instanceof Error) {
+          message = e.message;
+        } else if (typeof e === 'string') {
+          message = e;
+        }
+        setError('Error loading data: ' + message);
         setIsLoading(false);
       }
     };
@@ -288,8 +350,13 @@ const TTRPGDashboard: React.FC = () => {
   const genrePreferencesData = useMemo(() => countOccurrences(surveyData, 'genre', true).slice(0,10), [surveyData]);
 
   const averageRatingsData = useMemo(() => calculateAverageRatings(surveyData), [surveyData]);
-  const gameplayElementImportanceChartData = useMemo(() => {
-    if (!averageRatingsData) return [];
+  
+  interface GameplayElementChartItem {
+    name: string;
+    value: number;
+  }
+  const gameplayElementImportanceChartData = useMemo((): GameplayElementChartItem[] => {
+    if (!averageRatingsData || averageRatingsData.length === 0) return [];
     return [
       { name: "Combat", value: averageRatingsData.find(r => r.name === 'Combat Importance')?.value || 0 },
       { name: "Roleplaying", value: averageRatingsData.find(r => r.name === 'Roleplay Importance')?.value || 0 },
@@ -301,7 +368,6 @@ const TTRPGDashboard: React.FC = () => {
   const spendingPieData = useMemo(() => groupSpendingData(surveyData), [surveyData]);
   const priceSensitivityChartData = useMemo(() => getPriceSensitivityData(surveyData), [surveyData]);
 
-
   const chartOptionsBase = {
     responsive: true,
     maintainAspectRatio: false,
@@ -309,7 +375,7 @@ const TTRPGDashboard: React.FC = () => {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: (context: any) => `${context.dataset.label || context.label || ''}: ${context.formattedValue}`,
+          label: (context: TooltipItem<ChartType>) => `${context.dataset.label || context.label || ''}: ${context.formattedValue}`,
         },
       },
        colors: { enabled: true }
@@ -333,12 +399,13 @@ const TTRPGDashboard: React.FC = () => {
       legend: { position: 'bottom' as const, labels: { boxWidth:12, padding:15 } },
       tooltip: {
         callbacks: {
-          label: (context: any) => {
+          label: (context: TooltipItem<'pie'>) => {
             const label = context.label || '';
-            const value = context.raw;
-            const total = context.chart.getDatasetMeta(0).total;
+            const value = typeof context.raw === 'number' ? context.raw : 0;
+            const total = context.chart.data.datasets[context.datasetIndex].data
+                .reduce((acc: number, val: unknown) => acc + (typeof val === 'number' ? val : 0), 0);
             const percentage = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
-            return `${label}: ${value} (${percentage})`;
+            return `${label}: <span class="math-inline">\{value\} \(</span>{percentage})`;
           },
         },
       },
@@ -349,7 +416,7 @@ const TTRPGDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-var(--header-height,0px)-var(--footer-height,0px))]"> {/* Adjust min-height if header/footer heights are known via CSS vars */}
+      <div className="flex justify-center items-center min-h-[calc(100vh-var(--header-height,0px)-var(--footer-height,0px))]">
         <div className="text-center">
           <span className="loading loading-spinner loading-lg"></span>
           <p className="mt-4">Loading TTRPG dashboard data...</p>
@@ -429,7 +496,7 @@ const TTRPGDashboard: React.FC = () => {
                     backgroundColor: CHART_COLORS[0],
                   }]
                 }}
-                options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45, ha: 'right' } }}}}
+                options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }}}}
               />
             </div>
           </div>
@@ -448,7 +515,7 @@ const TTRPGDashboard: React.FC = () => {
                     backgroundColor: CHART_COLORS[1],
                   }]
                 }}
-                options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45, ha: 'right' } }}}}
+                options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }}}}
               />
           </div>
         </div>
@@ -472,7 +539,7 @@ const TTRPGDashboard: React.FC = () => {
                                     backgroundColor: CHART_COLORS[2],
                                 }]
                             }}
-                            options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45, ha: 'right', font: {size: 10} }}}}}
+                            options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45, font: {size: 10} }}}}}
                         />
                     </div>
                 </div>
@@ -509,7 +576,7 @@ const TTRPGDashboard: React.FC = () => {
                                 backgroundColor: CHART_COLORS,
                             }]
                         }}
-                        options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45, ha: 'right' }}, y: {...chartOptionsBase.scales.y, max: 5, title: {display: true, text: 'Avg. Satisfaction (1-5)'}}}}}
+                        options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 }}, y: {...chartOptionsBase.scales.y, max: 5, title: {display: true, text: 'Avg. Satisfaction (1-5)'}}}}}
                     />
                 </div>
             </div>
@@ -594,7 +661,7 @@ const TTRPGDashboard: React.FC = () => {
                                 backgroundColor: CHART_COLORS[3],
                             }]
                         }}
-                         options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45, ha: 'right' } }}}}
+                         options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }}}}
                     />
                 </div>
             </div>
@@ -609,104 +676,3 @@ const TTRPGDashboard: React.FC = () => {
                 <div className="card-body">
                     <h2 className="card-title">Annual Spending</h2>
                     <div className="h-80">
-                        <Pie 
-                            data={{
-                                labels: spendingPieData.map(d => d.name),
-                                datasets: [{
-                                    label: 'Annual Spending',
-                                    data: spendingPieData.map(d => d.value),
-                                    backgroundColor: CHART_COLORS,
-                                }]
-                            }}
-                            options={pieChartOptionsBase}
-                        />
-                    </div>
-                </div>
-            </div>
-             <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
-                    <h2 className="card-title">Price Sensitivity (Max Willing to Pay)</h2>
-                    <div className="h-80">
-                        <Line 
-                            data={{
-                                labels: priceSensitivityChartData.map(d => d.range),
-                                datasets: [
-                                    {
-                                        label: 'Digital Book ($)',
-                                        data: priceSensitivityChartData.map(d => d.digital),
-                                        borderColor: CHART_COLORS[0],
-                                        backgroundColor: `${CHART_COLORS[0]}60`,
-                                        fill: true,
-                                        tension: 0.3,
-                                    },
-                                    {
-                                        label: 'Hardback Book ($)',
-                                        data: priceSensitivityChartData.map(d => d.hardback),
-                                        borderColor: CHART_COLORS[1],
-                                        backgroundColor: `${CHART_COLORS[1]}60`,
-                                        fill: true,
-                                        tension: 0.3,
-                                    }
-                                ]
-                            }}
-                            options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, legend: {display: true, position: 'top'}}}}
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  );
-  
-  const renderActiveTab = () => {
-    switch(activeTab) {
-      case 0: return renderPlayerProfileTab();
-      case 1: return renderSystemGenreTab();
-      case 2: return renderGameplayTab();
-      case 3: return renderSpendingTab();
-      default: return renderPlayerProfileTab();
-    }
-  };
-  
-
-  return (
-    <div className="container mx-auto px-4 py-8"> 
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold tracking-tight">TTRPG Consumer Sentiments</h1>
-        <p className="text-xl mt-3 text-base-content/70">Insights from player surveys (November 2023)</p>
-      </div>
-      
-      <div className="stats shadow w-full mb-10 bg-base-200">
-        <div className="stat">
-          <div className="stat-figure text-primary text-3xl"><IoPricetagsOutline /></div>
-          <div className="stat-title">Total Responses</div>
-          <div className="stat-value text-primary">{surveyData.length}</div>
-          <div className="stat-desc">Participants in the survey</div>
-        </div>
-        
-        <div className="stat">
-          <div className="stat-figure text-secondary text-3xl"><IoGameControllerOutline/></div>
-          <div className="stat-title">Most Popular System</div>
-          <div className="stat-value text-secondary truncate">
-            {systemPreferencesData[0]?.name || 'N/A'}
-          </div>
-          <div className="stat-desc">{systemPreferencesData[0]?.value || 0} players</div>
-        </div>
-        
-        <div className="stat">
-          <div className="stat-figure text-accent text-3xl"><IoColorPaletteOutline /></div>
-          <div className="stat-title">Top Genre</div>
-          <div className="stat-value text-accent truncate">{genrePreferencesData[0]?.name || 'N/A'}</div>
-          <div className="stat-desc">{genrePreferencesData[0]?.value || 0} players</div>
-        </div>
-      </div>
-      
-      {renderTabs()}
-      <div className="mt-6">
-          {renderActiveTab()}
-      </div>
-    </div>
-  );
-};
-
-export default TTRPGDashboard;
