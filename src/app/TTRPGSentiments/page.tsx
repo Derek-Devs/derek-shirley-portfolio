@@ -15,10 +15,10 @@ import {
   Filler,
   Colors,
   TooltipItem,
-  ChartType,
+  ChartType, // Ensured ChartType is imported
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import Papa, { ParseError, ParseResult } from 'papaparse';
+import Papa, { ParseError, ParseResult } from 'papaparse'; // Ensured ParseError and ParseResult are imported
 import { IoCloseCircleOutline, IoPricetagsOutline, IoGameControllerOutline, IoColorPaletteOutline } from 'react-icons/io5';
 
 
@@ -357,10 +357,13 @@ const TTRPGDashboard: React.FC = () => {
   }
   const gameplayElementImportanceChartData = useMemo((): GameplayElementChartItem[] => {
     if (!averageRatingsData || averageRatingsData.length === 0) return [];
+    const combatImportance = averageRatingsData.find(r => r.name === 'Combat Importance')?.value || 0;
+    const roleplayImportance = averageRatingsData.find(r => r.name === 'Roleplay Importance')?.value || 0;
+    const explorationImportance = averageRatingsData.find(r => r.name === 'Exploration Importance')?.value || 0;
     return [
-      { name: "Combat", value: averageRatingsData.find(r => r.name === 'Combat Importance')?.value || 0 },
-      { name: "Roleplaying", value: averageRatingsData.find(r => r.name === 'Roleplay Importance')?.value || 0 },
-      { name: "Exploration", value: averageRatingsData.find(r => r.name === 'Exploration Importance')?.value || 0 },
+      { name: "Combat", value: combatImportance },
+      { name: "Roleplaying", value: roleplayImportance },
+      { name: "Exploration", value: explorationImportance },
     ];
   }, [averageRatingsData]);
   const sessionLengthData = useMemo(() => countOccurrences(surveyData, 'sessionLength', false), [surveyData]);
@@ -402,10 +405,13 @@ const TTRPGDashboard: React.FC = () => {
           label: (context: TooltipItem<'pie'>) => {
             const label = context.label || '';
             const value = typeof context.raw === 'number' ? context.raw : 0;
-            const total = context.chart.data.datasets[context.datasetIndex].data
-                .reduce((acc: number, val: unknown) => acc + (typeof val === 'number' ? val : 0), 0);
+            let total = 0;
+            if (context.chart.data.datasets[context.datasetIndex] && context.chart.data.datasets[context.datasetIndex].data) {
+                total = context.chart.data.datasets[context.datasetIndex].data
+                    .reduce((acc: number, val: unknown) => acc + (typeof val === 'number' ? val : 0), 0);
+            }
             const percentage = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
-            return `${label}: <span class="math-inline">\{value\} \(</span>{percentage})`;
+            return `${label}: ${value} (${percentage})`;
           },
         },
       },
@@ -670,9 +676,112 @@ const TTRPGDashboard: React.FC = () => {
   );
 
   const renderSpendingTab = () => (
-     <div className="space-y-6">
+    <>
+      <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="card bg-base-100 shadow-xl">
                 <div className="card-body">
                     <h2 className="card-title">Annual Spending</h2>
                     <div className="h-80">
+                        <Pie 
+                            data={{
+                                labels: spendingPieData.map(d => d.name),
+                                datasets: [{
+                                    label: 'Annual Spending',
+                                    data: spendingPieData.map(d => d.value),
+                                    backgroundColor: CHART_COLORS,
+                                }]
+                            }}
+                            options={pieChartOptionsBase}
+                        />
+                    </div>
+                </div>
+            </div>
+             <div className="card bg-base-100 shadow-xl">
+                <div className="card-body">
+                    <h2 className="card-title">Price Sensitivity (Max Willing to Pay)</h2>
+                    <div className="h-80">
+                        <Line 
+                            data={{
+                                labels: priceSensitivityChartData.map(d => d.range),
+                                datasets: [
+                                    {
+                                        label: 'Digital Book ($)',
+                                        data: priceSensitivityChartData.map(d => d.digital),
+                                        borderColor: CHART_COLORS[0],
+                                        backgroundColor: `${CHART_COLORS[0]}60`,
+                                        fill: true,
+                                        tension: 0.3,
+                                    },
+                                    {
+                                        label: 'Hardback Book ($)',
+                                        data: priceSensitivityChartData.map(d => d.hardback),
+                                        borderColor: CHART_COLORS[1],
+                                        backgroundColor: `${CHART_COLORS[1]}60`,
+                                        fill: true,
+                                        tension: 0.3,
+                                    }
+                                ]
+                            }}
+                            options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, legend: {display: true, position: 'top'}}}}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </>
+  );
+  
+  const renderActiveTab = () => {
+    switch(activeTab) {
+      case 0: return renderPlayerProfileTab();
+      case 1: return renderSystemGenreTab();
+      case 2: return renderGameplayTab();
+      case 3: return renderSpendingTab();
+      default: return renderPlayerProfileTab();
+    }
+  };
+  
+
+  return (
+    <div className="container mx-auto px-4 py-8"> 
+      <div className="text-center mb-10">
+        <h1 className="text-4xl font-bold tracking-tight">TTRPG Consumer Sentiments</h1>
+        <p className="text-xl mt-3 text-base-content/70">Insights from player surveys (November 2023)</p>
+      </div>
+      
+      <div className="stats shadow w-full mb-10 bg-base-200">
+        <div className="stat">
+          <div className="stat-figure text-primary text-3xl"><IoPricetagsOutline /></div>
+          <div className="stat-title">Total Responses</div>
+          <div className="stat-value text-primary">{surveyData.length}</div>
+          <div className="stat-desc">Participants in the survey</div>
+        </div>
+        
+        <div className="stat">
+          <div className="stat-figure text-secondary text-3xl"><IoGameControllerOutline/></div>
+          <div className="stat-title">Most Popular System</div>
+          <div className="stat-value text-secondary truncate">
+            {systemPreferencesData[0]?.name || 'N/A'}
+          </div>
+          <div className="stat-desc">{systemPreferencesData[0]?.value || 0} players</div>
+        </div>
+        
+        <div className="stat">
+          <div className="stat-figure text-accent text-3xl"><IoColorPaletteOutline /></div>
+          <div className="stat-title">Top Genre</div>
+          <div className="stat-value text-accent truncate">{genrePreferencesData[0]?.name || 'N/A'}</div>
+          <div className="stat-desc">{genrePreferencesData[0]?.value || 0} players</div>
+        </div>
+      </div>
+      
+      {renderTabs()}
+      <div className="mt-6">
+          {renderActiveTab()}
+      </div>
+    </div>
+  );
+};
+
+export default TTRPGDashboard;
