@@ -15,6 +15,8 @@ import {
   LineElement,
   ArcElement,
   Colors,
+  type TooltipItem,
+  type ChartType,
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import { IoInformationCircleOutline, IoCloseCircleOutline, IoWarningOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
@@ -106,30 +108,37 @@ const GameSalesDashboard: React.FC = () => {
           skipEmptyLines: true,
           complete: (results) => {
             if (results.errors.length) {
-              setError('Error parsing CSV file. Check console for details.');
+              setError("Error parsing CSV file. Check console for details.");
               console.error("CSV Parsing Errors:", results.errors);
             }
-            // Filter out rows that might be incomplete or have null critical values after parsing
             const validData = results.data.filter(
-              (row): row is GameData => // Type predicate
+              (row): row is GameData =>
                 row &&
                 typeof row.Rank === 'number' &&
                 typeof row.Name === 'string' &&
                 row.Name.trim() !== '' &&
+                (typeof row.Year === 'number' || (typeof row.Year === 'string' && !isNaN(parseInt(row.Year, 10)))) &&
                 typeof row.Global_Sales === 'number' &&
                 !isNaN(row.Global_Sales)
             );
-            setData(validData);
+            
+            const processedData = validData.map(row => ({
+                ...row,
+                Year: typeof row.Year === 'string' ? parseInt(row.Year, 10) : row.Year
+            })).filter(row => typeof row.Year === 'number' && !isNaN(row.Year));
+
+            setData(processedData);
             setLoading(false);
           },
-          error: (parseError: Error) => {
+          error: (parseError: Papa.ParseError) => {
             setError(`Error parsing CSV: ${parseError.message}`);
             setLoading(false);
           }
         });
       })
       .catch(fetchError => {
-        setError(`Error loading data: ${fetchError.message}. Ensure 'vgsales.csv' is in the 'public' folder.`);
+        const errorMessage = fetchError instanceof Error ? fetchError.message : String(fetchError);
+        setError(`Error loading data: ${errorMessage}. Ensure 'vgsales.csv' is in the 'public' folder.`);
         setLoading(false);
       });
   }, [isClient]);
@@ -169,17 +178,25 @@ const GameSalesDashboard: React.FC = () => {
 
   const salesByYear = useMemo((): YearlySales[] => {
     if (!data || data.length === 0) return [];
-    const validData = data.filter(game => game.Year && !isNaN(game.Year) && game.Year >= 1980 && game.Year <= 2020);
+    const validData = data.filter(game => 
+        typeof game.Year === 'number' && 
+        !isNaN(game.Year) && 
+        game.Year >= 1980 && 
+        game.Year <= 2020 
+    );
     const yearGroups = _.groupBy(validData, 'Year');
     return Object.keys(yearGroups)
-      .map(year => ({
-        Year: parseInt(year),
-        Global_Sales: _.sumBy(yearGroups[year], 'Global_Sales'),
-        NA_Sales: _.sumBy(yearGroups[year], 'NA_Sales'),
-        EU_Sales: _.sumBy(yearGroups[year], 'EU_Sales'),
-        JP_Sales: _.sumBy(yearGroups[year], 'JP_Sales'),
-        Other_Sales: _.sumBy(yearGroups[year], 'Other_Sales')
-      }))
+      .map(yearStr => {
+        const year = parseInt(yearStr, 10);
+        return {
+          Year: year,
+          Global_Sales: _.sumBy(yearGroups[yearStr], 'Global_Sales'),
+          NA_Sales: _.sumBy(yearGroups[yearStr], 'NA_Sales'),
+          EU_Sales: _.sumBy(yearGroups[yearStr], 'EU_Sales'),
+          JP_Sales: _.sumBy(yearGroups[yearStr], 'JP_Sales'),
+          Other_Sales: _.sumBy(yearGroups[yearStr], 'Other_Sales')
+        };
+      })
       .sort((a, b) => a.Year - b.Year);
   }, [data]);
 
@@ -203,15 +220,15 @@ const GameSalesDashboard: React.FC = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<ChartType>) {
             let label = context.dataset.label || '';
             if (label) {
               label += ': ';
             }
-            if (context.parsed.y !== null && context.parsed.y !== undefined) {
-              label += context.parsed.y.toFixed(2) + ' million';
-            } else if (context.parsed !== null && context.parsed !== undefined) { // For pie/doughnut
-                 label += context.parsed.toFixed(2) + ' million';
+            if (context.parsed && typeof context.parsed === 'object' && context.parsed.y !== null && context.parsed.y !== undefined) {
+              label += context.parsed.y.toFixed(2) + " million";
+            } else if (typeof context.parsed === 'number') { 
+               label += context.parsed.toFixed(2) + " million";
             }
             return label;
           }
@@ -233,7 +250,7 @@ const GameSalesDashboard: React.FC = () => {
       y: {
         title: {
           display: true,
-          text: 'Sales (millions)'
+          text: "Sales (millions)"
         },
         grid: {
             color: 'rgba(200, 200, 200, 0.2)',
@@ -254,11 +271,14 @@ const GameSalesDashboard: React.FC = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'pie'>) {
             let label = context.label || '';
             const value = context.parsed;
-            const total = context.dataset.data.reduce((a:number, b:number) => a + b, 0);
-            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+            
+            const datasetData = (context.dataset.data as number[] | undefined) || [];
+            const total = datasetData.reduce((a: number, b: number): number => a + b, 0);
+            
+            const percentage = total > 0 && value !== null && value !== undefined ? ((value / total) * 100).toFixed(1) : "0.0";
             if (label) {
               label += ': ';
             }
@@ -272,9 +292,9 @@ const GameSalesDashboard: React.FC = () => {
       colors: {
         enabled: true
       },
-      title: { // Generic title, can be overridden
+      title: { 
         display: false,
-        text: 'Chart Title'
+        text: "Chart Title"
       }
     },
   };
@@ -303,14 +323,14 @@ const GameSalesDashboard: React.FC = () => {
 
         {error && (
           <div role="alert" className="alert alert-error mb-6">
-            <IoCloseCircleOutline className="stroke-current flex-shrink-0 h-6 w-6" />
+            <IoCloseCircleOutline className="stroke-current flex-shrink-0 h-6 h-6" />
             <span>{error}</span>
           </div>
         )}
 
         {!loading && !error && data.length === 0 && (
           <div role="alert" className="alert alert-warning mb-6">
-            <IoWarningOutline className="stroke-current flex-shrink-0 h-6 w-6" />
+            <IoWarningOutline className="stroke-current flex-shrink-0 h-6 h-6" />
             <span>No data available. Processed 0 records. Please check if 'vgsales.csv' is in the 'public' folder and is not empty or corrupted.</span>
           </div>
         )}
@@ -318,7 +338,7 @@ const GameSalesDashboard: React.FC = () => {
         {data.length > 0 && !loading && !error && (
           <>
             <div role="alert" className="alert alert-success mb-6">
-              <IoCheckmarkCircleOutline className="stroke-current flex-shrink-0 h-6 w-6" />
+              <IoCheckmarkCircleOutline className="stroke-current flex-shrink-0 h-6 h-6" />
               <span>Loaded {data.length} video game sales records successfully!</span>
             </div>
 
@@ -327,7 +347,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Top 10 Games by Global Sales</h2>
                 <div style={{ height: '400px' }}>
                   <Bar
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: 'Top 10 Games by Global Sales' }}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Top 10 Games by Global Sales" }}}}
                     data={{
                       labels: topGames.map(game => game.Name),
                       datasets: [
@@ -346,9 +366,9 @@ const GameSalesDashboard: React.FC = () => {
 
               <div className="bg-base-200 p-4 rounded-box shadow">
                 <h2 className="text-xl font-semibold mb-2">Global Sales by Platform (Top 10)</h2>
-                 <div style={{ height: '400px' }}>
+                  <div style={{ height: '400px' }}>
                   <Bar
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: 'Global Sales by Platform (Top 10)' }}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Global Sales by Platform (Top 10)" }}}}
                     data={{
                       labels: salesByPlatform.slice(0,10).map(item => item.Platform),
                       datasets: [
@@ -362,14 +382,14 @@ const GameSalesDashboard: React.FC = () => {
                       ],
                     }}
                   />
-                </div>
+                  </div>
               </div>
 
               <div className="bg-base-200 p-4 rounded-box shadow">
                 <h2 className="text-xl font-semibold mb-2">Top 10 Publishers by Global Sales</h2>
                 <div style={{ height: '400px' }}>
                   <Bar
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: 'Top 10 Publishers by Global Sales' }}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Top 10 Publishers by Global Sales" }}}}
                     data={{
                       labels: salesByPublisher.map(item => item.Publisher),
                       datasets: [
@@ -390,7 +410,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Sales Distribution by Genre (Top 10)</h2>
                 <div style={{ height: '400px' }}>
                   <Pie
-                    options={{...pieChartOptions, plugins: {...pieChartOptions.plugins, title: { display: true, text: 'Sales Distribution by Genre (Top 10)' }}}}
+                    options={{...pieChartOptions, plugins: {...pieChartOptions.plugins, title: { display: true, text: "Sales Distribution by Genre (Top 10)" }}}}
                     data={{
                       labels: salesByGenre.slice(0,10).map(item => item.Genre),
                       datasets: [
@@ -408,7 +428,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Sales Trends Over Time (1980-2020)</h2>
                 <div style={{ height: '450px' }}>
                   <Line
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: 'Sales Trends Over Time (1980-2020)' }, legend: { display: true, position: 'bottom'}}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Sales Trends Over Time (1980-2020)" }, legend: { display: true, position: 'bottom'}}}}
                     data={{
                       labels: salesByYear.map(item => item.Year.toString()),
                       datasets: [
@@ -454,7 +474,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Regional Sales Comparison</h2>
                 <div style={{ height: '400px' }}>
                   <Bar
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: 'Regional Sales Comparison' }}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Regional Sales Comparison" }}}}
                     data={{
                       labels: ['North America', 'Europe', 'Japan', 'Other Regions'],
                       datasets: [

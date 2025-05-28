@@ -2,7 +2,6 @@
 export const getDaisyUIColor = (semanticName: string, opacity?: number): string => {
   if (typeof window === 'undefined') {
     const fallbackOpacity = opacity === undefined ? 1 : opacity;
-    // SSR fallback
     return `hsla(0, 0%, ${fallbackOpacity === 1 ? '20%' : '80%'}, ${fallbackOpacity})`;
   }
 
@@ -42,8 +41,7 @@ export const getDaisyUIColor = (semanticName: string, opacity?: number): string 
       }
       return colorValue;
     }
-  } catch (error) {
-    // console.error(`[ColorUtil] Error getting ${fullVariableName}:`, error); // For debugging
+  } catch (_error) { // Changed 'error' to '_error' to denote it as intentionally unused
   }
   
   // console.warn(`[ColorUtil] Variable ${fullVariableName} not found. Using fallback.`); // For debugging
