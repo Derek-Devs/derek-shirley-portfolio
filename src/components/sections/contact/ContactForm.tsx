@@ -29,40 +29,52 @@ export default function ContactForm() {
     event.preventDefault();
     setStatus('Sending...');
 
+    // Determine the path of the current page. For client components, window.location.pathname can be used.
+    // However, for the initial POST for Netlify Forms, it's often simplest to use
+    // the path where the form is intended to be found by Netlify, or just "/".
+    // If your form is on "/contact", you might use "/contact" here.
+    // For now, let's stick with "/" if it's generally worked for discovery before,
+    // or change it if you know the specific page path (e.g. '/contact')
+    const formPostUrl = "/"; // Or specific path like window.location.pathname or "/contact"
+
     try {
-      await fetch("/", {
+      await fetch(formPostUrl, { // Using a variable for clarity, can keep as "/"
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: encode({
-          "form-name": "contact",
+          "form-name": "contact", // This matches the form's name attribute
           ...formData
         })
       });
       setStatus('Message sent successfully!');
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', message: '' }); // Reset form
     } catch (error) {
       console.error('Form submission error:', error);
       setStatus('Error sending message. Please try again.');
     }
 
-    setTimeout(() => setStatus(''), 5000);
+    setTimeout(() => setStatus(''), 5000); // Clear status after 5 seconds
   };
 
   return (
     <div className="w-full">
       <h2 className="text-2xl font-semibold mb-6 text-base-content">Send me a message</h2>
       <form
-        name="contact"
-        method="POST"
-        data-netlify="true"
+        name="contact" 
+        method="POST" 
+        action="/thank-you" 
+        data-netlify="true" 
         netlify-honeypot="bot-field"
         onSubmit={handleSubmit}
         className="space-y-4"
       >
+
         <input type="hidden" name="form-name" value="contact" />
+        
+
         <p className="hidden">
           <label>
-            Don’t fill this out if you’re human: <input name="bot-field" />
+            Don’t fill this out if you’re human: <input name="bot-field" onChange={handleChange} />
           </label>
         </p>
 
