@@ -106,7 +106,7 @@ const GameSalesDashboard: React.FC = () => {
           header: true,
           dynamicTyping: true,
           skipEmptyLines: true,
-          complete: (results) => {
+          complete: (results) => { 
             if (results.errors.length) {
               setError("Error parsing CSV file. Check console for details.");
               console.error("CSV Parsing Errors:", results.errors);
@@ -130,7 +130,7 @@ const GameSalesDashboard: React.FC = () => {
             setData(processedData);
             setLoading(false);
           },
-          error: (parseError: Papa.ParseError) => {
+          error: (parseError: Error) => { 
             setError(`Error parsing CSV: ${parseError.message}`);
             setLoading(false);
           }
@@ -221,16 +221,24 @@ const GameSalesDashboard: React.FC = () => {
       tooltip: {
         callbacks: {
           label: function(context: TooltipItem<ChartType>) {
-            let label = context.dataset.label || '';
-            if (label) {
-              label += ': ';
+            let tipLabel = context.dataset.label || '';
+            if (tipLabel) {
+              tipLabel += ': ';
             }
-            if (context.parsed && typeof context.parsed === 'object' && context.parsed.y !== null && context.parsed.y !== undefined) {
-              label += context.parsed.y.toFixed(2) + " million";
-            } else if (typeof context.parsed === 'number') { 
-               label += context.parsed.toFixed(2) + " million";
+            const parsed = context.parsed;
+            if (parsed !== null && typeof parsed === 'object') {
+              // If parsed is an object, attempt to access 'y' and check its type
+              const yValue = (parsed as { y?: unknown }).y; // Access 'y' via an assertion
+              if (typeof yValue === 'number') {
+                tipLabel += yValue.toFixed(2) + " million";
+              }
+              // Note: This might need to be expanded if 'y' isn't always the value
+              // or for horizontal bars where 'x' might be the value.
+              // For a truly generic base, context.formattedValue could be a fallback.
+            } else if (typeof parsed === 'number') {
+              tipLabel += parsed.toFixed(2) + " million";
             }
-            return label;
+            return tipLabel;
           }
         }
       }
@@ -255,8 +263,9 @@ const GameSalesDashboard: React.FC = () => {
         grid: {
             color: 'rgba(200, 200, 200, 0.2)',
         },
+        beginAtZero: true,
         ticks: {
-            beginAtZero: true
+            // Other y-axis tick specific options can go here if needed
         }
       }
     }
