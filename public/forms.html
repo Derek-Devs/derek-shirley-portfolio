@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Form Definitions</title></head>
+<body>
+  <form name="contact" data-netlify="true" netlify-honeypot="bot-field" method="POST">
+    <input type="hidden" name="form-name" value="contact" />
+    <div style="display:none;"> 
+      <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+    </div>
+    <div><label>Name: <input type="text" name="name" /></label></div>
+    <div><label>Email: <input type="email" name="email" /></label></div>
+    <div><label>Message: <textarea name="message"></textarea></label></div>
+  </form>
+
+</body>
+</html>
