@@ -15,11 +15,12 @@ import {
   ArcElement,
   Filler,
   Colors,
-  TooltipItem, // Keep: Correctly TooltipItem instead of type TooltipItem
-  ChartType,   // Keep: Correctly ChartType instead of type ChartType
+  TooltipItem, 
+  ChartType,   
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import Papa, { ParseError, ParseResult } from 'papaparse'; // ParseError import is fine, but we'll use generic Error in the callback
+// Changed import: Removed ParseError as it's no longer directly used
+import Papa, { ParseResult } from 'papaparse'; 
 import { IoCloseCircleOutline, IoPricetagsOutline, IoGameControllerOutline, IoColorPaletteOutline } from 'react-icons/io5';
 
 
@@ -321,7 +322,7 @@ const TTRPGDashboard: React.FC = () => {
             setSurveyData(transformedData);
             setIsLoading(false);
           },
-          error: (err: Error) => { // Changed ParseError to Error
+          error: (err: Error) => { 
             setError('Error parsing CSV: ' + err.message);
             setIsLoading(false);
           }
@@ -710,7 +711,7 @@ const TTRPGDashboard: React.FC = () => {
                                         label: 'Digital Book ($)',
                                         data: priceSensitivityChartData.map(d => d.digital),
                                         borderColor: CHART_COLORS[0],
-                                        backgroundColor: `${CHART_COLORS[0]}60`, // Adding alpha for area fill
+                                        backgroundColor: `${CHART_COLORS[0]}60`, 
                                         fill: true,
                                         tension: 0.3,
                                     },
@@ -718,7 +719,7 @@ const TTRPGDashboard: React.FC = () => {
                                         label: 'Hardback Book ($)',
                                         data: priceSensitivityChartData.map(d => d.hardback),
                                         borderColor: CHART_COLORS[1],
-                                        backgroundColor: `${CHART_COLORS[1]}60`, // Adding alpha for area fill
+                                        backgroundColor: `${CHART_COLORS[1]}60`, 
                                         fill: true,
                                         tension: 0.3,
                                     }
