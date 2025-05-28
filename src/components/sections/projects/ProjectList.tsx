@@ -1,6 +1,6 @@
 // src/components/sections/projects/ProjectList.tsx
 import React from 'react';
-
+import Image from 'next/image'; 
 interface Project {
   id: number;
   title: string;
@@ -11,20 +11,18 @@ interface Project {
   githubUrl?: string;
 }
 
-// Expanded color map for tags
 const tagColorMap: { [key: string]: string } = {
   'Data Analysis': 'badge-primary',
   'React': 'badge-secondary',
   'Typescript': 'badge-accent',
   'SQL': 'badge-info',
-  'Python': 'badge-success', // Added
-  'Pandas': 'badge-success', // Added (can be same or different from Python)
-  'Scikit-learn': 'badge-warning', // Added
-  'GitHub': 'badge-neutral', // Added (often a platform/tool)
-  'Javascript': 'badge-warning', // Added (can share with Scikit-learn or be different)
-  'Google Sheets': 'badge-success', // Added (often associated with green)
-  'API': 'badge-error', // Added (or another distinct color)
-  // Add more tags and their corresponding DaisyUI color classes as needed
+  'Python': 'badge-success',
+  'Pandas': 'badge-success',
+  'Scikit-learn': 'badge-warning',
+  'GitHub': 'badge-neutral',
+  'Javascript': 'badge-warning',
+  'Google Sheets': 'badge-success',
+  'API': 'badge-error',
 };
 
 const projectsData: Project[] = [
@@ -84,20 +82,25 @@ export default function ProjectList() {
       <div className="container mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">My Projects 🚀</h2>
         <p className="text-center text-lg md:text-xl mb-12 text-base-content/70">
-          Here are some of the projects I've enjoyed working on.
+          Here are some of the projects I&apos;ve enjoyed working on.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {projectsData.map((project) => (
             <div key={project.id} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col">
-              <figure className="h-48 overflow-hidden">
-                <img
+              <figure className="h-48 overflow-hidden relative">
+                <Image
                   src={project.imageUrl}
                   alt={project.title}
-                  className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" 
+                  style={{ objectFit: 'cover' }} 
+                  className="transition-transform duration-300 hover:scale-105"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = `https://placehold.co/600x400/374151/ffffff?text=Image+Not+Found&font=lato`;
-                    (e.target as HTMLImageElement).alt = `${project.title} - Image Not Found`;
+                    const target = e.currentTarget as HTMLImageElement;
+                    target.srcset = ''; 
+                    target.src = `https://placehold.co/600x400/374151/ffffff?text=Image+Not+Found&font=lato`;
+
                   }}
                 />
               </figure>
@@ -107,7 +110,7 @@ export default function ProjectList() {
 
                 <div className="mb-4">
                   {project.tags.map((tag) => {
-                    const colorClass = tagColorMap[tag] || 'badge-ghost'; // Default to 'badge-ghost'
+                    const colorClass = tagColorMap[tag] || 'badge-ghost';
                     return (
                       <span key={tag} className={`badge badge-outline ${colorClass} badge-md mr-2 mb-2 font-medium`}>
                         {tag}

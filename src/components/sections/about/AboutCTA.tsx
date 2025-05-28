@@ -10,7 +10,7 @@ const sectionVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' },
+    transition: { duration: 0.6, ease: "easeOut" },
   },
 };
 
@@ -28,7 +28,7 @@ const AboutCTA: React.FC = () => {
             Let&apos;s Connect!
           </h2>
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90"> 
-            I&apos;m always interested in discussing new challenges, data strategies, or potential opportunities (and I'm open to relocation!). Feel free to explore my projects or get in touch.
+            I&apos;m always interested in discussing new challenges, data strategies, or potential opportunities (and I&apos;m open to relocation!). Feel free to explore my projects or get in touch.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link href="/projects" className="btn btn-accent shadow-md"> 
@@ -38,7 +38,7 @@ const AboutCTA: React.FC = () => {
               Contact Me
             </Link>
             <a
-              href="/derek_shirley_resume.pdf" // *** Make sure resume exists at this path in /public ***
+              href="/derek_shirley_resume.pdf" 
               download
               className="btn btn-outline border-primary-content text-primary-content hover:bg-primary-content hover:text-primary shadow-md"
             >

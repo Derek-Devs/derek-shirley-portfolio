@@ -41,10 +41,9 @@ export const getDaisyUIColor = (semanticName: string, opacity?: number): string 
       }
       return colorValue;
     }
-  } catch (_error) { // Changed 'error' to '_error' to denote it as intentionally unused
+  } catch { 
   }
   
-  // console.warn(`[ColorUtil] Variable ${fullVariableName} not found. Using fallback.`); // For debugging
   const errorFallbackHue = (semanticName.charCodeAt(0) * 20) % 360;
   const fallbackOpacity = opacity === undefined ? 1 : opacity;
   return `hsla(${errorFallbackHue}, 70%, 50%, ${fallbackOpacity})`;

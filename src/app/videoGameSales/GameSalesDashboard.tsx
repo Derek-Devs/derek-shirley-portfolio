@@ -250,7 +250,7 @@ const GameSalesDashboard: React.FC = () => {
       y: {
         title: {
           display: true,
-          text: "Sales (millions)"
+          text: `Sales (millions)`
         },
         grid: {
             color: 'rgba(200, 200, 200, 0.2)',
@@ -294,7 +294,7 @@ const GameSalesDashboard: React.FC = () => {
       },
       title: { 
         display: false,
-        text: "Chart Title"
+        text: `Chart Title`
       }
     },
   };
@@ -347,7 +347,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Top 10 Games by Global Sales</h2>
                 <div style={{ height: '400px' }}>
                   <Bar
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Top 10 Games by Global Sales" }}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: `Top 10 Games by Global Sales` }}}}
                     data={{
                       labels: topGames.map(game => game.Name),
                       datasets: [
@@ -368,7 +368,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Global Sales by Platform (Top 10)</h2>
                   <div style={{ height: '400px' }}>
                   <Bar
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Global Sales by Platform (Top 10)" }}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: `Global Sales by Platform (Top 10)` }}}}
                     data={{
                       labels: salesByPlatform.slice(0,10).map(item => item.Platform),
                       datasets: [
@@ -389,7 +389,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Top 10 Publishers by Global Sales</h2>
                 <div style={{ height: '400px' }}>
                   <Bar
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Top 10 Publishers by Global Sales" }}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: `Top 10 Publishers by Global Sales` }}}}
                     data={{
                       labels: salesByPublisher.map(item => item.Publisher),
                       datasets: [
@@ -410,7 +410,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Sales Distribution by Genre (Top 10)</h2>
                 <div style={{ height: '400px' }}>
                   <Pie
-                    options={{...pieChartOptions, plugins: {...pieChartOptions.plugins, title: { display: true, text: "Sales Distribution by Genre (Top 10)" }}}}
+                    options={{...pieChartOptions, plugins: {...pieChartOptions.plugins, title: { display: true, text: `Sales Distribution by Genre (Top 10)` }}}}
                     data={{
                       labels: salesByGenre.slice(0,10).map(item => item.Genre),
                       datasets: [
@@ -428,7 +428,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Sales Trends Over Time (1980-2020)</h2>
                 <div style={{ height: '450px' }}>
                   <Line
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Sales Trends Over Time (1980-2020)" }, legend: { display: true, position: 'bottom'}}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: `Sales Trends Over Time (1980-2020)` }, legend: { display: true, position: 'bottom'}}}}
                     data={{
                       labels: salesByYear.map(item => item.Year.toString()),
                       datasets: [
@@ -474,7 +474,7 @@ const GameSalesDashboard: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-2">Regional Sales Comparison</h2>
                 <div style={{ height: '400px' }}>
                   <Bar
-                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: "Regional Sales Comparison" }}}}
+                    options={{...chartOptionsBase, plugins: {...chartOptionsBase.plugins, title: { display: true, text: `Regional Sales Comparison` }}}}
                     data={{
                       labels: ['North America', 'Europe', 'Japan', 'Other Regions'],
                       datasets: [
