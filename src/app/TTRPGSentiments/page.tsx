@@ -1,3 +1,4 @@
+// src/app/TTRPGSentiments/page.tsx
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -14,11 +15,11 @@ import {
   ArcElement,
   Filler,
   Colors,
-  TooltipItem,
-  ChartType, // Ensured ChartType is imported
+  TooltipItem, // Keep: Correctly TooltipItem instead of type TooltipItem
+  ChartType,   // Keep: Correctly ChartType instead of type ChartType
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import Papa, { ParseError, ParseResult } from 'papaparse'; // Ensured ParseError and ParseResult are imported
+import Papa, { ParseError, ParseResult } from 'papaparse'; // ParseError import is fine, but we'll use generic Error in the callback
 import { IoCloseCircleOutline, IoPricetagsOutline, IoGameControllerOutline, IoColorPaletteOutline } from 'react-icons/io5';
 
 
@@ -320,7 +321,7 @@ const TTRPGDashboard: React.FC = () => {
             setSurveyData(transformedData);
             setIsLoading(false);
           },
-          error: (err: ParseError) => {
+          error: (err: Error) => { // Changed ParseError to Error
             setError('Error parsing CSV: ' + err.message);
             setIsLoading(false);
           }
@@ -381,7 +382,7 @@ const TTRPGDashboard: React.FC = () => {
           label: (context: TooltipItem<ChartType>) => `${context.dataset.label || context.label || ''}: ${context.formattedValue}`,
         },
       },
-       colors: { enabled: true }
+        colors: { enabled: true }
     },
     scales: {
       x: { 
@@ -667,7 +668,7 @@ const TTRPGDashboard: React.FC = () => {
                                 backgroundColor: CHART_COLORS[3],
                             }]
                         }}
-                         options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }}}}
+                        options={{...chartOptionsBase, scales: {...chartOptionsBase.scales, x: {...chartOptionsBase.scales.x, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }}}}
                     />
                 </div>
             </div>
@@ -709,7 +710,7 @@ const TTRPGDashboard: React.FC = () => {
                                         label: 'Digital Book ($)',
                                         data: priceSensitivityChartData.map(d => d.digital),
                                         borderColor: CHART_COLORS[0],
-                                        backgroundColor: `${CHART_COLORS[0]}60`,
+                                        backgroundColor: `${CHART_COLORS[0]}60`, // Adding alpha for area fill
                                         fill: true,
                                         tension: 0.3,
                                     },
@@ -717,7 +718,7 @@ const TTRPGDashboard: React.FC = () => {
                                         label: 'Hardback Book ($)',
                                         data: priceSensitivityChartData.map(d => d.hardback),
                                         borderColor: CHART_COLORS[1],
-                                        backgroundColor: `${CHART_COLORS[1]}60`,
+                                        backgroundColor: `${CHART_COLORS[1]}60`, // Adding alpha for area fill
                                         fill: true,
                                         tension: 0.3,
                                     }
