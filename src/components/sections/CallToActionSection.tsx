@@ -32,7 +32,7 @@ const CallToActionSection: React.FC = () => {
           </h2>
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-base-content/80">
             I&apos;m passionate about leveraging data to solve complex problems and drive business value.
-            Currently based near Fort Worth, TX (and open to relocation!), I&apos;m seeking exciting opportunities. Let&apos;s connect!
+            Currently based near Grapevine, TX (and open to relocation!), I&apos;m seeking exciting opportunities. Let&apos;s connect!
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link
