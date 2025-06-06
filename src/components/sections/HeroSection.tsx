@@ -85,14 +85,14 @@ const HeroSection: React.FC = () => {
             className="text-xl sm:text-2xl md:text-3xl font-semibold mb-5 text-base-content/90" 
             variants={textItemVariants}
           >
-            Senior Data Analyst
+            Data Analytics Lead
           </motion.h2>
 
           <motion.p
             className="mb-8 text-base sm:text-lg text-base-content/80 max-w-xl mx-auto lg:mx-0"
             variants={textItemVariants}
           >
-            Results-driven professional with 8+ years transforming complex data into strategic business solutions using Python, SQL, Power BI, and Tableau. Proven ability to deliver measurable improvements and communicate insights effectively.
+            A Data & Analytics Lead with 8+ years of experience building the data systems and analytical frameworks that drive business strategy. Specializing in Python, SQL, Databricks, and Power BI.
           </motion.p>
 
           <motion.div
