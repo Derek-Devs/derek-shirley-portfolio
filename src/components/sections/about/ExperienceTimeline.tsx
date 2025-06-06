@@ -15,18 +15,18 @@ const experienceTimeline = [
   {
     company: "GameStop Corp.",
     title: "Senior Data Analyst, Supply Chain",
-    years: "May 2023 – Aug 2024",
+    years: "Jun 2023 – Aug 2024",
     location: "Grapevine, TX",
   },
   {
     company: "Glitch Breakers",
-    title: "Senior Data Engineer",
-    years: "Jan 2020 – May 2023",
+    title: "Founder / Lead Data Analyst",
+    years: "Jan 2023 – Jun 2023",
     location: "Northlake, TX",
   },
   {
     company: "American Diamond Logistics",
-    title: "Senior Data Analyst, Logistics",
+    title: "Senior Data Analyst, Supply Chain",
     years: "Jun 2020 - Jan 2023",
     location: "Roanoke, TX",
   },
