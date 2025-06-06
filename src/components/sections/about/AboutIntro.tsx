@@ -43,14 +43,14 @@ const AboutIntro: React.FC = () => {
               Hi, I&apos;m Derek Shirley
             </h2>
             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-base-content/90">
-              Senior Data Analyst
+              Data Analytics Lead
             </h3>
             <p className="text-lg text-base-content/85 mb-4">
-              Based near Grapevine, Texas with over 8 years of experience transforming complex data into tangible business value. I thrive on the challenge of uncovering insights and building solutions that drive strategic decisions.
-            </p>
-            <p className="text-lg text-base-content/85">
-              My passion lies in translating findings into clear, actionable recommendations for stakeholders at all levels.
-            </p>
+  Based near Grapevine, Texas, I&apos;m a Data & Analytics Lead with over 8 years of experience architecting data solutions and translating complex information into tangible business value. I thrive on building the technical frameworks necessary to drive strategic decisions.
+</p>
+<p className="text-lg text-base-content/85">
+  My passion lies in leading the analytical process from end-to-end, ensuring that key findings are communicated effectively to empower stakeholders at all levels—from development teams to the C-suite.
+</p>
           </div>
         </motion.div>
       </div>
