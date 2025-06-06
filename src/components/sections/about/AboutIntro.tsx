@@ -45,12 +45,9 @@ const AboutIntro: React.FC = () => {
             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-base-content/90">
               Data Analytics Lead
             </h3>
-            <p className="text-lg text-base-content/85 mb-4">
-  Based near Grapevine, Texas, I&apos;m a Data & Analytics Lead with over 8 years of experience architecting data solutions and translating complex information into tangible business value. I thrive on building the technical frameworks necessary to drive strategic decisions.
-</p>
-<p className="text-lg text-base-content/85">
-  My passion lies in leading the analytical process from end-to-end, ensuring that key findings are communicated effectively to empower stakeholders at all levels—from development teams to the C-suite.
-</p>
+            <p className="text-lg text-base-content/85 leading-relaxed">
+              My mission is to build and lead analytics functions that transform complex data into clear, strategic assets. With over 8 years of experience—from architecting data solutions at startups to leading analytics for major brands like GameStop—I thrive on partnering with executive teams to solve their most challenging problems, drive measurable revenue growth, and build lasting, data-driven cultures.
+            </p>
           </div>
         </motion.div>
       </div>
