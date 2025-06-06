@@ -9,10 +9,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.derekdevs.com'), 
 
-  title: "Derek Shirley - Senior Data Analyst Portfolio", 
+  title: "Derek Shirley - Lead Data Analyst Portfolio", 
   description: "Portfolio showcasing the data analysis, data engineering, and visualization projects of Derek Shirley, a Senior Data Analyst based in Texas but open to relocation.",
   openGraph: {
-    title: "Derek Shirley - Senior Data Analyst Portfolio",
+    title: "Derek Shirley - Lead Data Analyst Portfolio",
     description: "Explore data-driven projects and insights from Derek Shirley.",
     url: 'https://www.derekdevs.com',
     siteName: 'Derek Shirley Portfolio',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: 'summary_large_image', 
-    title: "Derek Shirley - Senior Data Analyst Portfolio",
+    title: "Derek Shirley - Lead Data Analyst Portfolio",
     description: "Explore data-driven projects and insights from Derek Shirley.",
 
   },
