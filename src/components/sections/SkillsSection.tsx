@@ -1,10 +1,9 @@
-// src/components/sections/SkillsSection.tsx
 "use client";
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaUsers } from 'react-icons/fa';
-import { SiTableau, SiGooglebigquery, SiDatabricks, SiPython, SiGit } from "react-icons/si";
+import { FaBullseye, FaChartLine, FaSitemap } from 'react-icons/fa';
+import { SiTableau} from "react-icons/si";
 
 interface SkillCategory {
   title: string;
@@ -12,50 +11,33 @@ interface SkillCategory {
   icon: React.ReactNode;
 }
 
-// Moved outside component: Constant does not need to be redefined on each render
 const badgeColors = [
   'badge-primary',
   'badge-secondary',
   'badge-accent',
   'badge-info',
-  'badge-success',
-  'badge-warning',
-  'badge-error',
-  'badge-outline badge-primary',
-  'badge-outline badge-secondary',
-  'badge-outline badge-accent',
 ];
 
 const skillCategories: SkillCategory[] = [
   {
-    title: "Data Analysis & Engineering",
-    skills: ["Advanced SQL", "Python", "ETL Architecture", "Data Modeling", "Metrics Development"],
-    icon: <SiGooglebigquery className="inline mr-2 h-5 w-5" />
+    title: "Strategy & Leadership",
+    skills: ["Team Leadership", "Data Strategy", "Executive Communication", "Roadmapping", "Mentorship", "Data Governance"],
+    icon: <FaBullseye className="inline mr-2 h-5 w-5" />
   },
   {
-    title: "Visualization & Reporting",
-    skills: ["Power BI", "Tableau", "DAX", "Alteryx", "Advanced Excel"],
+    title: "Data Architecture & Cloud",
+    skills: ["Databricks", "Google BigQuery", "Snowflake", "AWS", "Data Warehousing", "ETL Architecture"],
+    icon: <FaSitemap className="inline mr-2 h-5 w-5" />
+  },
+  {
+    title: "Analytics & Modeling",
+    skills: ["Advanced SQL", "Python (Pandas)", "Data Modeling", "A/B Testing", "Demand Forecasting", "Alteryx"],
+    icon: <FaChartLine className="inline mr-2 h-5 w-5" />
+  },
+  {
+    title: "BI & Data Storytelling",
+    skills: ["Power BI", "Tableau", "DAX", "Executive Dashboards", "Insight Generation"],
     icon: <SiTableau className="inline mr-2 h-5 w-5" />
-  },
-  {
-    title: "Programming",
-    skills: ["Python", "SQL", "JavaScript", "TypeScript", "HTML/CSS"],
-    icon: <SiPython className="inline mr-2 h-5 w-5" />
-  },
-  {
-    title: "Cloud & Databases",
-    skills: ["AWS", "Google BigQuery", "MongoDB", "Databricks"],
-    icon: <SiDatabricks className="inline mr-2 h-5 w-5" />
-  },
-  {
-    title: "Tools & Methodologies",
-    skills: ["Git", "Agile Project Management", "A/B Testing", "Web Scraping", "AI Development Tools"],
-    icon: <SiGit className="inline mr-2 h-5 w-5" />
-  },
-  {
-    title: "Professional",
-    skills: ["Strategic Problem-Solving", "Cross-functional Collaboration", "Executive Communication", "Team Leadership"],
-    icon: <FaUsers className="inline mr-2 h-5 w-5" />
   },
 ];
 
@@ -83,7 +65,7 @@ const SkillsSection: React.FC = () => {
           Skills & Technologies
         </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {skillCategories.map((category, index) => {
             const badgeColorClass = badgeColors[index % badgeColors.length];
 

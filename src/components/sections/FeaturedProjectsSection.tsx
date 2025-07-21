@@ -2,6 +2,7 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { FaExternalLinkAlt, FaGithub } from 'react-icons/fa';
 
@@ -15,57 +16,45 @@ interface Project {
   githubUrl?: string; 
 }
 
-
 const tagColorMap: { [key: string]: string } = {
-  'Data Analysis': 'badge-primary',
+  'Data Architecture': 'badge-primary',
+  'Leadership': 'badge-primary',
+  'Power BI': 'badge-primary',
+  'DAX': 'badge-info',
+  'Databricks': 'badge-accent',
   'React': 'badge-secondary',
-  'Typescript': 'badge-accent', 
   'TypeScript': 'badge-accent',
   'SQL': 'badge-info',
   'Python': 'badge-success',
   'Pandas': 'badge-success',
   'Scikit-learn': 'badge-warning',
-  'GitHub': 'badge-neutral',
-  'Javascript': 'badge-warning',
-  'Google Sheets': 'badge-success',
-  'API': 'badge-error',
-
-  'Next.js': 'badge-primary',
-  'Tailwind CSS': 'badge-info',
-  'Daisy UI': 'badge-secondary',
-  'Framer Motion': 'badge-accent',
-  'Power BI': 'badge-primary',
-  'DAX': 'badge-info',          
-  'Data Modeling': 'badge-accent',
-  'Data Visualization': 'badge-secondary', 
+  'ETL': 'badge-warning',
 };
 
 const featuredProjectsData: Project[] = [
   {
     id: 1,
-    title: "Personal Portfolio (DerekDevs.com)",
-    description: "This website! A full-stack application showcasing my development journey, built with Next.js, React, TypeScript, and styled with Tailwind CSS & Daisy UI.",
-    imageUrl: "/images/portfolio.png",
-    tags: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Daisy UI", "Framer Motion"],
-    detailsUrl: "/", 
-    githubUrl: "https://github.com/Derek-Devs/derekdevs", 
+    title: "Enterprise Marketing Data Ecosystem (Dave & Buster's)",
+    description: "Architected and built a new, centralized marketing data platform from the ground up in Databricks, unifying 5+ disparate sources to create a single source of truth for all marketing KPIs and executive reporting.",
+    imageUrl: "/images/dnb-project.png",
+    tags: ["Data Architecture", "Leadership", "Databricks", "Power BI", "SQL", "Python", "ETL"],
+    detailsUrl: "/projects/dnb-marketing-ecosystem",
   },
   {
     id: 2, 
-    title: 'Python Data Pipeline',
-    description: 'Utilized a variety of Python libraries and AI assistance to build a comprehensive, object-oriented data analysis pipeline for data scientists and analysts.',
+    title: 'Object-Oriented Python ETL Framework',
+    description: 'Engineered a reusable, object-oriented ETL pipeline in Python, designed to provide a robust framework for data ingestion, cleaning, and analysis for data science workflows.',
     imageUrl: '/images/data-pipeline.png',
-    tags: ['Python', 'Pandas', 'Scikit-learn', 'Data Analysis'],
+    tags: ['Python', 'Pandas', 'Scikit-learn', 'ETL'],
     githubUrl: 'https://github.com/Derek-Devs/PythonDataPipeline',
   },
   {
     id: 3, 
-    title: 'TTRPG Player Insights Dashboard',
-    description: 'Developed an interactive dashboard to display player sentiments and trends within the TTRPG community using React, TypeScript, and Chart.js.',
+    title: 'Market Sentiment Analysis Platform',
+    description: 'Developed an interactive dashboard to analyze and visualize player sentiment data, providing strategic insights into market trends and user preferences within the TTRPG community.',
     imageUrl: '/images/ttrpg-dash.png',
-    tags: ['Data Analysis', 'React', 'TypeScript', 'Chart.js'], 
+    tags: ['Data Analysis', 'React', 'TypeScript', 'SQL'], 
     detailsUrl: '/TTRPGSentiments',
-    
   },
 ];
 
@@ -113,15 +102,17 @@ const FeaturedProjectsSection: React.FC = () => {
         >
           {featuredProjectsData.map((project) => (
             <motion.div key={project.id} variants={itemVariants} className="flex"> 
-              <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col w-full">
-                <figure className="h-48 overflow-hidden"> 
-                  <img
+              <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 flex flex-col w-full overflow-hidden">
+                <figure className="h-48 overflow-hidden relative"> 
+                  <Image
                     src={project.imageUrl}
                     alt={project.title}
-                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{ objectFit: 'cover' }}
+                    className="transition-transform duration-300 hover:scale-105"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = `https://placehold.co/600x400/374151/ffffff?text=Image+Not+Found&font=lato`;
-                      (e.target as HTMLImageElement).alt = `${project.title} - Image Not Found`;
                     }}
                   />
                 </figure>
@@ -131,7 +122,7 @@ const FeaturedProjectsSection: React.FC = () => {
 
                   <div className="mb-4"> 
                     {project.tags.map((tag) => {
-                      const colorClass = tagColorMap[tag.toLowerCase()] || tagColorMap[tag] || 'badge-ghost'; 
+                      const colorClass = tagColorMap[tag] || 'badge-ghost'; 
                       return (
                         <span key={tag} className={`badge badge-outline ${colorClass} badge-md mr-2 mb-2 font-medium`}>
                           {tag}
@@ -140,29 +131,29 @@ const FeaturedProjectsSection: React.FC = () => {
                     })}
                   </div>
 
-                  <div className="card-actions justify-end mt-auto pt-2"> {/* Matched button section structure, adjusted pt */}
-                    {project.detailsUrl && project.detailsUrl !== '#' && (
+                  <div className="card-actions justify-end mt-auto pt-2">
+                    {project.detailsUrl && (
                       <a
                         href={project.detailsUrl}
-                        target={project.detailsUrl.startsWith('/') ? '_self' : '_blank'} // Open internal links in self, external in new tab
+                        target={project.detailsUrl.startsWith('/') ? '_self' : '_blank'}
                         rel="noopener noreferrer"
-                        className="btn btn-primary btn-sm" // Primary button for details/live
+                        className="btn btn-primary btn-sm"
                         aria-label={`View details for ${project.title}`}
                       >
-                        <FaExternalLinkAlt className="mr-1.5 h-3.5 w-3.5" /> {/* Adjusted icon margin and size */}
-                        {project.detailsUrl.startsWith('/') ? 'View Project' : 'Live Demo'}
+                        <FaExternalLinkAlt className="mr-1.5 h-3.5 w-3.5" />
+                        View Case Study
                       </a>
                     )}
-                    {project.githubUrl && project.githubUrl !== '#' && (
+                    {project.githubUrl && (
                       <a
                         href={project.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-secondary btn-sm btn-outline" // Secondary outline for GitHub
+                        className="btn btn-secondary btn-sm btn-outline"
                         aria-label={`View GitHub repository for ${project.title}`}
                       >
-                        <FaGithub className="mr-1.5 h-4 w-4" />  {/* Adjusted icon margin and size */}
-                        GitHub
+                        <FaGithub className="mr-1.5 h-4 w-4" />
+                        View Code
                       </a>
                     )}
                   </div>

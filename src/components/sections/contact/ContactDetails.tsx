@@ -2,14 +2,13 @@
 "use client";
 
 import React from 'react';
-import { FiMail, FiLinkedin, FiMapPin, FiGithub, FiTwitter } from 'react-icons/fi';
+import { FiMail, FiLinkedin, FiMapPin, FiGithub } from 'react-icons/fi';
 
 export default function ContactDetails() {
   const email = 'derek@derekdevs.com';
   const linkedInUrl = 'https://www.linkedin.com/in/derekdevs/';
-  const location = 'Dallas, TX (Open to relocation).';
+  const location = 'Dallas-Fort Worth, TX';
   const githubUrl = 'https://github.com/Derek-Devs';
-  const twitterUrl = 'https://twitter.com/derek_devz'; 
 
   const contactItems = [
     {
@@ -33,13 +32,6 @@ export default function ContactDetails() {
       value: githubUrl,
       href: githubUrl,
       display: 'github.com/Derek-Devs',
-    },
-    {
-      Icon: FiTwitter,
-      label: 'Twitter',
-      value: twitterUrl,
-      href: twitterUrl,
-      display: '@derek_devz', 
     },
     {
       Icon: FiMapPin,

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaCode, FaChartLine, FaUsers, FaRocket, FaDatabase, FaPaintBrush } from 'react-icons/fa';
+import { FaCode, FaChartLine, FaRocket, FaPaintBrush, FaBullseye, FaSitemap } from 'react-icons/fa';
 
 interface SkillCategory {
   icon: React.ElementType;
@@ -13,12 +13,42 @@ interface SkillCategory {
 }
 
 const skillCategories: SkillCategory[] = [
-  { icon: FaChartLine, title: "Analysis & Modeling", skills: ["SQL", "Python", "ETL", "Modeling", "Metrics", "Statistics"], color: 'primary' },
-  { icon: FaPaintBrush, title: "Visualization & Reporting", skills: ["Power BI", "Tableau", "DAX", "Alteryx", "Storytelling"], color: 'secondary' },
-  { icon: FaCode, title: "Programming & Web", skills: ["JavaScript", "TypeScript", "React", "HTML/CSS", "Next.js"], color: 'accent' },
-  { icon: FaDatabase, title: "Databases & Cloud", skills: ["AWS", "GCP BigQuery", "Databricks", "MongoDB", "PostgreSQL"], color: 'primary' },
-  { icon: FaUsers, title: "Professional Skills", skills: ["Leadership", "Communication", "Problem-Solving", "Stakeholder Mgt."], color: 'secondary' },
-  { icon: FaRocket, title: "Tools & Methods", skills: ["Git", "Agile", "A/B Testing", "Web Scraping", "AI Tools"], color: 'accent' },
+  { 
+    icon: FaBullseye, 
+    title: "Strategy & Leadership", 
+    skills: ["Data Strategy", "Team Leadership", "Executive Communication", "Roadmapping", "Mentorship", "Data Governance"], 
+    color: 'primary' 
+  },
+  { 
+    icon: FaChartLine, 
+    title: "Analytics & Modeling", 
+    skills: ["Advanced SQL", "A/B Testing", "Demand Forecasting", "Statistical Analysis", "ETL", "Data Modeling"], 
+    color: 'secondary' 
+  },
+  { 
+    icon: FaPaintBrush, 
+    title: "BI & Data Storytelling", 
+    skills: ["Power BI", "Tableau", "DAX", "Alteryx", "Executive Dashboards", "Insight Generation"], 
+    color: 'accent' 
+  },
+  { 
+    icon: FaSitemap, 
+    title: "Data Architecture & Cloud", 
+    skills: ["Databricks", "Google BigQuery", "Snowflake", "AWS", "Data Warehousing", "API Integration"], 
+    color: 'secondary' 
+  },
+  { 
+    icon: FaCode, 
+    title: "Python & Automation", 
+    skills: ["Python (Pandas)", "Scikit-learn", "AI/LLM Workflows", "Web Scraping", "Process Automation"], 
+    color: 'accent' 
+  },
+  { 
+    icon: FaRocket, 
+    title: "GTM & Business Acumen", 
+    skills: ["Marketing Analytics", "Supply Chain", "SaaS Metrics", "ROI Optimization", "Stakeholder Mgt."], 
+    color: 'primary' 
+  },
 ];
 
 const titleVariants = {
@@ -39,7 +69,6 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
 };
 
-// Moved outside component: Constant does not need to be redefined on each render
 const badgeColorClasses = {
     primary: 'badge-primary',
     secondary: 'badge-secondary',

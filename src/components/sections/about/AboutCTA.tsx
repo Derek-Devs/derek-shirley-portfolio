@@ -25,10 +25,10 @@ const AboutCTA: React.FC = () => {
           variants={sectionVariants}
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Let&apos;s Connect!
+            Ready to Transform Your Data Strategy?
           </h2>
-          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90"> 
-            I&apos;m always interested in discussing new challenges, data strategies, or potential opportunities (and I&apos;m open to relocation!). Feel free to explore my projects or get in touch.
+          <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto opacity-90"> 
+            I am passionate about partnering with forward-thinking leadership teams to build data functions that drive scalable growth and create a competitive advantage. If you are facing a significant challenge in data strategy, architecture, or team leadership, let&apos;s discuss how my experience can benefit your organization.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link href="/projects" className="btn btn-accent shadow-md"> 
@@ -38,7 +38,7 @@ const AboutCTA: React.FC = () => {
               Contact Me
             </Link>
             <a
-              href="/derek_shirley_resume.pdf" 
+              href="/DerekShirley-Resume.pdf" 
               download
               className="btn btn-outline border-primary-content text-primary-content hover:bg-primary-content hover:text-primary shadow-md"
             >

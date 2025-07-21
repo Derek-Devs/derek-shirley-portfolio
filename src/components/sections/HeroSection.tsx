@@ -39,14 +39,13 @@ const HeroSection: React.FC = () => {
   const buttonVariants = {
     hover: {
       scale: 1.05,
-      transition: { duration: 0.2, yoyo: Infinity }, 
     },
     tap: { scale: 0.95 },
   };
 
 
   return (
-    <section className="hero min-h-[calc(100vh-4rem)] bg-gradient-to-br from-base-100 via-base-100 to-base-200 py-10 md:py-16 lg:py-20 px-4 relative"> {/* Added subtle gradient and relative positioning */}
+    <section className="hero min-h-[calc(100vh-4rem)] bg-gradient-to-br from-base-100 via-base-100 to-base-200 py-10 md:py-16 lg:py-20 px-4 relative">
       <div className="hero-content flex flex-col lg:flex-row items-center gap-10 lg:gap-16 max-w-6xl mx-auto">
         <motion.div
           className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 flex-shrink-0 order-first lg:order-none mx-auto lg:mx-0"
@@ -85,14 +84,14 @@ const HeroSection: React.FC = () => {
             className="text-xl sm:text-2xl md:text-3xl font-semibold mb-5 text-base-content/90" 
             variants={textItemVariants}
           >
-            Data Analytics Lead
+            Data & Analytics Leader | Architecting Data-Driven Strategy
           </motion.h2>
 
           <motion.p
             className="mb-8 text-base sm:text-lg text-base-content/80 max-w-xl mx-auto lg:mx-0"
             variants={textItemVariants}
           >
-            A Data & Analytics Lead with 8+ years of experience building the data systems and analytical frameworks that drive business strategy. Specializing in Python, SQL, Databricks, and Power BI.
+            I build the data functions that power business growth. With over 8 years of experience, I partner with executive teams to transform complex data into strategic assets—architecting everything from foundational pipelines to the C-suite dashboards that drive key decisions.
           </motion.p>
 
           <motion.div
@@ -113,7 +112,7 @@ const HeroSection: React.FC = () => {
             </motion.div>
             <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
               <a
-                href="/Derek_Shirley_Resume_2025.pdf" 
+                href="/DerekShirley-Resume.pdf" // Updated resume filename
                 download
                 className="btn btn-outline w-full sm:w-auto"
               >

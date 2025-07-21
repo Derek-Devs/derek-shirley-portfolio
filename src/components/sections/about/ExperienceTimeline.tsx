@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 const experienceTimeline = [
   {
     company: "Dave & Buster’s",
-    title: "Senior Data Analyst, Marketing",
+    title: "Marketing Analytics Lead",
     years: "Aug 2024 – Present",
     location: "Grapevine, TX",
     isCurrent: true,
@@ -15,18 +15,18 @@ const experienceTimeline = [
   {
     company: "GameStop Corp.",
     title: "Senior Data Analyst, Supply Chain",
-    years: "Jun 2023 – Aug 2024",
+    years: "May 2023 – Aug 2024",
     location: "Grapevine, TX",
   },
   {
     company: "Glitch Breakers",
     title: "Founder / Lead Data Analyst",
-    years: "Jan 2023 – Jun 2023",
+    years: "Jan 2023 – May 2023",
     location: "Northlake, TX",
   },
   {
     company: "American Diamond Logistics",
-    title: "Senior Data Analyst, Supply Chain",
+    title: "Founding Lead, Data & Analytics",
     years: "Jun 2020 - Jan 2023",
     location: "Roanoke, TX",
   },
@@ -95,7 +95,7 @@ const ExperienceTimeline: React.FC = () => {
                   <h3 className={`font-semibold text-lg ${job.isCurrent ? 'text-primary' : 'text-base-content'}`}>{job.company}</h3>
                   <p className="text-md opacity-90 text-base-content/90">{job.title}</p>
                   <p className="text-sm opacity-70 mt-1 text-base-content/70">
-                    {job.years} {job.isCurrent && <span className="font-medium text-primary">(Current)</span>}
+                    {job.years}
                   </p>
                   <p className="text-sm opacity-60 text-base-content/60">{job.location}</p>
                 </div>

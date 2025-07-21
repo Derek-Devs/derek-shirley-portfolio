@@ -31,8 +31,7 @@ const CallToActionSection: React.FC = () => {
             Ready to Build Something Data-Driven?
           </h2>
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-base-content/80">
-            I&apos;m passionate about leveraging data to solve complex problems and drive business value.
-            Currently based near Grapevine, TX (and open to relocation!), I&apos;m seeking exciting opportunities. Let&apos;s connect!
+            My passion lies in building high-performing analytics functions and architecting the data strategies that fuel business growth. If these projects resonate with you and you&apos;re facing a significant challenge in your data organization, let&apos;s start a conversation.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Link
@@ -45,7 +44,7 @@ const CallToActionSection: React.FC = () => {
                href="mailto:derek@derekdevs.com"
                className="btn btn-outline btn-lg" 
              >
-                derek@derekdevs.com
+               derek@derekdevs.com
              </a>
           </div>
         </motion.div>

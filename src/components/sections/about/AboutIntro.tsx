@@ -43,10 +43,10 @@ const AboutIntro: React.FC = () => {
               Hi, I&apos;m Derek Shirley
             </h2>
             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-base-content/90">
-              Data Analytics Lead
+              Data & Analytics Leader | Architecting Data-Driven Strategy
             </h3>
             <p className="text-lg text-base-content/85 leading-relaxed">
-              My mission is to build and lead analytics functions that transform complex data into clear, strategic assets. With over 8 years of experience—from architecting data solutions at startups to leading analytics for major brands like GameStop—I thrive on partnering with executive teams to solve their most challenging problems, drive measurable revenue growth, and build lasting, data-driven cultures.
+              I build and scale data functions from the ground up. With over 8 years of experience, I&apos;ve architected enterprise data strategy for major brands like Dave & Buster&apos;s and GameStop and built entire analytics departments from scratch. As a hands-on, &quot;player-coach&quot; leader, my passion is partnering with C-suite executives to translate complex business challenges into a clear data roadmap. I thrive on mentoring high-performing teams and building the data infrastructure, governance, and insights that directly fuel revenue growth.
             </p>
           </div>
         </motion.div>

@@ -29,31 +29,25 @@ export default function ContactForm() {
     event.preventDefault();
     setStatus('Sending...');
 
-    // Determine the path of the current page. For client components, window.location.pathname can be used.
-    // However, for the initial POST for Netlify Forms, it's often simplest to use
-    // the path where the form is intended to be found by Netlify, or just "/".
-    // If your form is on "/contact", you might use "/contact" here.
-    // For now, let's stick with "/" if it's generally worked for discovery before,
-    // or change it if you know the specific page path (e.g. '/contact')
-    const formPostUrl = "/"; // Or specific path like window.location.pathname or "/contact"
+    const formPostUrl = "/"; 
 
     try {
-      await fetch(formPostUrl, { // Using a variable for clarity, can keep as "/"
+      await fetch(formPostUrl, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: encode({
-          "form-name": "contact", // This matches the form's name attribute
+          "form-name": "contact",
           ...formData
         })
       });
       setStatus('Message sent successfully!');
-      setFormData({ name: '', email: '', message: '' }); // Reset form
+      setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('Form submission error:', error);
       setStatus('Error sending message. Please try again.');
     }
 
-    setTimeout(() => setStatus(''), 5000); // Clear status after 5 seconds
+    setTimeout(() => setStatus(''), 5000);
   };
 
   return (
@@ -71,7 +65,6 @@ export default function ContactForm() {
 
         <input type="hidden" name="form-name" value="contact" />
         
-
         <p className="hidden">
           <label>
             Don’t fill this out if you’re human: <input name="bot-field" onChange={handleChange} />
@@ -124,7 +117,7 @@ export default function ContactForm() {
             value={formData.message}
             onChange={handleChange}
             className="textarea textarea-bordered w-full bg-base-100"
-            placeholder="How can I help you?"
+            placeholder="Let's talk about your data strategy, a specific project, or a potential leadership opportunity..."
             disabled={status === 'Sending...'}
           />
         </div>
