@@ -38,7 +38,7 @@ const AboutCTA: React.FC = () => {
               Contact Me
             </Link>
             <a
-              href="/DerekShirley-Resume.pdf" 
+              href="/Derek_Shirley_Resume_2025.pdf" 
               download
               className="btn btn-outline border-primary-content text-primary-content hover:bg-primary-content hover:text-primary shadow-md"
             >

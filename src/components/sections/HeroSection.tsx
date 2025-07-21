@@ -112,7 +112,7 @@ const HeroSection: React.FC = () => {
             </motion.div>
             <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
               <a
-                href="/DerekShirley-Resume.pdf" // Updated resume filename
+                href="/Derek_Shirley_Resume_2025.pdf"
                 download
                 className="btn btn-outline w-full sm:w-auto"
               >
