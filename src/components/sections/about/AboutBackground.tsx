@@ -30,7 +30,7 @@ const AboutBackground: React.FC = () => {
         </motion.h2>
 
         <motion.div
-          className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-12 text-lg" // Increased gap for better separation
+          className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-12 text-lg" 
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}

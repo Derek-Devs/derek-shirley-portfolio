@@ -84,7 +84,7 @@ const HeroSection: React.FC = () => {
             className="text-xl sm:text-2xl md:text-3xl font-semibold mb-5 text-base-content/90" 
             variants={textItemVariants}
           >
-            Data & Analytics Leader | Architecting Data-Driven Strategy
+            Product, Player & Marketing Analytics
           </motion.h2>
 
           <motion.p
