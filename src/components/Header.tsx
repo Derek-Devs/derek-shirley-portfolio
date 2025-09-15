@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import Link from 'next/link'; 
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaChartBar } from 'react-icons/fa';
 
@@ -44,6 +44,11 @@ const Header: React.FC = () => {
               </Link>
             </li>
             <li>
+              <Link href="/insights" className="btn btn-ghost">
+                <motion.span variants={navItemVariants} whileHover="hover" whileTap="tap">Insights</motion.span>
+              </Link>
+            </li>
+            <li>
               <Link href="/about" className="btn btn-ghost">
                 <motion.span variants={navItemVariants} whileHover="hover" whileTap="tap">About</motion.span>
               </Link>
@@ -58,21 +63,15 @@ const Header: React.FC = () => {
 
         <div className="navbar-end lg:hidden">
           <div className="dropdown dropdown-end">
-            <label
-              tabIndex={0}
-              className="btn btn-ghost lg:hidden"
-              aria-label="Open navigation menu" 
-            >
+            <label tabIndex={0} className="btn btn-ghost lg:hidden" aria-label="Open navigation menu">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
               </svg>
             </label>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[100] p-2 shadow bg-base-100 rounded-box w-52"
-            >
+            <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[100] p-2 shadow bg-base-100 rounded-box w-52">
               <li><Link href="/">Home</Link></li>
               <li><Link href="/projects">Projects</Link></li>
+              <li><Link href="/insights">Insights</Link></li>
               <li><Link href="/about">About</Link></li>
               <li><Link href="/contact">Contact</Link></li>
             </ul>

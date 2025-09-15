@@ -7,26 +7,16 @@ import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 
 const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear(); // Dynamically get the current year
-
-  const iconVariants = {
-    hover: {
-      scale: 1.2,
-      y: -3,
-      transition: { type: 'spring', stiffness: 300 },
-    },
-    tap: {
-      scale: 0.9
-    }
-  };
+  const currentYear = new Date().getFullYear();
+  const iconVariants = { hover: { scale: 1.2, y: -3, transition: { type: 'spring', stiffness: 300 } }, tap: { scale: 0.9 } };
 
   return (
     <footer className="footer footer-center p-10 bg-base-300 text-base-content rounded">
-      {/* Internal navigation links */}
       <nav className="grid grid-flow-col gap-4">
         <Link href="/about" className="link link-hover">About</Link>
         <Link href="/contact" className="link link-hover">Contact</Link>
         <Link href="/projects" className="link link-hover">Projects</Link>
+        <Link href="/insights" className="link link-hover">Insights</Link>
       </nav>
 
       {/* Social media and contact icons */}

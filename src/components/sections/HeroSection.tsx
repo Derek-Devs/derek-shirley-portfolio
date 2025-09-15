@@ -91,7 +91,7 @@ const HeroSection: React.FC = () => {
             className="mb-8 text-base sm:text-lg text-base-content/80 max-w-xl mx-auto lg:mx-0"
             variants={textItemVariants}
           >
-            I build the data functions that power business growth. With over 8 years of experience, I partner with executive teams to transform complex data into strategic assets—architecting everything from foundational pipelines to the C-suite dashboards that drive key decisions.
+            I build the data functions that power business growth. With over 8 years of experience, I partner with executive teams to transform complex data into strategic assets, architecting everything from foundational pipelines to the C-suite dashboards that drive key decisions.
           </motion.p>
 
           <motion.div
