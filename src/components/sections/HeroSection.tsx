@@ -1,11 +1,16 @@
-// src/components/sections/HeroSection.tsx
 "use client";
 
 import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaProjectDiagram, FaEnvelope, FaDownload, FaArrowDown } from 'react-icons/fa'; 
+import { FaProjectDiagram, FaEnvelope, FaDownload, FaArrowDown } from 'react-icons/fa';
+
+const ctaButtons = [
+  { href: "/projects", text: "View Projects", icon: FaProjectDiagram, className: "btn btn-primary w-full sm:w-auto" },
+  { href: "/contact", text: "Contact Me", icon: FaEnvelope, className: "btn btn-secondary w-full sm:w-auto" },
+  { href: "/Derek_Shirley_Resume_2025.pdf", text: "Download Resume", icon: FaDownload, className: "btn btn-outline w-full sm:w-auto", download: true },
+];
 
 const HeroSection: React.FC = () => {
   const columnVariants = {
@@ -13,7 +18,7 @@ const HeroSection: React.FC = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.7, ease: 'easeOut' }, 
+      transition: { duration: 0.7, ease: 'easeOut' },
     },
   };
 
@@ -21,14 +26,14 @@ const HeroSection: React.FC = () => {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: 0.1, 
-        delayChildren: 0.2,  
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
       },
     },
   };
 
   const textItemVariants = {
-    hidden: { opacity: 0, x: -30 }, 
+    hidden: { opacity: 0, x: -30 },
     visible: {
       opacity: 1,
       x: 0,
@@ -37,12 +42,9 @@ const HeroSection: React.FC = () => {
   };
 
   const buttonVariants = {
-    hover: {
-      scale: 1.05,
-    },
+    hover: { scale: 1.05 },
     tap: { scale: 0.95 },
   };
-
 
   return (
     <section className="hero min-h-[calc(100vh-4rem)] bg-gradient-to-br from-base-100 via-base-100 to-base-200 py-10 md:py-16 lg:py-20 px-4 relative">
@@ -53,11 +55,11 @@ const HeroSection: React.FC = () => {
           initial="hidden"
           animate="visible"
           transition={{ delay: 0.1 }}
-          whileHover={{ scale: 1.03, transition: { duration: 0.3 } }} 
+          whileHover={{ scale: 1.03, transition: { duration: 0.3 } }}
         >
-          <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl border-4 border-primary"> 
+          <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl border-4 border-primary">
             <Image
-              src="/images/derek-shirley-photo.jpg" 
+              src="/images/derek-shirley-photo.jpg"
               alt="Photo of Derek Shirley"
               fill
               style={{ objectFit: 'cover' }}
@@ -81,45 +83,35 @@ const HeroSection: React.FC = () => {
           </motion.h1>
 
           <motion.h2
-            className="text-xl sm:text-2xl md:text-3xl font-semibold mb-5 text-base-content/90" 
+            className="text-xl sm:text-2xl md:text-3xl font-semibold mb-5 text-base-content/90"
             variants={textItemVariants}
           >
-            Product, Player & Marketing Analytics
+            Growth & Analytics Engineering
           </motion.h2>
 
           <motion.p
             className="mb-8 text-base sm:text-lg text-base-content/80 max-w-xl mx-auto lg:mx-0"
             variants={textItemVariants}
           >
-            I build the data functions that power business growth. With over 8 years of experience, I partner with executive teams to transform complex data into strategic assets, architecting everything from foundational pipelines to the C-suite dashboards that drive key decisions.
+            I build the data capabilities that power business growth. With over 8 years of experience, I transform complex data into strategic assets by architecting everything from foundational ETL pipelines to the executive dashboards that drive key decisions.
           </motion.p>
 
           <motion.div
             className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4"
             variants={textItemVariants}
           >
-            <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-              <Link href="/projects" className="btn btn-primary w-full sm:w-auto">
-                <FaProjectDiagram className="mr-2" />
-                View Projects
-              </Link>
-            </motion.div>
-            <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-              <Link href="/contact" className="btn btn-secondary w-full sm:w-auto">
-                <FaEnvelope className="mr-2" />
-                Contact Me
-              </Link>
-            </motion.div>
-            <motion.div variants={buttonVariants} whileHover="hover" whileTap="tap">
-              <a
-                href="/Derek_Shirley_Resume_2025.pdf"
-                download
-                className="btn btn-outline w-full sm:w-auto"
-              >
-                <FaDownload className="mr-2" />
-                Download Resume
-              </a>
-            </motion.div>
+            {ctaButtons.map(({ href, text, icon: Icon, className, download }) => (
+              <motion.div key={text} variants={buttonVariants} whileHover="hover" whileTap="tap">
+                <Link
+                  href={href}
+                  className={className}
+                  {...(download && { download: true })}
+                >
+                  <Icon className="mr-2" />
+                  {text}
+                </Link>
+              </motion.div>
+            ))}
           </motion.div>
         </motion.div>
       </div>

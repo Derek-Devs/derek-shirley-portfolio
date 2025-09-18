@@ -1,52 +1,51 @@
-// src/components/sections/about/AboutSkills.tsx
 "use client";
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaCode, FaChartLine, FaRocket, FaPaintBrush, FaBullseye, FaSitemap } from 'react-icons/fa';
+import { FaBullseye, FaSitemap, FaChartLine, FaPaintBrush, FaPython, FaBriefcase } from 'react-icons/fa';
 
 interface SkillCategory {
   icon: React.ElementType;
   title: string;
   skills: string[];
-  color?: 'primary' | 'secondary' | 'accent';
+  color: 'primary' | 'secondary' | 'accent';
 }
 
 const skillCategories: SkillCategory[] = [
   { 
     icon: FaBullseye, 
     title: "Strategy & Leadership", 
-    skills: ["Data Strategy", "Team Leadership", "Executive Communication", "Roadmapping", "Mentorship", "Data Governance"], 
+    skills: ["Data Strategy", "Team Leadership", "C-Suite Communication", "Roadmapping", "Mentorship", "Data Governance"], 
     color: 'primary' 
   },
   { 
-    icon: FaChartLine, 
-    title: "Analytics & Modeling", 
-    skills: ["Advanced SQL", "A/B Testing", "Demand Forecasting", "Statistical Analysis", "ETL", "Data Modeling"], 
+    icon: FaSitemap, 
+    title: "Data Architecture & Engineering", 
+    skills: ["Databricks", "Google BigQuery", "Snowflake", "ETL/ELT Pipelines", "Data Modeling", "dbt"], 
     color: 'secondary' 
+  },
+  { 
+    icon: FaChartLine, 
+    title: "Predictive Analytics & Data Science", 
+    skills: ["Demand Forecasting", "Experimentation (A/B)", "Marketing Mix Modeling", "Statistical Analysis", "Scikit-learn", "Growth Analytics"], 
+    color: 'accent' 
   },
   { 
     icon: FaPaintBrush, 
     title: "BI & Data Storytelling", 
-    skills: ["Power BI", "Tableau", "DAX", "Alteryx", "Executive Dashboards", "Insight Generation"], 
-    color: 'accent' 
-  },
-  { 
-    icon: FaSitemap, 
-    title: "Data Architecture & Cloud", 
-    skills: ["Databricks", "Google BigQuery", "Snowflake", "AWS", "Data Warehousing", "API Integration"], 
+    skills: ["Power BI", "Tableau", "DAX", "Executive Dashboards", "Insight Generation", "Alteryx"], 
     color: 'secondary' 
   },
   { 
-    icon: FaCode, 
+    icon: FaPython, 
     title: "Python & Automation", 
-    skills: ["Python (Pandas)", "Scikit-learn", "AI/LLM Workflows", "Web Scraping", "Process Automation"], 
+    skills: ["Python (Pandas, PySpark)", "Process Automation", "API Integration", "Web Scraping", "Custom Tooling"], 
     color: 'accent' 
   },
   { 
-    icon: FaRocket, 
-    title: "GTM & Business Acumen", 
-    skills: ["Marketing Analytics", "Supply Chain", "SaaS Metrics", "ROI Optimization", "Stakeholder Mgt."], 
+    icon: FaBriefcase, 
+    title: "Business Acumen & Domain Expertise", 
+    skills: ["Marketing & CRM", "Supply Chain", "Logistics Pricing", "E-commerce", "ROI Optimization", "Stakeholder Management"], 
     color: 'primary' 
   },
 ];
@@ -73,7 +72,6 @@ const badgeColorClasses = {
     primary: 'badge-primary',
     secondary: 'badge-secondary',
     accent: 'badge-accent',
-    default: 'badge-neutral',
 };
 
 const AboutSkills: React.FC = () => {
@@ -87,7 +85,7 @@ const AboutSkills: React.FC = () => {
           viewport={{ once: true, amount: 0.3 }}
           variants={titleVariants}
         >
-          Core Skill Areas
+          Core Capabilities
         </motion.h2>
 
         <motion.div
@@ -97,14 +95,14 @@ const AboutSkills: React.FC = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
         >
-          {skillCategories.map((category, index) => {
-            const badgeClass = category.color ? badgeColorClasses[category.color] : badgeColorClasses.default;
-            const iconBgClass = category.color ? `bg-${category.color}/10` : 'bg-neutral/10';
-            const iconTextClass = category.color ? `text-${category.color}` : 'text-neutral-content';
+          {skillCategories.map((category) => {
+            const badgeClass = badgeColorClasses[category.color];
+            const iconBgClass = `bg-${category.color}/10`;
+            const iconTextClass = `text-${category.color}`;
 
             return (
               <motion.div
-                key={index}
+                key={category.title}
                 variants={cardVariants}
                 whileHover={{ y: -5, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
@@ -116,8 +114,8 @@ const AboutSkills: React.FC = () => {
                     </div>
                     <h3 className="card-title text-lg font-semibold mb-2 text-base-content">{category.title}</h3>
                     <div className="flex flex-wrap justify-center gap-2 mt-2">
-                      {category.skills.map((skill, sIndex) => (
-                        <span key={sIndex} className={`badge badge-sm ${badgeClass} badge-outline`}>
+                      {category.skills.map((skill) => (
+                        <span key={skill} className={`badge badge-sm ${badgeClass} badge-outline`}>
                           {skill}
                         </span>
                       ))}

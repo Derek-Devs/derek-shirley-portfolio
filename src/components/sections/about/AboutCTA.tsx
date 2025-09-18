@@ -1,5 +1,4 @@
-// src/components/sections/about/AboutCTA.tsx
-"use client"; 
+"use client";
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -14,6 +13,12 @@ const sectionVariants = {
   },
 };
 
+const ctaButtons = [
+  { href: "/projects", text: "View Projects", className: "btn btn-accent shadow-md" },
+  { href: "/contact", text: "Contact Me", className: "btn btn-ghost shadow-md hover:bg-white/20" },
+  { href: "/Derek_Shirley_Resume_2025.pdf", text: "Download Resume", className: "btn btn-outline border-primary-content text-primary-content hover:bg-primary-content hover:text-primary shadow-md", download: true },
+];
+
 const AboutCTA: React.FC = () => {
   return (
     <section className="bg-gradient-to-r from-primary to-secondary text-primary-content py-16 md:py-20">
@@ -21,29 +26,32 @@ const AboutCTA: React.FC = () => {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }} 
+          viewport={{ once: true, amount: 0.3 }}
           variants={sectionVariants}
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Transform Your Data Strategy?
+            Ready to Solve Your Data Challenges?
           </h2>
-          <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto opacity-90"> 
-            I am passionate about partnering with forward-thinking leadership teams to build data functions that drive scalable growth and create a competitive advantage. If you are facing a significant challenge in data strategy, architecture, or team leadership, let&apos;s discuss how my experience can benefit your organization.
+          <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto opacity-90">
+            I specialize in transforming complex, multi-source data into a competitive advantage. Whether you&apos;re looking to build a new analytics capability, architect a modern data stack, or extract deeper insights from your existing systems, let&apos;s connect and discuss how my experience can help you achieve your goals.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <Link href="/projects" className="btn btn-accent shadow-md"> 
-              View Projects
-            </Link>
-            <Link href="/contact" className="btn btn-ghost shadow-md hover:bg-white/20"> 
-              Contact Me
-            </Link>
-            <a
-              href="/Derek_Shirley_Resume_2025.pdf" 
-              download
-              className="btn btn-outline border-primary-content text-primary-content hover:bg-primary-content hover:text-primary shadow-md"
-            >
-              Download Resume
-            </a>
+            {ctaButtons.map(({ href, text, className, download }) => {
+              const isExternal = href.startsWith('http') || download;
+              const Component = isExternal ? 'a' : Link;
+              
+              return (
+                <Component
+                  key={text}
+                  href={href}
+                  className={className}
+                  {...(download && { download: true })}
+                  {...(isExternal && !download && { target: '_blank', rel: 'noopener noreferrer' })}
+                >
+                  {text}
+                </Component>
+              );
+            })}
           </div>
         </motion.div>
       </div>

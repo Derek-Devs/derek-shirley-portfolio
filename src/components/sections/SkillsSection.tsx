@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaBullseye, FaChartLine, FaSitemap } from 'react-icons/fa';
-import { SiTableau} from "react-icons/si";
+import { SiTableau } from "react-icons/si";
 
 interface SkillCategory {
   title: string;
@@ -21,22 +21,22 @@ const badgeColors = [
 const skillCategories: SkillCategory[] = [
   {
     title: "Strategy & Leadership",
-    skills: ["Team Leadership", "Data Strategy", "Executive Communication", "Roadmapping", "Mentorship", "Data Governance"],
+    skills: ["Team Leadership", "Data Strategy", "C-Suite Communication", "Roadmapping", "Growth Analytics", "Data Governance"],
     icon: <FaBullseye className="inline mr-2 h-5 w-5" />
   },
   {
-    title: "Data Architecture & Cloud",
-    skills: ["Databricks", "Google BigQuery", "Snowflake", "AWS", "Data Warehousing", "ETL Architecture"],
+    title: "Analytics Engineering",
+    skills: ["Databricks", "Snowflake", "BigQuery", "dbt", "ETL/ELT Pipelines", "Data Modeling"],
     icon: <FaSitemap className="inline mr-2 h-5 w-5" />
   },
   {
-    title: "Analytics & Modeling",
-    skills: ["Advanced SQL", "Python (Pandas)", "Data Modeling", "A/B Testing", "Demand Forecasting", "Alteryx"],
+    title: "Data Science & Modeling",
+    skills: ["Predictive Forecasting", "Experimentation (A/B)", "Marketing Mix Modeling (MMM)", "Advanced SQL", "Python (Pandas, Scikit-learn)"],
     icon: <FaChartLine className="inline mr-2 h-5 w-5" />
   },
   {
-    title: "BI & Data Storytelling",
-    skills: ["Power BI", "Tableau", "DAX", "Executive Dashboards", "Insight Generation"],
+    title: "BI & Storytelling",
+    skills: ["Power BI", "Tableau", "DAX", "Executive Dashboards", "Insight Generation", "Alteryx"],
     icon: <SiTableau className="inline mr-2 h-5 w-5" />
   },
 ];

@@ -5,6 +5,14 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaChartBar } from 'react-icons/fa';
 
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/projects", label: "Projects" },
+  { href: "/insights", label: "Insights" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
 const Header: React.FC = () => {
   const navItemVariants = {
     hover: { y: -2, transition: { duration: 0.2 } },
@@ -25,7 +33,7 @@ const Header: React.FC = () => {
             <div className="flex flex-col items-start ml-2">
               <span className="text-lg font-bold leading-tight">Derek Shirley</span>
               <span className="text-xs font-normal text-base-content/70 -mt-1 leading-tight">
-                Product, Player & Marketing Analytics
+                Growth & Analytics Engineering
               </span>
             </div>
           </Link>
@@ -33,31 +41,13 @@ const Header: React.FC = () => {
 
         <div className="navbar-end hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link href="/" className="btn btn-ghost">
-                <motion.span variants={navItemVariants} whileHover="hover" whileTap="tap">Home</motion.span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/projects" className="btn btn-ghost">
-                <motion.span variants={navItemVariants} whileHover="hover" whileTap="tap">Projects</motion.span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/insights" className="btn btn-ghost">
-                <motion.span variants={navItemVariants} whileHover="hover" whileTap="tap">Insights</motion.span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/about" className="btn btn-ghost">
-                <motion.span variants={navItemVariants} whileHover="hover" whileTap="tap">About</motion.span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="btn btn-ghost">
-                <motion.span variants={navItemVariants} whileHover="hover" whileTap="tap">Contact</motion.span>
-              </Link>
-            </li>
+            {navLinks.map(({ href, label }) => (
+              <li key={href}>
+                <Link href={href} className="btn btn-ghost">
+                  <motion.span variants={navItemVariants} whileHover="hover" whileTap="tap">{label}</motion.span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -69,11 +59,9 @@ const Header: React.FC = () => {
               </svg>
             </label>
             <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[100] p-2 shadow bg-base-100 rounded-box w-52">
-              <li><Link href="/">Home</Link></li>
-              <li><Link href="/projects">Projects</Link></li>
-              <li><Link href="/insights">Insights</Link></li>
-              <li><Link href="/about">About</Link></li>
-              <li><Link href="/contact">Contact</Link></li>
+              {navLinks.map(({ href, label }) => (
+                <li key={href}><Link href={href}>{label}</Link></li>
+              ))}
             </ul>
           </div>
         </div>

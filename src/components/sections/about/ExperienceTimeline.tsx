@@ -1,4 +1,3 @@
-// src/components/sections/about/ExperienceTimeline.tsx
 "use client";
 
 import React from 'react';
@@ -7,7 +6,7 @@ import { motion } from 'framer-motion';
 const experienceTimeline = [
   {
     company: "Dave & Buster’s",
-    title: "Marketing Analytics Lead",
+    title: "Senior Data Analyst, Marketing Analytics",
     years: "Aug 2024 – Present",
     location: "Grapevine, TX",
     isCurrent: true,
@@ -20,13 +19,13 @@ const experienceTimeline = [
   },
   {
     company: "Glitch Breakers",
-    title: "Founder / Lead Data Analyst",
+    title: "Data & Analytics Consultant",
     years: "Jan 2023 – May 2023",
     location: "Northlake, TX",
   },
   {
     company: "American Diamond Logistics",
-    title: "Founding Lead, Data & Analytics",
+    title: "Senior Data Analyst (Founding Analyst)",
     years: "Jun 2020 - Jan 2023",
     location: "Roanoke, TX",
   },

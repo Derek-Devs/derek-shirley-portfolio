@@ -1,4 +1,3 @@
-// src/components/sections/about/AboutIntro.tsx
 "use client";
 
 import React from 'react';
@@ -43,10 +42,10 @@ const AboutIntro: React.FC = () => {
               Hi, I&apos;m Derek Shirley
             </h2>
             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-base-content/90">
-              Data & Analytics Leader | Architecting Data-Driven Strategy
+              Growth & Analytics Engineering
             </h3>
             <p className="text-lg text-base-content/85 leading-relaxed">
-              I build and scale data functions from the ground up. With over 8 years of experience, I&apos;ve architected enterprise data strategy for major brands like Dave & Buster&apos;s and GameStop and built entire analytics departments from scratch. As a hands-on, &quot;player-coach&quot; leader, my passion is partnering with C-suite executives to translate complex business challenges into a clear data roadmap. I thrive on mentoring high-performing teams and building the data infrastructure, governance, and insights that directly fuel revenue growth.
+              With over 8 years of experience, I specialize in transforming complex data into a competitive advantage. From architecting data ecosystems for major brands like Dave & Buster’s and GameStop to building analytics capabilities from the ground up, my focus is on delivering end-to-end solutions. I thrive on translating ambitious business goals into robust, scalable data infrastructure and actionable insights that directly fuel revenue growth.
             </p>
           </div>
         </motion.div>
