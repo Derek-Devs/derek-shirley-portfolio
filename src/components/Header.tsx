@@ -33,7 +33,7 @@ const Header: React.FC = () => {
             <div className="flex flex-col items-start ml-2">
               <span className="text-lg font-bold leading-tight">Derek Shirley</span>
               <span className="text-xs font-normal text-base-content/70 -mt-1 leading-tight">
-                Growth & Analytics Engineering
+                Senior Data Analyst & Analytics Lead
               </span>
             </div>
           </Link>

@@ -86,7 +86,7 @@ const HeroSection: React.FC = () => {
             className="text-xl sm:text-2xl md:text-3xl font-semibold mb-5 text-base-content/90"
             variants={textItemVariants}
           >
-            Growth & Analytics Engineering
+            Senior Data Analyst & Analytics Lead
           </motion.h2>
 
           <motion.p

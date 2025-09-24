@@ -10,13 +10,13 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://www.derekdevs.com'),
   
   title: {
-    default: "Derek Shirley | Growth & Analytics Engineering",
+    default: "Derek Shirley | Senior Data Analyst & Analytics Lead",
     template: "%s | Derek Shirley",
   },
   description: "The portfolio of Derek Shirley, a data leader with 8+ years of experience in data strategy, analytics engineering, and driving business growth with data.",
   
   openGraph: {
-    title: "Derek Shirley | Growth & Analytics Engineering Portfolio",
+    title: "Derek Shirley | Senior Data Analyst & Analytics Lead Portfolio",
     description: "Explore the portfolio of a data leader focused on building data functions, architecting strategy, and driving business impact.",
     url: 'https://www.derekdevs.com',
     siteName: 'Derek Shirley | Portfolio',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Derek Shirley - Growth & Analytics Engineering',
+        alt: 'Derek Shirley - Senior Data Analyst & Analytics Lead',
       },
     ],
     locale: 'en_US',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: 'summary_large_image',
-    title: "Derek Shirley | Growth & Analytics Engineering Portfolio",
+    title: "Derek Shirley | Senior Data Analyst & Analytics Lead Portfolio",
     description: "Explore the portfolio of a data leader focused on building data functions, architecting strategy, and driving business impact.",
     images: ['/images/og-image.png'],
   },
