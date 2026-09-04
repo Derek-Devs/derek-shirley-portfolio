@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactForm from "../components/ContactForm.astro";
+import { site } from "../lib/site";
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact Derek Shirley about measurement, growth analytics, or related roles."
+>
+  <div class="site-shell">
+    <section class="page-intro" aria-labelledby="contact-title">
+      <p class="section-label">Contact</p>
+      <h1 id="contact-title">Contact</h1>
+      <p class="page-intro__dek">
+        Email is the most reliable way to reach me. I am based in the
+        Dallas-Fort Worth area.
+      </p>
+    </section>
+
+    <div class="contact-grid">
+      <ContactForm />
+      <div>
+        <p class="section-label">Direct</p>
+        <ul class="contact-list">
+          <li>
+            <span class="meta">Email</span>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </li>
+          <li>
+            <span class="meta">LinkedIn</span>
+            <a href={site.linkedin} target="_blank" rel="noreferrer">
+              linkedin.com/in/derekdevs
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <span class="meta">GitHub</span>
+            <a href={site.github} target="_blank" rel="noreferrer">
+              github.com/Derek-Devs
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <span class="meta">Location</span>
+            <span>{site.location}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

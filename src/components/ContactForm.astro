@@ -1,0 +1,39 @@
+<div>
+  <p class="section-label">Message</p>
+  <form
+    name="contact"
+    method="POST"
+    action="/thank-you"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    class="form-stack"
+  >
+    <input type="hidden" name="form-name" value="contact" />
+    <p class="sr-only">
+      <label>
+        Do not fill this out if you are human. <input name="bot-field" />
+      </label>
+    </p>
+    <label for="name">
+      Name
+      <input type="text" id="name" name="name" required autocomplete="name" />
+    </label>
+    <label for="email">
+      Email
+      <input
+        type="email"
+        id="email"
+        name="email"
+        required
+        autocomplete="email"
+      />
+    </label>
+    <label for="message">
+      Message
+      <textarea id="message" name="message" rows="6" required></textarea>
+    </label>
+    <div>
+      <button type="submit" class="button-primary">Send message</button>
+    </div>
+  </form>
+</div>

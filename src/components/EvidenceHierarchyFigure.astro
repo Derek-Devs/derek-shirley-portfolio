@@ -1,0 +1,47 @@
+---
+interface Step {
+  title: string;
+  detail: string;
+  kind?: "signal" | "structural" | "unresolved";
+}
+
+interface Props {
+  caption: string;
+  steps: Step[];
+  note?: string;
+}
+
+const { caption, steps, note } = Astro.props;
+
+const kindLabel = {
+  signal: "Signal",
+  structural: "Structural",
+  unresolved: "Unresolved",
+} as const;
+---
+
+<figure class="analysis-figure evidence-figure">
+  <figcaption>{caption}</figcaption>
+  <ol class="evidence-figure__list">
+    {
+      steps.map((step, index) => {
+        const kind = step.kind ?? "signal";
+        return (
+          <li class={`evidence-figure__step evidence-figure__step--${kind}`}>
+            <span class="evidence-figure__index">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <div class="evidence-figure__body">
+              <div class="evidence-figure__heading">
+                <h3>{step.title}</h3>
+                <p class="meta">{kindLabel[kind]}</p>
+              </div>
+              <p>{step.detail}</p>
+            </div>
+          </li>
+        );
+      })
+    }
+  </ol>
+  {note ? <p class="analysis-figure__note">{note}</p> : null}
+</figure>

@@ -1,0 +1,37 @@
+---
+interface Column {
+  title: string;
+  lede: string;
+  steps: string[];
+}
+
+interface Props {
+  caption: string;
+  before: Column;
+  after: Column;
+  note?: string;
+}
+
+const { caption, before, after, note } = Astro.props;
+---
+
+<figure class="analysis-figure architecture-figure">
+  <figcaption>{caption}</figcaption>
+  <div class="architecture-figure__grid">
+    <div class="architecture-figure__col architecture-figure__col--before">
+      <h3>{before.title}</h3>
+      <p>{before.lede}</p>
+      <ol>
+        {before.steps.map((step) => <li>{step}</li>)}
+      </ol>
+    </div>
+    <div class="architecture-figure__col architecture-figure__col--after">
+      <h3>{after.title}</h3>
+      <p>{after.lede}</p>
+      <ol>
+        {after.steps.map((step) => <li>{step}</li>)}
+      </ol>
+    </div>
+  </div>
+  {note ? <p class="analysis-figure__note">{note}</p> : null}
+</figure>

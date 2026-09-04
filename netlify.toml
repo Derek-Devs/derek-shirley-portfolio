@@ -1,0 +1,33 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/projects"
+  to = "/work"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/*"
+  to = "/work/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/customer-dashboard"
+  to = "/work"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/videoGameSales"
+  to = "/work"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/TTRPGSentiments"
+  to = "/work"
+  status = 301
+  force = true

@@ -1,0 +1,74 @@
+---
+interface Props {
+  caption: string;
+  windowNote?: string;
+  beforeLabel: string;
+  beforeValue: string;
+  beforeWidth: number;
+  afterLabel: string;
+  afterValue: string;
+  afterWidth: number;
+  delta?: string;
+  note?: string;
+}
+
+const {
+  caption,
+  windowNote,
+  beforeLabel,
+  beforeValue,
+  beforeWidth,
+  afterLabel,
+  afterValue,
+  afterWidth,
+  delta,
+  note,
+} = Astro.props;
+
+const beforeResolved = Math.max(0, Math.min(100, 100 - beforeWidth));
+const afterResolved = Math.max(0, Math.min(100, 100 - afterWidth));
+---
+
+<figure class="analysis-figure coverage-figure">
+  <figcaption>{caption}</figcaption>
+  {windowNote ? <p class="analysis-figure__window">{windowNote}</p> : null}
+  <p class="coverage-figure__legend" aria-hidden="true">
+    <span class="coverage-figure__swatch coverage-figure__swatch--unknown"></span>
+    Unknown
+    <span class="coverage-figure__swatch coverage-figure__swatch--resolved"></span>
+    Resolved
+  </p>
+  <div class="coverage-figure__compare">
+    <div class="coverage-figure__side">
+      <p class="meta">{beforeLabel}</p>
+      <p class="coverage-figure__value">{beforeValue}</p>
+      <p class="coverage-figure__measure">Unknown</p>
+      <div
+        class="coverage-figure__bar"
+        role="img"
+        aria-label={`${beforeLabel}, ${beforeValue} unknown, ${beforeResolved}% resolved`}
+      >
+        <span class="is-unknown" style={`flex: 0 0 ${beforeWidth}%`}></span>
+        <span class="is-resolved" style={`flex: 0 0 ${beforeResolved}%`}></span>
+      </div>
+      <p class="coverage-figure__complement">{beforeResolved}% resolved</p>
+    </div>
+    <p class="coverage-figure__arrow" aria-hidden="true">→</p>
+    <div class="coverage-figure__side coverage-figure__side--after">
+      <p class="meta">{afterLabel}</p>
+      <p class="coverage-figure__value">{afterValue}</p>
+      <p class="coverage-figure__measure">Unknown</p>
+      <div
+        class="coverage-figure__bar"
+        role="img"
+        aria-label={`${afterLabel}, ${afterValue} unknown, ${afterResolved}% resolved`}
+      >
+        <span class="is-unknown" style={`flex: 0 0 ${afterWidth}%`}></span>
+        <span class="is-resolved" style={`flex: 0 0 ${afterResolved}%`}></span>
+      </div>
+      <p class="coverage-figure__complement">{afterResolved}% resolved</p>
+    </div>
+  </div>
+  {delta ? <p class="analysis-figure__delta">{delta}</p> : null}
+  {note ? <p class="analysis-figure__note">{note}</p> : null}
+</figure>
