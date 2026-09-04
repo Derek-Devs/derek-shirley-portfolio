@@ -1,0 +1,39 @@
+---
+interface Stage {
+  title: string;
+  items: string[];
+}
+
+interface Props {
+  caption: string;
+  stages: Stage[];
+}
+
+const { caption, stages } = Astro.props;
+---
+
+<figure class="system-figure">
+  <figcaption>{caption}</figcaption>
+  <div class="system-figure__flow">
+    {
+      stages.map((stage, index) => (
+        <>
+          {index > 0 ? (
+            <span class="system-figure__arrow" aria-hidden="true">
+              →
+            </span>
+          ) : null}
+          <div class="system-figure__stage">
+            <p class="meta">{String(index + 1).padStart(2, "0")}</p>
+            <h3>{stage.title}</h3>
+            <ul>
+              {stage.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </>
+      ))
+    }
+  </div>
+</figure>

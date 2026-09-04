@@ -1,0 +1,23 @@
+---
+interface Props {
+  id?: string;
+  number: string;
+  kicker?: string;
+  title: string;
+  rail?: string;
+}
+
+const { id, number, kicker, title, rail } = Astro.props;
+---
+
+<section class="case-section" id={id}>
+  <aside class="case-rail">
+    <p class="meta">{number}</p>
+    {kicker ? <p class="meta">{kicker}</p> : null}
+    {rail ? <p class="meta">{rail}</p> : null}
+  </aside>
+  <div class="case-section__body">
+    <h2>{title}</h2>
+    <slot />
+  </div>
+</section>

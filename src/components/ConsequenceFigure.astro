@@ -1,0 +1,92 @@
+---
+interface Props {
+  caption: string;
+  context: string;
+  measure?: string;
+  beforeLabel: string;
+  beforeValue: string;
+  beforeWidth: number;
+  afterLabel: string;
+  afterValue: string;
+  afterWidth: number;
+  delta?: string;
+  path?: string[];
+  note?: string;
+}
+
+const {
+  caption,
+  context,
+  measure,
+  beforeLabel,
+  beforeValue,
+  beforeWidth,
+  afterLabel,
+  afterValue,
+  afterWidth,
+  delta,
+  path = [],
+  note,
+} = Astro.props;
+
+const rows = [
+  {
+    label: beforeLabel,
+    value: beforeValue,
+    width: beforeWidth,
+    emphasis: false,
+  },
+  {
+    label: afterLabel,
+    value: afterValue,
+    width: afterWidth,
+    emphasis: true,
+  },
+];
+---
+
+<figure class="analysis-figure consequence-figure">
+  <figcaption>{caption}</figcaption>
+  <p class="analysis-figure__window">{context}</p>
+  {measure ? <p class="consequence-figure__measure">{measure}</p> : null}
+  <div class="consequence-figure__rows">
+    {
+      rows.map((row) => (
+        <div
+          class:list={[
+            "consequence-figure__row",
+            { "consequence-figure__row--emphasis": row.emphasis },
+          ]}
+        >
+          <p class="meta">{row.label}</p>
+          <p class="consequence-figure__value">{row.value}</p>
+          <div
+            class="consequence-figure__track"
+            role="img"
+            aria-label={`${row.label}, ${row.value}`}
+          >
+            <span style={`width: ${row.width}%`}></span>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+  {delta ? <p class="analysis-figure__delta">{delta}</p> : null}
+  {
+    path.length ? (
+      <p class="consequence-figure__path">
+        {path.map((stage, index) => (
+          <>
+            {index > 0 ? (
+              <span class="consequence-figure__path-arrow" aria-hidden="true">
+                →
+              </span>
+            ) : null}
+            <span>{stage}</span>
+          </>
+        ))}
+      </p>
+    ) : null
+  }
+  {note ? <p class="analysis-figure__note">{note}</p> : null}
+</figure>

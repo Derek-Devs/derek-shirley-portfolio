@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import { formatDateRange } from "../lib/site";
+
+interface Props {
+  role: CollectionEntry<"experience">;
+}
+
+const { role } = Astro.props;
+const { Content } = await render(role);
+const headingId = `${role.id}-company`;
+const dateRange = formatDateRange(role.data.start, role.data.end);
+---
+
+<article
+  class={`experience-role experience-role--${role.data.prominence}`}
+  id={role.id}
+  aria-labelledby={headingId}
+>
+  <header class="experience-role__header">
+    <h2 class="experience-role__company" id={headingId}>
+      {role.data.organization}
+    </h2>
+    <p class="experience-role__title">{role.data.title}</p>
+    <p class="experience-role__dates">
+      {dateRange}
+      <br />
+      {role.data.location}
+    </p>
+  </header>
+  <div class="experience-role__body">
+    <div class="experience-copy">
+      <Content />
+    </div>
+  </div>
+</article>

@@ -1,0 +1,101 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../lib/site";
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="Privacy Policy for the professional portfolio website of Derek Shirley."
+>
+  <article class="site-shell legal-page">
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last updated September 3, 2026</p>
+
+    <section>
+      <h2>1. Introduction</h2>
+      <p>
+        This privacy policy describes how I handle personal data on this site
+        and what rights you may have.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Information I Collect</h2>
+      <p>
+        When you use the contact form, I collect your name, email address, and
+        message content. I may also use analytics tools such as Google Analytics
+        to collect standard usage data, including IP address and browser type,
+        so I can understand how the site is used.
+      </p>
+    </section>
+
+    <section>
+      <h2>3. How I Use Your Information</h2>
+      <p>
+        I use the information I collect to operate and maintain my website,
+        respond to your inquiries, understand website usage to improve its
+        functionality, and ensure the security of the website.
+      </p>
+    </section>
+
+    <section>
+      <h2>4. Data Security &amp; Retention</h2>
+      <p>
+        I use commercially reasonable measures to protect personal data. I keep
+        that information only as long as needed for the purposes in this
+        policy.
+      </p>
+    </section>
+
+    <section>
+      <h2>5. Your Data Rights</h2>
+      <p>
+        Depending on your location, you may have rights regarding your personal
+        data, including the right to access, update, or delete the information I
+        hold about you. I do not sell your personal information to any third
+        parties. To exercise any data protection rights, you can contact me at
+        the email address below.
+      </p>
+    </section>
+
+    <section>
+      <h2>6. Third-Party Services</h2>
+      <p>
+        My website may contain links to other sites (like LinkedIn or GitHub)
+        and may use services like Google Analytics. I have no control over and
+        assume no responsibility for the content or privacy practices of any
+        third-party sites or services.
+      </p>
+    </section>
+
+    <section>
+      <h2>7. Children's Privacy</h2>
+      <p>
+        My website is intended for a professional audience and does not address
+        anyone under the age of 18. I do not knowingly collect personally
+        identifiable information from children.
+      </p>
+    </section>
+
+    <section>
+      <h2>8. Changes to This Privacy Policy</h2>
+      <p>
+        I may update this privacy policy from time to time. Any changes will be
+        posted on this page, and the "Last Updated" date will reflect the most
+        recent revision.
+      </p>
+    </section>
+
+    <section>
+      <h2>9. Contact Me</h2>
+      <p>
+        If you have questions about this privacy policy, email{" "}
+        <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+    </section>
+
+    <p>
+      <a class="text-link" href="/">Home</a>
+    </p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,174 @@
+---
+title: Rebuilding acquisition attribution around observable evidence
+kicker: Professional / Lark Health
+organization: Lark Health
+role: Lead Data Analyst, Marketing. Production acquisition-attribution rebuild.
+year: "2025 to 2026"
+timeframe: November 2025 to present
+summary: The existing acquisition-attribution system had accumulated independent first-match classifiers, hard-coded campaign rules, partner and path heuristics, and incomplete tracking. Around March 2026, on a trailing 365-day view, about 42% of enrollments were unresolved. Channel performance and CAC were hard to trust.
+question: The existing measurement could not safely support acquisition-channel decisions. Independent classifiers and incomplete tracking left a large share of enrollments unresolved, so reported mix and CAC could not be used as evidence.
+impact: Unknown attribution fell from about 42% to 8% on the trailing 365-day view. For one partner population in Q4 2025, direct mail’s measured share of enrollments changed from about 4% to 38%, and the channel stayed in use instead of being retired.
+methods: Canonical first-enrollment grain; evidence normalization; ordered resolver with retained provenance; channel taxonomy derived after source, medium, and campaign; session-level review; channel-mix monitoring.
+seoTitle: Rebuilding acquisition attribution around observable evidence
+seoDescription: Rebuilding Lark Health acquisition attribution around observable evidence, reducing unknown enrollments from about 42% to 8% and changing the measurement used to evaluate a channel slated for retirement.
+featured: true
+---
+
+<CaseSection number="01" kicker="Problem" title="The existing measurement could not safely support channel decisions">
+
+The prior acquisition-attribution system had accumulated multiple independent first-match classifiers, hard-coded campaign rules, partner and path heuristics, and incomplete tracking. Category, agent, medium, source, and campaign should have been one resolved story. Instead they were derived through partially independent logic.
+
+Around March 2026, on a trailing 365-day view, about 42% of enrollments were unresolved or unknown. Channel mix and CAC could be reported, but not trusted for funding, cutting, or retiring acquisition channels.
+
+<CoverageFigure
+  caption="Figure 1 · Measurement coverage"
+  windowNote="Trailing 365-day view, around March 2026"
+  beforeLabel="Previous system"
+  beforeValue="~42%"
+  beforeWidth={42}
+  afterLabel="Rebuilt model"
+  afterValue="~8%"
+  afterWidth={8}
+  delta="34 percentage points of enrollments recovered into a resolved source"
+  note="Unknown share of enrollments on the same trailing window. A lower unknown rate is recovered coverage. It does not prove that every remaining classification is certain."
+/>
+
+</CaseSection>
+
+<CaseSection number="02" kicker="System" title="Resolve observable evidence first, then apply business semantics" rail="Production dbt model">
+
+The rebuild changed the order of operations. The previous system classified business-facing dimensions from raw fields through separate first-match trees. The production model now establishes a canonical first-enrollment grain, normalizes raw acquisition evidence, evaluates an ordered evidence hierarchy, and only then maps the resolved evidence into channel and business-facing dimensions.
+
+Lifecycle metadata is joined afterward. It can describe what happened after acquisition. It does not overwrite how the enrollment was attributed.
+
+<ArchitectureFigure
+  caption="Figure 2 · Architecture transformation"
+  before={{
+    title: "Before",
+    lede: "Raw fields fed several independent first-match classification trees, then reporting.",
+    steps: [
+      "Raw acquisition fields",
+      "Separate first-match trees for category, agent, medium, source, and campaign",
+      "Reporting on those independently derived labels",
+    ],
+  }}
+  after={{
+    title: "After",
+    lede: "Observed signals are normalized and resolved before any business taxonomy is applied.",
+    steps: [
+      "Observed acquisition signals",
+      "Normalization",
+      "Ordered evidence resolver",
+      "Source, medium, and campaign",
+      "Channel and business-facing dimensions",
+    ],
+  }}
+  note="Lifecycle metadata enriches the attributed enrollment afterward. It does not override the resolved acquisition evidence."
+/>
+
+Four rules governed the model.
+
+**Facts before business semantics.** Observable acquisition evidence is resolved first. Channel, category, and other business-facing labels are mappings of that evidence, not a parallel classification exercise.
+
+**Coverage without pretending certainty.** Secondary signals can recover attribution when explicit tracking is missing. The model retains attribution provenance (the resolution method) instead of emitting only a channel label.
+
+**No-web-session is different from unknown session.** A structurally unavailable web signal is not the same thing as a session that exists and still cannot be resolved. Collapsing both into “unknown” hid why coverage failed.
+
+**Lifecycle metadata enriches acquisition attribution instead of overriding it.** Downstream engagement can explain later value. It should not rewrite the acquisition evidence.
+
+<EvidenceHierarchyFigure
+  caption="Figure 3 · Evidence hierarchy"
+  steps={[
+    {
+      title: "Explicit tracking UTMs",
+      detail: "Campaign parameters captured on the acquiring visit.",
+      kind: "signal",
+    },
+    {
+      title: "Usable GA session attribution",
+      detail: "Session-level source and medium when the tracking parameters themselves were not usable.",
+      kind: "signal",
+    },
+    {
+      title: "Mapped referrer evidence",
+      detail: "Referrer values that can be mapped to a known acquisition path.",
+      kind: "signal",
+    },
+    {
+      title: "SSO evidence",
+      detail: "Sign-on context that identifies how the person arrived when web campaign tags are absent.",
+      kind: "signal",
+    },
+    {
+      title: "Untagged partner enrollment-path evidence",
+      detail: "Enrollment-path signals for partner traffic that never received campaign tags.",
+      kind: "signal",
+    },
+    {
+      title: "No-web-session classification",
+      detail: "Web attribution is structurally unavailable. This is not treated as an unresolved session.",
+      kind: "structural",
+    },
+    {
+      title: "Unresolved session",
+      detail: "A session exists, but the remaining evidence is not enough to resolve source, medium, and campaign.",
+      kind: "unresolved",
+    },
+  ]}
+  note="Order is the recovery sequence, from stronger observable evidence to weaker or unavailable signals. It is not a confidence score."
+/>
+
+</CaseSection>
+
+<CaseSection number="03" kicker="Validation" title="Review the evidence under each classification, then watch the mix">
+
+A lower unknown rate was not treated as proof that the new labels were correct. Each channel decision was checked against raw session-level data, including what evidence was present, which rule in the hierarchy fired, and whether that method matched the classified channel.
+
+After deployment, monitoring was set up to catch large swings in channel mix. Unexpected movement in reported mix is a reason to investigate the measurement, not an automatic conclusion that the underlying channels changed.
+
+</CaseSection>
+
+<CaseSection number="04" kicker="Decision" title="Incomplete measurement could have retired the wrong channel">
+
+The prior system left a large unknown bucket and also misstated channels that were already in the evidence.
+
+For one partner population in Q4 2025, direct mail’s measured share of enrollments was about 4% under the previous measurement and about 38% after the corrected attribution. Direct mail had been scheduled for retirement. The corrected measurement changed the evidence being used to evaluate the channel, and direct mail stayed in use.
+
+This does not say direct mail caused 38% of enrollments, and it is not an incrementality estimate. The prior measurement was incomplete enough that it could have supported the wrong channel decision.
+
+<ConsequenceFigure
+  caption="Figure 4 · Business consequence"
+  context="Direct mail · Q4 2025 · one partner population"
+  measure="Measured share of enrollments"
+  beforeLabel="Previous measurement"
+  beforeValue="~4%"
+  beforeWidth={4}
+  afterLabel="Corrected measurement"
+  afterValue="~38%"
+  afterWidth={38}
+  delta="34 percentage points higher measured share"
+  path={["Planned retirement", "Measurement corrected", "Channel retained"]}
+  note="Share of enrollments under two measurement systems. This is not an incrementality or causal estimate."
+/>
+
+</CaseSection>
+
+<CaseSection number="05" kicker="Impact" title="Coverage recovered, and a retirement decision was reversed">
+
+On the trailing 365-day view, unknown attribution moved from about 42% to 8%. Channel and CAC reporting became usable measurement instead of a leftover bucket.
+
+The direct-mail result is the clearest decision consequence. A channel slated for retirement stayed in use once the evidence used to judge it was no longer missing most of the attributed volume.
+
+The unknown-rate drop is the headline. The supporting evidence is recovered coverage, retained provenance, session-level review, and mix-shift detection.
+
+</CaseSection>
+
+<CaseSection number="06" kicker="Limitations" title="Attribution is not incrementality">
+
+This work answers a measurement question. Given the evidence that exists, how should an enrollment’s acquisition source be resolved, and how should that resolution be labeled for the business?
+
+It does not answer the causal question. It does not say whether a channel produced enrollments that would not have happened otherwise, or where the next dollar should go. Moving direct mail from 4% to 38% of measured enrollments in one partner population means the previous system was incomplete. It does not mean direct mail caused 38% of those enrollments.
+
+Incrementality, experimentation, and allocation under uncertainty are a different problem. That work is in development as independent research.
+
+</CaseSection>

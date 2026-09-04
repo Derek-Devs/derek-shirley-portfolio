@@ -1,0 +1,70 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArchitectureFigure from "../../components/ArchitectureFigure.astro";
+import CaseSection from "../../components/CaseSection.astro";
+import ConsequenceFigure from "../../components/ConsequenceFigure.astro";
+import CoverageFigure from "../../components/CoverageFigure.astro";
+import EvidenceHierarchyFigure from "../../components/EvidenceHierarchyFigure.astro";
+import SystemFigure from "../../components/SystemFigure.astro";
+
+export async function getStaticPaths() {
+  const cases = await getCollection("cases");
+  return cases.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const timeframe = entry.data.timeframe ?? entry.data.year;
+---
+
+<BaseLayout title={entry.data.seoTitle} description={entry.data.seoDescription}>
+  <article class="site-shell case-page">
+    <header class="page-intro">
+      <p class="section-label">{entry.data.kicker}</p>
+      <h1>{entry.data.title}</h1>
+      <p class="page-intro__dek">{entry.data.summary}</p>
+    </header>
+
+    <dl class="case-snapshot">
+      <div>
+        <dt>Role / scope</dt>
+        <dd>{entry.data.role}</dd>
+      </div>
+      {
+        timeframe ? (
+          <div>
+            <dt>Timeframe</dt>
+            <dd>{timeframe}</dd>
+          </div>
+        ) : null
+      }
+      <div>
+        <dt>Business problem</dt>
+        <dd>{entry.data.question}</dd>
+      </div>
+      <div>
+        <dt>Key result</dt>
+        <dd>{entry.data.impact}</dd>
+      </div>
+    </dl>
+
+    <Content
+      components={{
+        ArchitectureFigure,
+        CaseSection,
+        ConsequenceFigure,
+        CoverageFigure,
+        EvidenceHierarchyFigure,
+        SystemFigure,
+      }}
+    />
+
+    <p>
+      <a class="text-link" href="/work">All work</a>
+    </p>
+  </article>
+</BaseLayout>
