@@ -2,6 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+# Skip leftover Next.js runtime from the Netlify UI (this site is Astro).
+# Also disable @netlify/plugin-nextjs under Site configuration → Build plugins.
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
 [[redirects]]
   from = "/projects"
   to = "/work"
