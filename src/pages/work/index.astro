@@ -14,27 +14,27 @@ const independent = work
 
 <BaseLayout
   title="Work"
-  description="Selected professional work and independent research in decision science, growth measurement, and data systems."
+  description="Attribution, enrollment forecasting, marketing investment planning, and pricing analytics by Derek Shirley, with methods and decision outcomes."
 >
   <div class="site-shell home-page">
     <section class="page-intro" aria-labelledby="work-title">
       <p class="section-label">Work</p>
       <h1 id="work-title">Selected work</h1>
       <p class="page-intro__dek">
-        Professional systems and independent research in decision science,
-        growth, and data systems. Each item states the problem, the method, and
-        what changed.
+        Projects from my work at Lark Health, Dave &amp; Buster’s, and American
+        Diamond Logistics. The case studies describe what I built and how
+        the teams used it.
       </p>
     </section>
 
     <section class="content-section" aria-labelledby="professional-work-title">
       <h2 class="section-label" id="professional-work-title">
-        01 / Professional work
+        Professional work
       </h2>
       <div class="work-list">
         {
-          professional.map((item, index) => (
-            <WorkRow item={item} index={index} />
+          professional.map((item) => (
+            <WorkRow item={item} />
           ))
         }
       </div>
@@ -46,16 +46,16 @@ const independent = work
       aria-labelledby="independent-work-title"
     >
       <h2 class="section-label" id="independent-work-title">
-        02 / Independent research
+        Independent research
       </h2>
       <p class="section-lede">
-        New work in causal inference, experimentation, optimization, and
-        decision science.
+        I’m studying airport disruption forecasts alongside marketing
+        incrementality and budget allocation. These projects show the work as it develops.
       </p>
       <div class="work-list">
         {
-          independent.map((item, index) => (
-            <WorkRow item={item} index={index} />
+          independent.map((item) => (
+            <WorkRow item={item} />
           ))
         }
       </div>

@@ -40,3 +40,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# Local weather collection and research data (never publish raw flight histories)
+/.airport-data/
+__pycache__/
