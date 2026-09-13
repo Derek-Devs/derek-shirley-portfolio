@@ -1,0 +1,62 @@
+---
+interface Props {
+  kind: "attribution" | "budget" | "forecast";
+}
+
+const { kind } = Astro.props;
+---
+
+{
+  kind === "attribution" ? (
+    <figure class="decision-graphic decision-graphic--attribution">
+      <figcaption>Direct mail’s measured share of enrollments</figcaption>
+      <p class="figure-context">Q4 2025 · One partner population</p>
+      <dl class="measurement-bars">
+        <div>
+          <dt>Direct-mail share · Previous attribution</dt>
+          <dd>
+            <strong>~4<span>%</span></strong>
+            <span class="measurement-bars__track" aria-hidden="true"><span style="width: 4%" /></span>
+          </dd>
+        </div>
+        <div class="measurement-bars__after">
+          <dt>Direct-mail share · Corrected attribution</dt>
+          <dd>
+            <strong>~38<span>%</span></strong>
+            <span class="measurement-bars__track" aria-hidden="true"><span style="width: 38%" /></span>
+          </dd>
+        </div>
+      </dl>
+      <div class="figure-scale" aria-hidden="true"><span>0%</span><span>100% of enrollments</span></div>
+      <p class="decision-graphic__takeaway">The findings reversed the plan to discontinue direct mail.</p>
+      <p class="figure-note">These figures show a correction to attribution, not incremental lift. Both bars use the same 0–100% scale.</p>
+    </figure>
+  ) : kind === "budget" ? (
+    <figure class="decision-graphic decision-graphic--budget">
+      <figcaption>Two proposals for Q4 media spend</figcaption>
+      <dl class="budget-bars">
+        <div>
+          <dt>Outside proposal</dt>
+          <dd><strong>~$11M</strong><span class="budget-bars__track" aria-hidden="true"><span style="width: 91.6667%" /></span></dd>
+        </div>
+        <div class="budget-bars__internal">
+          <dt>My recommendation</dt>
+          <dd><strong>$6.9M</strong><span class="budget-bars__track" aria-hidden="true"><span style="width: 57.5%" /></span></dd>
+        </div>
+      </dl>
+      <div class="figure-scale" aria-hidden="true"><span>$0</span><span>$12M</span></div>
+      <p class="figure-note">Both amounts are proposed budgets; the difference does not represent realized savings.</p>
+    </figure>
+  ) : (
+    <figure class="decision-graphic decision-graphic--forecast">
+      <figcaption>How the enrollment forecasts are used</figcaption>
+      <ol class="forecast-path">
+        <li><strong>Audience <br />&amp; sends</strong><span>Observed relationships</span></li>
+        <li><strong>Partner <br />forecasts</strong><span>Seasonality · 1 year</span></li>
+        <li><strong>Outreach <br />&amp; budgets</strong><span>Channel planning</span></li>
+      </ol>
+      <p class="forecast-check"><span class="forecast-check__mark" aria-hidden="true">↳</span> Checked monthly, separately for each partner.</p>
+      <p class="figure-note">As of September 2026, monthly enrollment error has usually been within 10% for each partner, after accounting for backdated enrollments.</p>
+    </figure>
+  )
+}

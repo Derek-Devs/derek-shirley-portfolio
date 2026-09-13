@@ -1,0 +1,11 @@
+**
+!tools/
+!tools/*.py
+!research/
+!research/requirements.txt
+!research/airport-protocol*.json
+!infra/
+!infra/aws/
+!infra/aws/limits.json
+!infra/aws/runtime/
+!infra/aws/runtime/*.py

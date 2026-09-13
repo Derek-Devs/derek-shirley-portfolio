@@ -6,7 +6,8 @@ import { site } from "../lib/site";
   <div class="site-shell site-footer__content">
     <p>{site.location}</p>
     <a href={`mailto:${site.email}`}>{site.email}</a>
-    <nav class="site-footer__links" aria-label="Professional profiles">
+    <nav class="site-footer__links" aria-label="Footer navigation">
+      <a href="/about">About</a>
       <a href={site.linkedin} target="_blank" rel="noreferrer">
         LinkedIn
         <span class="sr-only"> (opens in a new tab)</span>

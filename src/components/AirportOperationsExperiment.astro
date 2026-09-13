@@ -1,0 +1,31 @@
+---
+import report from '../../public/data/airport-weather/experiments/operations-us-v1.json';
+const periods = [
+  {name:'Winter · January–February 2026', result:report.summary.test},
+  {name:'Spring · March–June 2026', result:report.summary.previouslySeenStressTest},
+];
+---
+<section class="airport-model-evidence" id="operations-experiment" aria-labelledby="operations-experiment-title">
+  <p class="airport-kicker">FAA history, tested nationally</p>
+  <h2 id="operations-experiment-title">Does an operations model improve the outlook?</h2>
+  <p class="airport-evidence-lead">FAA advisory history adds a small average gain over matched local weather models. It does not beat the currently served weather model across both seasons, so weather remains the default. Choose “Operations” above to explore the alternative and its local evidence.</p>
+  <p class="airport-small">100 major airports assessed · {report.summary.test.testedAirports} with sufficient outcomes · {report.summary.test.slices} arrival/departure/horizon comparisons per period. No probabilities transfer to airports without outcomes.</p>
+  <div class="airport-evidence-grid">{periods.map(({name,result}) => <article>
+    <h3>{name}</h3>
+    <div class="airport-table-scroll"><table class="airport-forecast-table">
+      <thead><tr><th scope="col">Mean error ↓</th><th scope="col">Current weather model</th><th scope="col">Matched local weather</th><th scope="col">Operations</th></tr></thead>
+      <tbody><tr><th scope="row">Brier error</th><td>{result.productionComparatorMean.brier.toFixed(5)}</td><td>{result.meanMetrics.weather.brier.toFixed(5)}</td><td>{result.meanMetrics.operations.brier.toFixed(5)}</td></tr>
+      <tr><th scope="row">Log loss</th><td>{result.productionComparatorMean.logLoss.toFixed(5)}</td><td>{result.meanMetrics.weather.logLoss.toFixed(5)}</td><td>{result.meanMetrics.operations.logLoss.toFixed(5)}</td></tr></tbody>
+    </table></div>
+    <p class="airport-small">{result.positiveSlices} of {result.slices} operations comparisons lowered Brier error versus matched weather; {result.positiveAdjustedSlices} retained positive improvement after the approximate multiple-comparison adjustment. {result.moderateEvidenceSlices} also met the sample, calibration, and uncertainty criteria.</p>
+    <p>Operations’ nominal 80% outcome-rate bands covered {(100*result.meanMetrics.operations.bandCoverage).toFixed(1)}% of test windows on average. Lower probability error does not guarantee reliable uncertainty bands.</p>
+  </article>)}</div>
+  <details class="airport-metric-details"><summary>What FAA history means—and how the default was chosen</summary>
+    <p>The model counts airport-specific ground-stop and ground-delay-program messages in the previous 6 and 24 hours, including revisions and cancellations. This is a signal of recent activity, not a complete inventory of active restrictions, traffic volume, runway capacity, or aircraft rotations. Carrier-specific notices are not restrictions on every flight.</p>
+    <p>903 cached national daily listings passed validation; 30 dates remained missing or ambiguous. Every comparison uses identical eligible windows. Publication timestamps and the hourly collection phase determine what was known; missing history never becomes a zero-risk signal. The same FAA feature code is used in training and live scoring.</p>
+    <p>The three local variants share fixed learners and separate fitting, probability-calibration, and uncertainty-calibration periods. Both 2026 evaluations are retrospective. Tables average airport/direction/horizon slices equally. The original production comparator was scored on the same windows, preserving its existing training and calibration.</p>
+    <p>{report.summary.test.noFaaTrainingActivitySlices} comparisons had no FAA activity during training, so they cannot establish a learned FAA effect. Tiny numerical differences from fitting were excluded from improvement tests before release; raw scores and model weights were preserved.</p>
+    <p>Operations would become the default only if average Brier error and log loss beat both matched weather and the currently served model in both periods. It did not meet that rule. Local evidence, including regressions, remains visible when you select an airport.</p>
+    <p><a href="/data/airport-weather/experiments/operations-us-v1.json" download>Protocol, national results, and release decision</a> · <a href="/data/airport-weather/experiments/operations-us-v1-full.json.gz" download>Full reproducibility report</a></p>
+  </details>
+</section>

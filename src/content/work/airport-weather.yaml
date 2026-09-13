@@ -1,0 +1,8 @@
+title: Airport weather and disruption
+organization: Independent research
+kind: independent
+summary: When does weather disrupt a U.S. airport, and how early can we know? An interactive airport risk map with delay probabilities, chronological backtests, and visible uncertainty.
+impact: 100 major U.S. airports assessed, with airport-specific models, transparent coverage gaps, and winter and spring backtests at 24, 12, and 6 hours.
+href: /work/airport-weather
+status: in-development
+order: 0
