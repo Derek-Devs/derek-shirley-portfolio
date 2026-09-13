@@ -22,7 +22,7 @@ const ogDescription = home ? site.ogDescription : description;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light" data-theme-color-light={site.themeColor} data-theme-color-dark={site.darkThemeColor}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,15 +42,16 @@ const ogDescription = home ? site.ogDescription : description;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline>
       (function () {
+        var root = document.documentElement;
+        var theme = "light";
         try {
           var t = localStorage.getItem("derekdevs-theme");
-          document.documentElement.setAttribute(
-            "data-theme",
-            t === "light" ? "light" : "dark",
-          );
-        } catch (e) {
-          document.documentElement.setAttribute("data-theme", "dark");
-        }
+          if (t === "dark") theme = "dark";
+        } catch (e) {}
+        root.setAttribute("data-theme", theme);
+        document.querySelector('meta[name="theme-color"]').setAttribute(
+          "content", root.getAttribute("data-theme-color-" + theme),
+        );
       })();
     </script>
   </head>
@@ -66,12 +67,13 @@ const ogDescription = home ? site.ogDescription : description;
         var key = "derekdevs-theme";
         var root = document.documentElement;
         function current() {
-          return root.getAttribute("data-theme") === "light" ? "light" : "dark";
+          return root.getAttribute("data-theme") === "dark" ? "dark" : "light";
         }
         function nextLabel(theme) {
           return theme === "dark" ? "Light" : "Dark";
         }
         document.querySelectorAll("[data-theme-toggle]").forEach(function (btn) {
+          btn.hidden = false;
           var theme = current();
           btn.textContent = nextLabel(theme);
           btn.setAttribute(
@@ -81,6 +83,9 @@ const ogDescription = home ? site.ogDescription : description;
           btn.addEventListener("click", function () {
             var next = current() === "dark" ? "light" : "dark";
             root.setAttribute("data-theme", next);
+            document.querySelector('meta[name="theme-color"]').setAttribute(
+              "content", root.getAttribute("data-theme-color-" + next),
+            );
             try {
               localStorage.setItem(key, next);
             } catch (e) {}

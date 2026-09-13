@@ -1,0 +1,1 @@
+{"generatedAt":"2026-09-13T02:28:32Z","stations":{"07FA":{"observation":null,"tafs":[],"faa":{"events":[],"identifierAvailable":true},"runways":{"sourceIdent":"07FA","runways":[{"id":"245843","ends":["04","22"],"lengthFt":4500.0,"widthFt":70.0,"surface":"ASP-G","lighted":true,"closed":false,"headingsTrue":[40.0,null]}]}}}}

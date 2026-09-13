@@ -1,0 +1,32 @@
+{
+  "version":"2.0.0",
+  "frozenBeforeFitting":"2026-09-11",
+  "scope":"25 US airports; reporting-carrier domestic flight events; experimental airport windows",
+  "airports":{"DFW":"America/Chicago","ORD":"America/Chicago","ATL":"America/New_York","DEN":"America/Denver","SEA":"America/Los_Angeles","LAX":"America/Los_Angeles","JFK":"America/New_York","SFO":"America/Los_Angeles","MIA":"America/New_York","PHX":"America/Phoenix","LAS":"America/Los_Angeles","CLT":"America/New_York","EWR":"America/New_York","IAH":"America/Chicago","BOS":"America/New_York","MSP":"America/Chicago","DTW":"America/Detroit","SLC":"America/Denver","PHL":"America/New_York","BWI":"America/New_York","DCA":"America/New_York","IAD":"America/New_York","SAN":"America/Los_Angeles","TPA":"America/New_York","FLL":"America/New_York"},
+  "horizons":[24,12,6],"windowHours":2,
+  "train":["2023-01-03","2024-06-27"],
+  "probabilityCalibration":["2024-07-04","2024-12-27"],
+  "intervalCalibration":["2025-01-04","2025-09-27"],
+  "test":["2026-01-03","2026-02-26"],
+  "previouslySeenStressTest":["2026-03-04","2026-06-27"],
+  "folds":[
+    {"name":"Winter 2024","train":["2023-01-03","2023-05-27"],"probabilityCalibration":["2023-06-04","2023-07-27"],"intervalCalibration":["2023-08-04","2023-09-27"],"test":["2024-01-04","2024-03-27"]},
+    {"name":"Summer 2024","train":["2023-01-03","2023-09-27"],"probabilityCalibration":["2023-10-04","2023-12-27"],"intervalCalibration":["2024-01-04","2024-03-27"],"test":["2024-07-04","2024-09-27"]},
+    {"name":"Autumn 2024","train":["2023-01-03","2023-12-27"],"probabilityCalibration":["2024-01-04","2024-03-27"],"intervalCalibration":["2024-04-04","2024-06-27"],"test":["2024-10-04","2024-12-27"]}
+  ],
+  "candidates":{
+    "linear":{"C":1.0,"solver":"lbfgs","max_iter":1500,"tol":1e-7},
+    "boosted":{"learning_rate":0.08,"max_iter":120,"max_leaf_nodes":15,"min_samples_leaf":80,"l2_regularization":20.0,"max_bins":64,"early_stopping":false}
+  },
+  "selection":"Choose one learner for all directions/horizons by mean flight-weighted disruption Brier across the three development folds and six slices. Prefer linear unless boosted improves by at least 0.5% relative. Never choose or tune using 2026 outcomes.",
+  "calibration":"Airport-aware sigmoid with C=0.02 on fixed log odds plus airport indicators; six-month final calibration. No class rebalancing.",
+  "interval":"Central signed-residual 80% empirical band from nine months; airport plus predicted-risk bins (<25%,25-50%,50%+) with >=100 windows, otherwise airport fallback. No guarantee under temporal dependence.",
+  "availabilityLagMinutes":10,"availabilitySensitivityMinutes":60,"monthBoundaryExclusionDays":2,
+  "minimumScheduledFlightsPerWindow":10,"minimumTestDaysForModerateEvidence":45,"minimumTestFlightsForModerateEvidence":5000,
+  "intervalNominalCoverage":0.8,"minimumIntervalBinWindows":100,
+  "bootstrapDayResamples":1000,"bootstrapBlockDays":3,"falseDiscoveryRate":0.1,"seed":1729,
+  "evidence":"Moderate requires sample support, positive 95% Brier-skill interval, BH-adjusted approximate bootstrap p <= 0.1 across 150 airport/direction/horizon comparisons, calibration error <5pp, and band coverage >=75%.",
+  "fairHorizonComparison":"Common eligible windows at all horizons; publish per-airport and per-horizon missingness as well as primary metrics.",
+  "maxResearchMonths":40,"maxConcurrentMonths":2,"maxWeatherAirportsPerRequest":8,
+  "limitations":["January-February 2026 was not loaded or evaluated in v1, but evaluates winter only","March-June 2026 has been inspected in v1 and is a disclosed stress re-evaluation, never a new holdout","Candidate development validation overlaps the final probability calibration period; final interval calibration and fresh test remain outside selection","Final-vintage BTS outcomes; no release-vintage reconstruction or cancellation announcement time","TAF issue/product time plus lag approximates historical delivery","No private or global flight-outcome transfer","No causal weather attribution"]
+}

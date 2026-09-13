@@ -1,0 +1,35 @@
+---
+import experiment from '../../public/data/airport-weather/experiments/traffic-proxy-v1.json';
+const periods = [
+  {name:'Winter · January–February 2026', result:experiment.summary.test},
+  {name:'Spring · March–June 2026', result:experiment.summary.previouslySeenStressTest},
+];
+const pp = (value: number) => `${(100 * value).toFixed(2)} pp`;
+---
+<section class="airport-model-evidence" id="traffic-experiment" aria-labelledby="traffic-experiment-title">
+  <p class="airport-kicker">A traffic proxy, tested</p>
+  <h2 id="traffic-experiment-title">Does traffic volume improve predictions?</h2>
+  <p class="airport-evidence-lead">Adding historical arrival and departure volume did not reliably improve predictions in this experiment. Average probability error rose slightly in winter and fell slightly in spring; average calibration error increased in both. The live model has not been replaced.</p>
+  <p class="airport-small">100 airports assessed · {experiment.summary.test.testedAirports} with sufficient evidence · {experiment.summary.test.slices} airport/direction/horizon comparisons per period. Every variant uses the same test windows within each comparison.</p>
+  <div class="airport-evidence-grid">
+    {periods.map(({name,result}) => <article>
+      <h3>{name}</h3>
+      <div class="airport-table-scroll"><table class="airport-forecast-table">
+        <thead><tr><th scope="col">Mean metric</th><th scope="col">Calendar + weather</th><th scope="col">+ historical traffic</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Brier error ↓</th><td>{result.meanMetrics.weather.brier.toFixed(5)}</td><td>{result.meanMetrics.weatherTraffic.brier.toFixed(5)}</td></tr>
+          <tr><th scope="row">Calibration gap ↓</th><td>{pp(result.meanMetrics.weather.calibrationError)}</td><td>{pp(result.meanMetrics.weatherTraffic.calibrationError)}</td></tr>
+          <tr><th scope="row">Band coverage · 80% target</th><td>{(100*result.meanMetrics.weather.bandCoverage).toFixed(1)}%</td><td>{(100*result.meanMetrics.weatherTraffic.bandCoverage).toFixed(1)}%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="airport-small">{result.positiveTrafficBrierSlices} of {result.slices} comparisons improved on Brier error; {result.positiveAdjustedSlices} retained a positive improvement after the approximate multiple-comparison adjustment. Local gains do not establish a general improvement.</p>
+    </article>)}
+  </div>
+  <details class="airport-metric-details"><summary>How the traffic test avoids looking ahead</summary>
+    <p>At each airport, older flight counts estimate typical arrivals and departures by local weekday and two-hour block. The profile uses up to 12 source months with a conservative 120-day publication lag. Missing source months are excluded, not counted as zero. Actual flight counts in the predicted window never become a predictor.</p>
+    <p>Calendar-only, calendar plus weather, and calendar plus weather plus traffic use the same fixed airport-local logistic learner, with separate probability and uncertainty calibration. Traffic features include typical demand, demand relative to historical peak periods, adjacent periods, and weather interactions. Historical peaks are not measured runway capacity.</p>
+    <p>Model fitting uses September 2023–June 2024, probability calibration July–December 2024, and uncertainty calibration January–September 2025. Both 2026 evaluation periods are retrospective; their dates and connected outcomes have been seen before. The publication lag is assumed rather than reconstructed from historical data releases.</p>
+    <p>The tables average the matched airport/direction/horizon comparisons equally. Tests across horizons may contain different windows. The downloadable report also provides flight-weighted comparisons with shared calendar-block uncertainty. This experiment has different fitting dates and local comparators from the live model, so it is not a direct before/after production comparison.</p>
+    <p><a href="/data/airport-weather/experiments/traffic-proxy-v1.json" download>Download protocol and airport results (JSON)</a> · <a href="/data/airport-weather/experiments/traffic-proxy-v1-full.json.gz" download>Full reproducibility report (compressed JSON)</a></p>
+  </details>
+</section>

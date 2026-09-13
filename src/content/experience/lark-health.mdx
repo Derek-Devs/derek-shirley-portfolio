@@ -9,13 +9,19 @@ prominence: primary
 order: 1
 ---
 
-I own marketing attribution and measurement at Lark Health. My work covers acquisition, enrollment, lifecycle channels, paid media, direct mail, activation, and partner programs.
+I am the sole owner of marketing analytics at Lark Health. My work covers attribution, enrollment forecasting, lifecycle measurement, paid media, direct mail, activation, and partner programs.
 
 ### Attribution and channel measurement
 
 I rebuilt production acquisition attribution after the existing system had accumulated independent first-match classifiers, hard-coded rules, and incomplete tracking. Around March 2026, on a trailing 365-day view, about 42% of enrollments were unresolved. The rebuilt model reduced unknown attribution to about 8%.
 
-For one partner population in Q4 2025, direct mail’s measured share of enrollments moved from about 4% under the previous measurement to about 38% after corrected attribution. Direct mail had been scheduled for retirement. The corrected measurement changed the evidence used to evaluate the channel, and it stayed in use. This is a measurement correction, not an incrementality result.
+For one partner population in Q4 2025, direct mail’s measured share of enrollments moved from about 4% under the previous measurement to about 38% after corrected attribution. My findings reversed a decision to discontinue direct mail, a channel with $550K in annual spend. This is a measurement correction, not an incrementality result. [Read the attribution case](/work/lark-attribution).
+
+### Enrollment forecasting and channel planning
+
+I built and shipped one-year enrollment forecasts for Carelon, BCBSAL, and MMO using the observed relationship between audience size, marketing sends, and enrollments, with seasonality accounted for. The forecasts guide send volumes and direct-mail budgets, with email costs also considered in planning.
+
+I check monthly enrollment error separately for each partner and account for backdated enrollments. Error has usually been within 10% during 2026 to date, as of September 2026. [Read the forecasting case](/work/lark-enrollment-forecasting).
 
 ### Lifecycle and engagement systems
 
@@ -25,6 +31,12 @@ I built production Snowflake and dbt models connecting attribution and Braze ema
 
 For Lark’s Medicare DPP launch, I defined Marketing’s measurement path from paid source and campaign through enrollment, eligibility, account creation, activation, engagement, and billable milestones. I also built a downside, base, and upside planning model that shows CAC per account, cost per first billable event, likely funnel losses, and the assumptions that matter most.
 
-### Decision and experiment readiness
+### Experiment design
 
 For Samsung partnership measurement, I defined experiment-ready requirements that separate assignment from actual exposure and support ITT analysis, SRM checks, power planning, guardrails, and explicit decision rules.
+
+I am also designing randomized geographic experiments for Google and Meta paid advertising. That work is in design and has not shipped.
+
+### Analyst development
+
+I have coached other analysts at Lark alongside owning marketing analytics.

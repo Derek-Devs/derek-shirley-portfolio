@@ -1,33 +1,33 @@
 ---
-title: Marketing data environment, planning, and diagnosis
+title: Marketing analytics at Dave & Buster’s
 kicker: Professional / Dave & Buster’s
 organization: Dave & Buster’s
 role: Senior Analyst, Marketing. August 2024 to November 2025
 year: "2024 to 2025"
 timeframe: August 2024 to November 2025
 summary: I worked on marketing planning, web performance, attribution, and the data environment behind executive reporting.
-question: How should Q4 media be funded, what was driving a sharp decline in web traffic, and what data environment would make those answers trustworthy?
+question: Leadership needed a Q4 media budget recommendation and an explanation for declining web traffic. Marketing data was spread across separate platforms, making analysis and reporting slow.
 impact: Recommended $6.9M in Q4 spend against an outside proposal of about $11M. Reduced manual reporting by at least 35%. Unified more than five marketing sources in Databricks.
 methods: Databricks ELT; Adobe Analytics; UTM and attribution governance; media-contribution model; web root-cause analysis; Google Meridian MMM prototype.
-seoTitle: Dave & Buster’s marketing data ecosystem
+seoTitle: Marketing analytics at Dave & Buster’s
 seoDescription: Building a Databricks-centered marketing data environment at Dave & Buster’s, and using it for Q4 spend planning and web-traffic diagnosis.
 featured: true
 ---
 
-<CaseSection number="01" kicker="Problem" title="Fragmented sources, delayed decisions">
+<CaseSection number="01" kicker="Problem" title="Marketing data was spread across separate platforms">
 
-Marketing analytics was operating with fragmented data across five major siloed platforms. That blocked a trustworthy view of the marketing funnel and cross-channel ROI, and left more than 35% of analyst time on manual data wrangling instead of analysis.
+Marketing data was spread across five major platforms. Analysts spent more than 35% of their time manually preparing data, and reporting on the marketing funnel and cross-channel ROI was difficult.
 
-Key initiatives such as the Leaderboard program and Summer Season Pass lacked a unified performance measurement framework. Leadership needed a Q4 media decision on a three-hour deadline, and web traffic was down about 42% year over year.
+Leaderboard and Summer Season Pass lacked consistent performance reporting. Leadership also needed a Q4 media budget recommendation on a three-hour deadline, while web traffic was down about 42% year over year.
 
 </CaseSection>
 
-<CaseSection number="02" kicker="System" title="A Databricks-centered marketing data environment" rail="5+ sources unified">
+<CaseSection number="02" kicker="System" title="Integrating marketing data in Databricks" rail="5+ sources unified">
 
 I designed a Databricks-centered marketing-data environment integrating more than five sources, improved Adobe Analytics reporting, and established UTM and attribution governance.
 
 <SystemFigure
-  caption="Marketing data flow used for reporting and decision support"
+  caption="Marketing data sources and reporting"
   stages={[
     { title: "Sources", items: ["SFMC", "Adobe Analytics", "Google Ads / GA4", "Meta Ads", "Sprout Social"] },
     { title: "Databricks", items: ["ELT pipelines", "Modeling and unification", "Shared marketing metrics"] },
@@ -37,25 +37,23 @@ I designed a Databricks-centered marketing-data environment integrating more tha
 
 </CaseSection>
 
-<CaseSection number="03" kicker="Method" title="Contribution modeling, root-cause analysis, and an MMM prototype">
+<CaseSection number="03" kicker="Method" title="Budget modeling and web-traffic analysis">
 
-Under the Q4 deadline, I built a media-contribution model instead of accepting the external $11M proposal as the planning baseline. For the traffic decline, I traced a major driver to a 40% to 75% deterioration in CTR or message resonance, depending on the comparison, and presented the findings to VP leadership.
+I built a media-contribution model to evaluate the outside proposal of about $11M for Q4. In the web-traffic analysis, I identified a 40% to 75% deterioration in CTR or message resonance, depending on the comparison, as a major driver of the decline. I presented those findings to VP leadership.
 
-I also prototyped the company’s first internal Marketing Mix Model using Google Meridian, and selected and recommended a junior analyst candidate, then led his onboarding and analytical development.
-
-</CaseSection>
-
-<CaseSection number="04" kicker="Tradeoffs" title="Internal evidence under a hard clock">
-
-The Q4 decision could not wait for a fully mature cross-channel system. The contribution model had to be good enough to brief the CEO and CMO in hours, while the Databricks environment was being built to make later questions less dependent on manual wrangling.
-
-Unifying sources and governing UTMs reduced reporting labor. The immediate executive question was still allocation. The internal model supported $6.9M. The outside proposal was about $11M.
+I separately designed and prototyped the company’s first internal Marketing Mix Model using Google Meridian. The MMM was not deployed and was not the model behind the Q4 recommendation.
 
 </CaseSection>
 
-<CaseSection number="05" kicker="Decision" title="Fund the internally evidenced plan, then keep measurement centralized">
+<CaseSection number="04" kicker="Constraints" title="A three-hour deadline for the Q4 recommendation">
 
-The $6.9M recommendation shaped CEO and CMO planning. The Databricks environment became the source of truth for marketing KPIs, executive reporting, and self-service analysis in Power BI.
+The Databricks environment was still being built when the Q4 recommendation was needed. I had three hours to prepare a model for the CEO and CMO, so the recommendation used the data available at the time.
+
+</CaseSection>
+
+<CaseSection number="05" kicker="Decision" title="The $6.9M Q4 recommendation">
+
+The CEO and CMO used the $6.9M recommendation in their planning. The Databricks environment became the shared source for marketing KPIs, executive reporting, and self-service analysis in Power BI.
 
 <ConsequenceFigure
   caption="Figure 1 · Q4 media recommendation"
@@ -67,16 +65,22 @@ The $6.9M recommendation shaped CEO and CMO planning. The Databricks environment
   afterLabel="Internal recommendation"
   afterValue="$6.9M"
   afterWidth={63}
-  path={["Three-hour clock", "Internal model", "CEO and CMO planning"]}
-  note="$6.9M is the internally evidenced plan. About $11M is the outside proposal."
+  path={["Three-hour deadline", "Contribution model", "CEO and CMO planning"]}
+  note="These are proposed budgets, not actual spend or realized savings. The internal recommendation shaped CEO and CMO planning."
 />
 
 </CaseSection>
 
-<CaseSection number="06" kicker="Impact" title="Less wrangling, a funded plan, and a usable funnel view" rail=">=35% less manual reporting">
+<CaseSection number="06" kicker="Impact" title="Reporting and analysis results" rail=">=35% less manual reporting">
 
-Manual reporting fell by at least 35%. More than five sources were unified, which enabled cross-channel ROI analysis and a consistent measurement frame for Leaderboard and Summer Season Pass.
+Manual reporting fell by at least 35%. Integrating more than five sources made cross-channel ROI analysis possible and gave Leaderboard and Summer Season Pass consistent performance reporting.
 
 The Q4 model recommended $6.9M against an outside proposal of about $11M. The web diagnosis identified weaker CTR and message resonance as an important driver of the 42% traffic decline.
+
+</CaseSection>
+
+<CaseSection number="07" kicker="Leadership" title="Selecting and developing an analyst">
+
+I selected and recommended the candidate who was hired into Marketing, then trained him after he joined.
 
 </CaseSection>

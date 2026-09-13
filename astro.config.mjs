@@ -6,6 +6,10 @@ export default defineConfig({
   site: "https://www.derekdevs.com",
   trailingSlash: "never",
   integrations: [mdx(), sitemap()],
+  vite: {
+    // Cached research data and Python environments are not website source.
+    server: { watch: { ignored: ["**/.airport-data/**"] } },
+  },
   redirects: {
     "/projects": { status: 301, destination: "/work" },
     "/projects/[slug]": { status: 301, destination: "/work/[slug]" },
