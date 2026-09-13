@@ -1,0 +1,7 @@
+{
+  "definedBeforeReadingNationwideResults": "2026-09-12",
+  "userDecision": "Default if more accurate overall; otherwise provide as an option.",
+  "rule": "Set operations as the default experimental airline model only if its equally weighted mean slice Brier error and log loss are lower than the matched weather comparator in both the winter and spring evaluations. Each slice uses flight-weighted scoring on identical eligible windows. Otherwise keep weather as default. Do not select airports or discard regression slices after viewing results.",
+  "incumbentCheckAddedBeforeScoringIncumbent": "Also require lower mean Brier error and log loss than the currently served production model on those same windows in both periods. This protects the existing product: gains over the matched local ablation baseline alone do not establish a better default than the retained production models. Added after nationwide ablation scores, before running the incumbent comparison; no models are refit or tuned.",
+  "limits": "This is a descriptive retrospective default-selection rule, not proof of future improvement. Preserve weather as an explicit alternative. Show airport-specific evidence, degradation, and uncertainty coverage. Never silently substitute weather under an operations label when FAA history is missing. Private jets do not inherit airline probabilities. No change to dollar, compute, lease, or early-stop safeguards."
+}

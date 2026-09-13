@@ -4,5 +4,5 @@ kind: professional
 summary: Lifecycle activity and downstream program milestones were not connected in production measurement, including for Lark’s Medicare DPP launch.
 impact: Built production Snowflake and dbt models connecting Braze email, SMS, and push activity to downstream behavior and program milestones, and defined Marketing’s measurement path from paid acquisition through enrollment, activation, engagement, and billable milestones.
 href: /experience#lark-health
-featured: true
-order: 2
+featured: false
+order: 5

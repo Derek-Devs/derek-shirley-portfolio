@@ -1,0 +1,81 @@
+.airport-map-panel { min-width: 0; padding: 1.5rem; }
+.airport-map-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.airport-map-heading h2 { font-family: var(--font-editorial); font-size: 1.65rem; font-weight: 400; line-height: 1.25; margin-bottom: .8rem; }
+.airport-map-views { display: grid; gap: .3rem; font-size: .75rem; color: var(--text-secondary); }
+.airport-map-views select { border: 1px solid var(--border); background: var(--canvas); color: var(--text); border-radius: var(--radius); min-height: 2.75rem; max-width: 11rem; padding: .45rem .7rem; font: inherit; font-size: .875rem; cursor: pointer; }
+#airport-map { height: 390px; width: 100%; background: #dbe9ed; border: 1px solid var(--border); border-radius: var(--radius); z-index: 0; font-family: var(--font-sans); }
+.airport-map-legend { display: flex; flex-wrap: wrap; gap: .8rem 1rem; font-size: .75rem; padding-block: 1rem; }
+.airport-map-legend span { display: flex; align-items: center; gap: .35rem; }
+.airport-map-legend i { display: inline-block; width: .8rem; height: .8rem; border-radius: 50%; }
+.risk-0 { --risk: #286a75; background: var(--risk); }
+.risk-1 { --risk: #a49335; background: var(--risk); }
+.risk-2 { --risk: #c36e32; background: var(--risk); }
+.risk-3 { --risk: #a53749; background: var(--risk); }
+.risk-none { --risk: #899593; background: var(--risk); }
+.weather-vfr { --risk: #257849; background: var(--risk); }
+.weather-mvfr { --risk: #285bbb; background: var(--risk); }
+.weather-ifr { --risk: #b33443; background: var(--risk); }
+.weather-lifr { --risk: #922b99; background: var(--risk); }
+.weather-unknown { --risk: #899593; background: var(--risk); }
+.airport-category { display: inline-block; color: #fff; padding: .35rem .65rem; border-radius: var(--radius); font-size: .875rem; }
+.airport-category.weather-unknown { color: #172526; background: #cdd5d3; }
+.airport-weather-summary { margin-block: .75rem 1rem; }
+.airport-weather-summary p { margin: .5rem 0; }
+#private-airport-summary h3 { font-size: 1rem; margin-block: 1.2rem .6rem; }
+#private-airport-summary p { font-size: .8125rem; }
+.airport-private-horizons { font-size: .75rem; table-layout: fixed; width: 100%; }
+.airport-private-horizons th, .airport-private-horizons td { min-width: 0; padding: .55rem .25rem; overflow-wrap: anywhere; }
+.risk-limited { background: transparent; border: 2px dashed var(--text-secondary); }
+.airport-map-marker { background: transparent; border: 0; display: grid; place-items: center; pointer-events: none; }
+.airport-pin { width: 9px; height: 9px; border: 1px solid #fff; border-radius: 50%; display: block; pointer-events: auto; }
+.airport-pin-main { width: 17px; height: 17px; border-width: 2px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--risk) 20%, transparent); }
+.airport-pin-limited { outline: 2px dashed #353e3b; outline-offset: 4px; }
+.airport-pin-selected { outline: 2px solid #142d31; outline-offset: 7px; }
+.airport-pin-low { background: transparent; border: 2px dotted #788683; }
+.airport-pin-label { position: absolute; top: 25px; color: #182e33; background: #ffffffde; border-radius: 2px; padding: 1px 3px; font-family: var(--font-mono); font-size: 10px; line-height: 1.2; pointer-events: none; }
+.airport-map-marker:focus-visible { outline: 3px solid #152a30; outline-offset: 5px; border-radius: 50%; }
+.airport-horizons button[aria-pressed="true"] { background: var(--accent-strong); border-color: var(--accent-strong); color: var(--canvas); }
+.airport-probabilities { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem 1rem; margin: 1rem 0; }
+.airport-probabilities > div { margin: 0; padding-bottom: .8rem; }
+.airport-probabilities dt { font-size: .8125rem; min-height: 2.6em; }
+.airport-probabilities dd { font-size: 1.65rem; }
+.airport-risk-total { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .25rem 1rem; padding: .9rem 0; border-bottom: 1px solid var(--border); font-size: .875rem; }
+.airport-risk-total strong { grid-column: 2; grid-row: 1 / 3; font-family: var(--font-mono); font-size: 2rem; font-weight: 400; }
+.airport-risk-total span:last-child { font-size: .8125rem; color: var(--text-secondary); }
+.airport-window { font-size: .8125rem; line-height: 1.6; margin: 1rem 0; }
+.airport-confidence-note { padding: .8rem; border-left: 2px solid var(--plot-neutral); background: var(--surface); font-size: .8125rem; line-height: 1.6; }
+.airport-model-evidence { padding-block: 2.5rem; border-bottom: 1px solid var(--border); }
+#airport-evidence, #research { scroll-margin-top: 8rem; }
+.airport-model-evidence > h2 { font-family: var(--font-editorial); font-size: 2rem; font-weight: 400; margin-bottom: .8rem; }
+.airport-evidence-lead { max-width: 80ch; font-size: .9375rem; color: var(--text-secondary); }
+.airport-story-metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); background: var(--surface); border: 1px solid var(--border); margin: 1.5rem 0 2rem; }
+.airport-story-metrics > div { padding: 1.2rem; border-right: 1px solid var(--border); }
+.airport-story-metrics > div:last-child { border-right: 0; }
+.airport-story-metrics dt { font-size: .8125rem; color: var(--text-secondary); min-height: 2.6em; }
+.airport-story-metrics dd { font-family: var(--font-mono); font-size: clamp(1.4rem, 2.2vw, 1.9rem); margin: .6rem 0; line-height: 1.25; }
+.airport-story-metrics dd.airport-evidence-word { font-family: var(--font-sans); font-size: 1.6rem; }
+.airport-story-metrics span { font-size: .75rem; color: var(--text-secondary); line-height: 1.45; display: block; }
+.airport-evidence-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); gap: 2.5rem; margin-block: 2rem; }
+.airport-evidence-grid article { min-width: 0; }
+.airport-evidence-grid h3 { font-size: 1.2rem; font-weight: 500; margin-bottom: .75rem; }
+.airport-evidence-grid p { font-size: .9375rem; line-height: 1.6; }
+.airport-evidence-grid .airport-small { font-size: .8125rem; }
+.airport-selected-row { background: var(--feature-surface); }
+.airport-calibration-plot { display: block; width: 100%; max-height: 270px; overflow: visible; }
+.airport-calibration-plot text { fill: var(--text-secondary); font: 10px var(--font-sans); }
+.plot-grid { stroke: var(--border); stroke-width: .7; }
+.plot-ideal { stroke: var(--text-secondary); stroke-dasharray: 4 4; stroke-width: 1; }
+.plot-observed { fill: var(--accent); stroke: var(--canvas); stroke-width: 1; opacity: .85; }
+.airport-metric-details { padding: 1.2rem; border: 1px solid var(--border); font-size: .875rem; }
+.airport-metric-details + .airport-metric-details { margin-top: 1rem; }
+.airport-evaluation-picker { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; font-size: .875rem; margin-block: 1rem; }
+.airport-evaluation-picker select { min-height: 2.8rem; max-width: 100%; border: 1px solid var(--border); border-radius: var(--radius); background: var(--elevated); color: var(--text); padding: .5rem .7rem; font: inherit; }
+.airport-version-comparison { background: var(--surface); border: 1px solid var(--border); padding: 1.25rem; margin-bottom: 1.5rem; }
+.airport-version-comparison h3 { font-size: 1.2rem; }
+.airport-version-comparison p { font-size: .875rem; }
+.airport-metric-details summary, .airport-evidence-grid summary { cursor: pointer; color: var(--accent); }
+.airport-metric-details p { margin: 1rem 0; }
+[data-theme="dark"] #airport-map { background: #233c45; }
+[data-theme="dark"] .airport-land { fill: #404c46; stroke: #758179; }
+@media (max-width: 1050px) { .airport-outcome { border-top: 1px solid var(--border); } .airport-probabilities { grid-template-columns: repeat(4,1fr); } .airport-risk-total { max-width: 28rem; } }
+@media (max-width: 720px) { .airport-map-panel { padding: 1rem; } #airport-map { height: 330px; } .airport-map-heading { align-items: start; } .airport-map-heading h2 { font-size: 1.4rem; } .airport-story-metrics { grid-template-columns: 1fr 1fr; } .airport-story-metrics > div { border-bottom: 1px solid var(--border); } .airport-story-metrics > div:nth-child(even) { border-right: 0; } .airport-story-metrics > div:nth-last-child(-n+2) { border-bottom: 0; } .airport-evidence-grid { grid-template-columns: 1fr; gap: 1.5rem; } .airport-probabilities { grid-template-columns: 1fr 1fr; } .airport-horizon-table { font-size: .8125rem; } .airport-horizon-table td { min-width: 0; } }

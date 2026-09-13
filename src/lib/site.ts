@@ -1,16 +1,18 @@
 export const site = {
   name: "Derek Shirley",
   url: "https://www.derekdevs.com",
-  title: "Derek Shirley | Decision Science, Growth, and Data Systems",
+  title: "Derek Shirley | Marketing Analytics & Growth Measurement",
   description:
-    "Derek Shirley's work in decision science, growth measurement, product analytics, analytics engineering, and data systems.",
+    "Derek Shirley leads marketing analytics at Lark Health. Read about his work in attribution, enrollment forecasting, marketing budgets, and pricing analytics.",
   ogDescription:
-    "Decision science, growth measurement, and data systems.",
+    "Marketing analytics at Lark Health, with projects in attribution, enrollment forecasting, and budget planning.",
   email: "derek@derekdevs.com",
   location: "Dallas-Fort Worth, Texas",
   github: "https://github.com/Derek-Devs",
   linkedin: "https://www.linkedin.com/in/derekdevs/",
-  themeColor: "#111315",
+  resume: "/Derek_Shirley_Resume_2026.pdf",
+  themeColor: "#f6f3ed",
+  darkThemeColor: "#171c19",
 } as const;
 
 export function formatDateRange(

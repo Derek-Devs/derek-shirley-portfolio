@@ -1,0 +1,153 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AirportTrafficExperiment from "../../components/AirportTrafficExperiment.astro";
+import AirportOperationsExperiment from "../../components/AirportOperationsExperiment.astro";
+import "../../styles/airport-weather.css";
+import "../../styles/airport-risk.css";
+import evaluation from "../../../public/data/airport-weather/evaluation.json";
+import operationsRelease from "../../../public/data/airport-weather/operations/release.json";
+const study = evaluation.protocol;
+const airportCodes = Object.keys(study.airports);
+const testedCodes = Object.entries(evaluation.airports).filter(([, value]) => Object.values(value.directions).some(horizons => Object.keys(horizons).length > 0)).map(([code]) => code);
+const testSlices = Object.values(evaluation.airports).reduce((total, value) => total + Object.values(value.directions).reduce((n, horizons) => n + Object.keys(horizons).length, 0), 0);
+const v2 = evaluation.version.startsWith("airport-v2") || evaluation.version.startsWith("airport-v3");
+const cloudConnected = Boolean(import.meta.env.PUBLIC_AIRPORT_DATA_URL);
+---
+
+<BaseLayout title="U.S. airport weather & disruption" description="Explore U.S. airport weather, experimental delay probabilities, and transparent backtests at 24, 12, and 6 hours.">
+  <div class="site-shell airport-page">
+    <header class="airport-intro">
+      <div>
+        <a class="airport-back" href="/work">Work / Independent research</a>
+        <p class="airport-kicker">United States &amp; U.S. territories</p>
+        <h1>Airport weather &amp; disruption</h1>
+        <p>When does weather disrupt an airport, and how early can we know?</p>
+      </div>
+      <a class="airport-method-link" href="#research">Read the research design <span aria-hidden="true">↘</span></a>
+    </header>
+
+    <section class="airport-tool" aria-label="Airport weather explorer">
+      <div class="airport-toolbar">
+        <fieldset class="airport-mode">
+          <legend class="sr-only">Aviation view</legend>
+          <label><input type="radio" name="aviation-mode" value="airline" checked /><span>Airline outlook</span></label>
+          <label><input type="radio" name="aviation-mode" value="private" /><span>Private aviation</span></label>
+        </fieldset>
+        <p class="airport-data-state" id="data-state">Connecting to the weather snapshot…</p>
+      </div>
+
+      <div id="forecast-model-controls" class="airport-model-controls">
+        <label>Forecast model <select id="forecast-model" aria-describedby="forecast-model-note"><option value="weather" selected={operationsRelease.defaultModel === 'weather'}>Weather model</option><option value="operations" selected={operationsRelease.defaultModel === 'operations'}>Operations · weather + FAA history</option></select></label>
+        <span id="forecast-model-note">Both views are experimental. Compare the selected airport’s backtest below.</span>
+      </div>
+
+      <form id="airport-form" class="airport-controls">
+        <label class="airport-search"><span id="airport-label">Airport</span>
+          <input id="airport" name="airport" list="airport-options" autocomplete="off" value="DFW" required placeholder="Airport name, IATA or ICAO" aria-describedby="airport-selection" />
+        </label>
+        <span id="airport-selection" class="airport-selection-name"></span>
+        <label id="direction-label">Flights
+          <select id="direction" name="direction"><option value="departures">Departures</option><option value="arrivals">Arrivals</option></select>
+        </label>
+        <label id="departure-time-label"><span id="time-label">Airport time (UTC)</span>
+          <input id="event-time" type="datetime-local" name="time" required />
+        </label>
+        <button class="button-primary" type="submit" id="show-weather">Refresh data <span aria-hidden="true">↻</span></button>
+        <datalist id="airport-options"></datalist>
+      </form>
+      <div class="airport-control-foot">
+        <div class="airport-horizons" aria-label="Set airport time ahead of now"><span>Look ahead</span><button type="button" data-horizon="6">+6h</button><button type="button" data-horizon="12">+12h</button><button type="button" data-horizon="24">+24h</button></div>
+        <span>All times are UTC. Airport-level context.</span>
+      </div>
+      <p id="airport-error" class="airport-error" role="alert" hidden></p>
+      <noscript><p class="airport-notice">Enable JavaScript to select an airport and load the weather. The research design and limitations are available below.</p></noscript>
+
+      <div class="airport-results" id="airport-results">
+        <section class="airport-map-panel" aria-labelledby="map-title">
+          <div class="airport-map-heading"><div><p class="airport-kicker">Explore the U.S. outlook</p><h2 id="map-title">Where is disruption more likely?</h2></div><label class="airport-map-views">Map region<select id="map-region"><option value="mainland">Contiguous U.S.</option><option value="alaska">Alaska</option><option value="hawaii">Hawaii</option><option value="caribbean">Puerto Rico &amp; USVI</option><option value="pacific">Guam &amp; N. Marianas</option><option value="samoa">American Samoa</option></select></label></div>
+          <p class="airport-small" id="map-description">Select an airport on the map or use search. Drag to pan; use + / − to zoom.</p>
+          <div id="airport-map" aria-label="Interactive airport disruption map"></div>
+          <div id="airline-map-legend" class="airport-map-legend" aria-label="Disruption map legend"><span><i class="risk-0"></i>&lt;15%</span><span><i class="risk-1"></i>15–30%</span><span><i class="risk-2"></i>30–45%</span><span><i class="risk-3"></i>45%+</span><span><i class="risk-none"></i>No estimate</span><span><i class="airport-pin-low"></i>Low data</span><span><i class="risk-limited"></i>Limited evidence</span></div>
+          <div id="private-map-legend" class="airport-map-legend" aria-label="Ceiling and visibility map legend" hidden><span><i class="weather-vfr"></i>VFR</span><span><i class="weather-mvfr"></i>Marginal VFR</span><span><i class="weather-ifr"></i>IFR</span><span><i class="weather-lifr"></i>Low IFR</span><span><i class="weather-unknown"></i>No category / coverage</span><span><i class="risk-limited"></i>Conditional groups</span></div>
+          <p id="airline-map-note" class="airport-small">Colors show predicted delay or cancellation share (plus diversion for arrivals). Dashed rings mark limited model evidence or a band below its coverage target. Gray means no estimate, never “low risk.” Shading applies at airports, not the airspace between them.</p>
+          <p id="private-map-note" class="airport-small" hidden>Colors describe prevailing ceiling and visibility using <a href="https://aviationweather.gov/gfa/help/">NOAA weather categories</a>. Dashed rings flag temporary or probability groups; select an airport to read them. Wind, storms, terrain, route weather, aircraft limits, and pilot qualifications are not captured by this color. VFR does not mean safe to fly; gray does not mean good weather.</p>
+        </section>
+        <aside class="airport-outcome" aria-labelledby="outcome-title" aria-live="polite">
+          <p id="outcome-kicker" class="airport-kicker">Disruption outlook</p>
+          <h2 id="outcome-title">How likely is a delay?</h2>
+          <p class="airport-validation-label">Loading model evidence…</p>
+          <dl class="airport-probabilities" id="probability-list">
+            <div><dt>Delayed ≥15 minutes</dt><dd>—<span>Not estimated yet</span></dd></div>
+            <div><dt>Cancelled</dt><dd>—<span>Not estimated yet</span></dd></div>
+          </dl>
+          <div id="risk-interval"></div>
+          <div id="private-airport-summary" hidden></div>
+          <p id="model-explanation">Loading the airport outlook and its evaluation.</p>
+          <a id="evidence-link" href="#airport-evidence">See the backtest <span aria-hidden="true">↘</span></a>
+        </aside>
+        <section class="airport-weather-result" id="weather-result" aria-label="Airport conditions" aria-live="polite"><div class="airport-loading">Loading the latest downloaded weather for Dallas–Fort Worth…</div></section>
+      </div>
+      <div class="airport-provenance" id="provenance"></div>
+    </section>
+
+    <section class="airport-model-evidence" id="airport-evidence" aria-labelledby="evidence-title"><p class="airport-kicker">The airport’s data story</p><h2 id="evidence-title">What supports this estimate?</h2><label class="airport-evaluation-picker" id="evaluation-picker" hidden>Evaluation period<select id="evaluation-period"><option value="test">Winter backtest · Jan–Feb 2026</option><option value="stress">Previously seen stress test · Mar–Jun 2026</option></select></label><div id="evidence-content" aria-live="polite"><p>Loading the held-out evaluation…</p></div></section>
+
+    <section class="airport-coverage" aria-labelledby="coverage-title">
+      <div><p class="airport-kicker">Coverage, not a promise</p><h2 id="coverage-title">U.S. weather. Airport-specific evidence.</h2></div>
+      <div><p id="coverage-summary">The catalog includes large and medium airports in the United States and U.S. territories. Available observations and forecasts vary by airport.</p><p>The study assesses {airportCodes.length} major U.S. airports. {testedCodes.length} have at least one tested direction and forecast horizon. Each additional airport is fitted and calibrated using its own flight outcomes. Horizons without enough evidence show a reason, with weather context still available.</p><p>Major U.S. airports are the modeling target. Medium airports remain searchable for weather and private-aviation context. The flight-outcome population is reporting carriers’ scheduled domestic flights, not every flight using an airport.</p></div>
+    </section>
+
+    <section id="research" class="airport-research" aria-labelledby="research-title">
+      <div class="airport-section-head"><p class="airport-kicker">The research question</p><h2 id="research-title">How much warning is useful?</h2><p>I’m applying the same discipline I use in commercial forecasting: establish a baseline, measure what new information adds, and make uncertainty visible.</p></div>
+      <div class="airport-study-horizons">
+        <article><span>T−24</span><h3>A day to plan</h3><p>Can tomorrow’s weather distinguish an unusually disruptive airport window from a normal one?</p></article>
+        <article><span>T−12</span><h3>A forecast revision</h3><p>Does updated timing or a change in confidence improve the prediction?</p></article>
+        <article><span>T−6</span><h3>Closer to the operation</h3><p>How much additional signal is available as the airport’s arrival or departure window approaches?</p></article>
+      </div>
+      <div class="airport-research-grid">
+        <article><h3>Define the outcome</h3><p>Estimate the share of scheduled domestic airline flights departing late or cancelled, and arriving late, cancelled, or diverted, within a two-hour window. A delay is at least 15 minutes. These are mutually exclusive outcomes, with an on-time remainder.</p></article>
+        <article><h3>Reconstruct what was known</h3><p>Join each window to forecasts available at the cutoff. Keep original issues, amendments, and retrieval times. Later weather observations can verify a forecast, but cannot become an earlier prediction’s inputs.</p></article>
+        <article><h3>Measure what each input adds</h3><p>Compare a calendar baseline with the same learner plus airport forecasts. {v2 ? "The original 25 models retain their seasonal development experiment. Added airports use fixed regularized logistic models trained only on their own outcomes, with separate probability and uncertainty calibration." : "Fixed logistic models estimate cancellation, diversion, and delay."} Wind, gusts, visibility, ceiling, storms, precipitation, and forecast age enter alongside airport, local time, day-of-week, and seasonal patterns. Flight counts weight fitting and evaluation; actual arrival/departure volume and live congestion are not predictors.</p></article>
+        <article><h3>Publish the evidence</h3><p>Use chronological splits, probability calibration, Brier score, and log loss. Compare the same eligible windows at each horizon, report missing coverage, and assess uncertainty by day or storm rather than treating every flight as independent.</p></article>
+      </div>
+      <div class="airport-evidence-status"><strong>A test that can fail</strong><p>Fit: {study.train.join(" to ")}. Probability calibration: {study.probabilityCalibration.join(" to ")}. Interval calibration: {study.intervalCalibration.join(" to ")}. Winter backtest: {study.test.join(" to ")}. New airports retain the available windows at each horizon; matched-window scores separately compare T−24, T−12, and T−6 where all three forecasts exist. {v2 ? "These dates and some connected flight outcomes were inspected in prior experiments, so this is retrospective testing. March–June 2026 provides a separate stress re-evaluation. Prior versions remain downloadable." : "Unfavorable results remain visible."}</p><a href="/data/airport-weather/evaluation.json" download>Download the protocol, exclusions, sources, and evaluation (JSON)</a></div>
+    </section>
+
+    <AirportOperationsExperiment />
+    <AirportTrafficExperiment />
+
+    <section class="airport-replay" aria-labelledby="replay-title">
+      <div class="airport-section-head"><p class="airport-kicker">Historical replay · DFW · May 2025</p><h2 id="replay-title">What did the forecast say beforehand?</h2><p>Choose a two-hour airport window. Compare the archived forecasts at three cutoffs with the flight outcomes recorded afterward.</p></div>
+      <button type="button" class="button-primary" id="load-replay">Load the historical sample <span aria-hidden="true">↓</span></button>
+      <p class="airport-small">One month is a test of the data pipeline, not a representative annual baseline.</p>
+      <div id="replay-content" hidden>
+        <form id="replay-form" class="airport-replay-form">
+          <label>DFW date (local)<input id="replay-date" type="date" min="2025-05-01" max="2025-05-31" value="2025-05-15" required /></label>
+          <label>Window (DFW local time)<select id="replay-window">{Array.from({length:12},(_,i) => <option value={String(i*2)} selected={i===6}>{String(i*2).padStart(2,"0")}:00–{String(i*2+2).padStart(2,"0")}:00</option>)}</select></label>
+          <label>Flights<select id="replay-direction"><option value="departures">Departures</option><option value="arrivals">Arrivals</option></select></label>
+          <button type="submit" class="button-primary">Show this window</button>
+        </form>
+        <div id="replay-result" aria-live="polite"></div>
+        <details class="airport-replay-audit"><summary>Sample coverage and assumptions</summary><p id="replay-audit"></p><p>Historical availability is approximated as issue time plus 10 minutes; delivery timestamps have not been verified. Partial forecast coverage is marked. Arrival windows near the month boundary may omit flights whose departure fell in an adjacent source month. The denominator includes the reporting airlines’ scheduled domestic flights represented in this sample.</p><p>No cancellation announcement times are available here. This replay cannot determine which cancellations were already known at a cutoff, and does not attribute delays to weather.</p><a href="/data/airport-weather/replay.json" download>Download the replay data and source references (JSON)</a></details>
+      </div>
+      <p id="replay-error" class="airport-error" role="alert" hidden></p>
+    </section>
+
+    <section class="airport-notes" aria-labelledby="notes-title">
+      <h2 id="notes-title">Reading this tool</h2>
+      <details open><summary>Freshness and missing data</summary><p>{cloudConnected ? "A shared AWS collector checks the weather feeds hourly and publishes a complete snapshot for this page." : "The local collector checks once per hour while it is running. A static deployment stays at its last snapshot until a collector is connected."} Reports themselves have different issue schedules. Each result shows report and download times; an old or missing report is not evidence of good weather. Probabilities are withheld when the snapshot is more than 90 minutes old.</p></details>
+      <details><summary>Airport outlooks and individual flights</summary><p>This project does not look up a flight or monitor its current status. Estimates describe reporting carriers’ scheduled US domestic flights in an airport window, including cancellations. They do not condition on a flight still being active at the cutoff. Crew, maintenance, traffic restrictions, and disruptions elsewhere can change an individual flight’s outcome. Weather associations do not establish weather as the cause of every delay.</p></details>
+      <details><summary>Traffic volume and factors beyond weather</summary><p>The live model includes the airport, local hour, day of week, and season, with separate arrival and departure models. These capture typical operating patterns, but do not measure that day’s demand or congestion. Historical flight counts determine each window’s weight and evidence support; they are not traffic-volume inputs to the live model. The optional operations model adds recent FAA ground-stop/GDP advisory activity. Live arrival/departure demand, actual runway capacity, complete restriction scope, delay buildup, airline mix, staffing, maintenance, and aircraft rotations are not modeled.</p><p>The airport panel adds hourly FAA airport notices and a monthly runway inventory as separate context. The current-notice panel and runway inventory are separate context. The operations model uses recent advisory-message history rather than treating these displayed notices as universal restrictions. FAA status describes its report time, not the selected future departure or arrival; a missing notice is not evidence of normal operations. Runway counts and dimensions describe layout, not current usable capacity. Closure notices may affect only certain flights or include exceptions.</p><p>We tested a lagged historical traffic proxy against calendar and weather models on the same chronological windows. It did not establish a reliable general improvement, so the live model remains unchanged. <a href="#traffic-experiment">Read the experiment and its limitations.</a></p></details>
+      <details><summary>What confidence means here</summary><p>The 80% target band describes variation in the observed disruption share across two-hour windows. {v2 ? "Nine months of errors calibrate separate upper and lower limits, by airport and predicted-risk band where enough samples exist. Confidence intervals resample blocks of up to three days. Moderate evidence also requires a multiple-comparison adjustment across all tested slices, at least 45 test days and 5,000 flights, calibration error below five percentage points, and interval coverage of at least 75%." : "The original model uses one calibration month and whole-day resampling."} Temporal dependence means target coverage is not guaranteed. Actual coverage and band width are displayed; live confidence uses the winter backtest. There are {testSlices} tested airport, direction, and horizon combinations in that period.</p></details>
+      <details><summary>Backtest limitations and next experiments</summary><p>Historical forecast availability uses the later of issue and archive product time, plus 10 minutes. A 60-minute delivery sensitivity check is published. Final-vintage flight outcomes are used; data-release revisions and cancellation announcement times are not reconstructed. Low-volume windows, unknown outcomes, unsupported forecasts, month edges, and incomplete coverage are excluded. Backtests use fixed local two-hour blocks; the live view uses rolling windows. Live windows touching a local clock block with fewer than 30 eligible training windows show “low data.” {v2 ? "The winter and spring evaluations are retrospective. Additional-airport settings were fixed before fitting their models; training, probability calibration, uncertainty calibration, and test dates remain separate. Adjusted significance is approximate and does not remove dependence or selection uncertainty." : "Performance outside the tested season remains uncertain."} Forecast error, upstream disruption, aircraft rotation, and weather beyond the airport are not yet modeled.</p></details>
+      <details><summary>Private aviation and shared data</summary><p>Choose one airport, arrivals or departures, and the airport time. Results populate automatically, with forecast coverage at +6, +12, and +24 hours. Both aviation views use the same NOAA weather reports, FAA airport notices, and runway inventory. The arrival/departure selector identifies the operation at that airport; it does not change the underlying weather forecast or filter FAA notices into a complete restriction briefing.</p><p>The private-jet view is independent of airline-model coverage, so medium airports remain available wherever weather is reported. Map colors describe prevailing ceiling and visibility, with temporary and probability groups flagged separately. A missing or expired forecast stays unavailable; observations do not replace future forecasts.</p><p>Airline probabilities additionally use historical scheduled-airline outcomes. Those delay rates and backtest confidence have not been validated for private jets. Weather categories are not aircraft operating minima; this view does not assess aircraft capability, route conditions, or whether a flight is safe.</p></details>
+      <details><summary>Conditional weather forecasts</summary><p>Temporary, transition, and probability groups remain separate from prevailing conditions. A “30% weather group” concerns the specified weather, not a 30% chance of delay or cancellation. Missing fields in a change group do not mean calm winds or clear skies. Read the source report for its full context.</p></details>
+      <details><summary>Cost and operating limits</summary><p>This version uses public data without paid API subscriptions. Visitors read shared snapshots; opening the map never starts a data collection or training job.</p>{cloudConnected ? <><p>A shared AWS job refreshes weather hourly. It covers the airport catalog; airline probabilities are available only for the airports supported by the published model. A monthly job can evaluate a weather-model candidate after enough new flight outcomes arrive. The operations option currently uses the completed national backtest; its FAA inputs refresh hourly and are archived for future evaluation, while its fitted weights remain fixed. Candidate models require review before replacing an active model.</p><p>The service currently runs on an AWS Free account plan, with no charges while that plan is active. The trial ends March 11, 2027 or when credits run out, whichever comes first. Continued service then requires a separate cost review. Collection and training have run limits, size limits, an early budget stop, and a renewable operating period of at most 31 days. Missing, stale, or unverified data can interrupt estimates. No automatic paid upgrade is enabled.</p></> : <p>Collection has hourly and monthly request limits, download-size limits, and bounded archive storage. This page reads the latest locally published snapshots; unattended updates require the shared cloud service to be configured. Data subscription cost is $0. No paid fallback or automatic upgrade is enabled.</p>}</details>
+      <details><summary>Sources and coverage</summary><p>Weather comes from the <a href="https://aviationweather.gov/data/api/">NOAA Aviation Weather Center</a>. The collector uses its public bulk feeds and retains only weather for the U.S. airport catalog. Airport and runway metadata come from <a href="https://ourairports.com/data/">OurAirports</a>, using large and medium airports with four-character identifiers in the United States, Puerto Rico, the U.S. Virgin Islands, Guam, the Northern Mariana Islands, and American Samoa. Airport notices come from the <a href="https://www.fly.faa.gov/fly/FAQ/faq">FAA’s public airport-status feed</a>; en-route airspace programs are not mapped to individual airports. The operations option uses dated <a href="https://www.fly.faa.gov/adv/advAdvisoryForm">FAA advisory listings</a> for recent message activity. The study uses <a href="https://transtats.bts.gov/ONTIME/">BTS airline on-time records</a> and <a href="https://mesonet.agron.iastate.edu/request/taf.php">Iowa Environmental Mesonet forecast archives</a>. Geography is from <a href="https://www.naturalearthdata.com/about/terms-of-use/">Natural Earth</a>. Private aviation receives weather and airport context, without airline outcome probabilities.</p></details>
+    </section>
+  </div>
+  <script>
+    import "../../scripts/airport-weather";
+    import "../../scripts/airport-replay";
+  </script>
+</BaseLayout>

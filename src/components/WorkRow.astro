@@ -4,12 +4,10 @@ import { workHref, workIsExternal } from "../lib/site";
 
 interface Props {
   item: CollectionEntry<"work">;
-  index: number;
   headingLevel?: "h2" | "h3";
 }
 
-const { item, index, headingLevel = "h2" } = Astro.props;
-const number = String(index + 1).padStart(2, "0");
+const { item, headingLevel = "h3" } = Astro.props;
 const href = workHref(item.data);
 const external = workIsExternal(item.data);
 const Heading = headingLevel;
@@ -17,11 +15,10 @@ const Heading = headingLevel;
 
 <article class="work-row">
   <p class="meta work-row__context">
-    <span class="work-row__kind">
-      {number} / {item.data.kind === "professional" ? "Professional" : "Independent"}
-      {item.data.status === "in-development" ? " · In development" : ""}
-    </span>
     {item.data.organization}
+    <span class="work-row__kind">
+      {item.data.status === "in-development" ? "In development" : "Professional work"}
+    </span>
   </p>
   <div>
     <Heading>

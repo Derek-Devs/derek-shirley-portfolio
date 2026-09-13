@@ -1,0 +1,1321 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Airport weather: private hourly collection and review-only monthly learning. Disabled until billing preflight.",
+  "Parameters": {
+    "ImageUri": {
+      "Type": "String",
+      "AllowedPattern": "[0-9]{12}\\.dkr\\.ecr\\.us-east-2\\.amazonaws\\.com/[a-z0-9/_-]+@sha256:[a-f0-9]{64}"
+    },
+    "ContactEmail": {
+      "Type": "String",
+      "Default": "derek@derekdevs.com"
+    },
+    "EnableJobs": {
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [
+        "false",
+        "true"
+      ]
+    },
+    "EnableDelivery": {
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [
+        "false",
+        "true"
+      ]
+    }
+  },
+  "Rules": {
+    "ReviewedRegion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Equals": [
+              {
+                "Ref": "AWS::Region"
+              },
+              "us-east-2"
+            ]
+          },
+          "AssertDescription": "Deploy only in the reviewed project region."
+        }
+      ]
+    }
+  },
+  "Conditions": {
+    "JobsEnabled": {
+      "Fn::Equals": [
+        {
+          "Ref": "EnableJobs"
+        },
+        "true"
+      ]
+    },
+    "DeliveryEnabled": {
+      "Fn::Equals": [
+        {
+          "Ref": "EnableDelivery"
+        },
+        "true"
+      ]
+    }
+  },
+  "Resources": {
+    "Data": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "OwnershipControls": {
+          "Rules": [
+            {
+              "ObjectOwnership": "BucketOwnerEnforced"
+            }
+          ]
+        },
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "CorsConfiguration": {
+          "CorsRules": [
+            {
+              "AllowedOrigins": [
+                "https://www.derekdevs.com",
+                "https://derekdevs.com",
+                "http://127.0.0.1:4321"
+              ],
+              "AllowedMethods": [
+                "GET",
+                "HEAD"
+              ],
+              "AllowedHeaders": [
+                "*"
+              ],
+              "MaxAge": 3600
+            }
+          ]
+        },
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "Id": "Snapshots",
+              "Status": "Enabled",
+              "Prefix": "public/snapshots/",
+              "ExpirationInDays": 7
+            },
+            {
+              "Id": "ForecastEvidence",
+              "Status": "Enabled",
+              "Prefix": "archive/",
+              "ExpirationInDays": 400
+            },
+            {
+              "Id": "Challengers",
+              "Status": "Enabled",
+              "Prefix": "candidates/",
+              "ExpirationInDays": 90
+            },
+            {
+              "Id": "IncompleteUploads",
+              "Status": "Enabled",
+              "AbortIncompleteMultipartUpload": {
+                "DaysAfterInitiation": 1
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Control": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "BillingMode": "PROVISIONED",
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        },
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "TimeToLiveSpecification": {
+          "AttributeName": "expiresAt",
+          "Enabled": true
+        }
+      }
+    },
+    "CollectorLog": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${AWS::StackName}-collector"
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "CollectorRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "BoundedProjectAccess",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "freetier:GetAccountPlanState",
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "${Data.Arn}/active/*"
+                    },
+                    {
+                      "Fn::Sub": "${Data.Arn}/public/airports.json"
+                    },
+                    {
+                      "Fn::Sub": "${Data.Arn}/state/latest.json"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "${Data.Arn}/public/snapshots/*"
+                    },
+                    {
+                      "Fn::Sub": "${Data.Arn}/public/latest.json"
+                    },
+                    {
+                      "Fn::Sub": "${Data.Arn}/archive/*"
+                    },
+                    {
+                      "Fn::Sub": "${Data.Arn}/state/latest.json"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "dynamodb:ConditionCheckItem",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Control",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringEquals": {
+                      "dynamodb:LeadingKeys": [
+                        "control"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "dynamodb:PutItem",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Control",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "slot/collector/*"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "dynamodb:UpdateItem",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Control",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "quota/collector/*"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "CollectorLog",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "Collector": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": "CollectorLog",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${AWS::StackName}-collector"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "CollectorRole",
+            "Arn"
+          ]
+        },
+        "PackageType": "Image",
+        "Code": {
+          "ImageUri": {
+            "Ref": "ImageUri"
+          }
+        },
+        "Architectures": [
+          "x86_64"
+        ],
+        "Timeout": 120,
+        "MemorySize": 1024,
+        "EphemeralStorage": {
+          "Size": 512
+        },
+        "ReservedConcurrentExecutions": {
+          "Fn::If": [
+            "JobsEnabled",
+            1,
+            0
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "DATA_BUCKET": {
+              "Ref": "Data"
+            },
+            "CONTROL_TABLE": {
+              "Ref": "Control"
+            },
+            "JOB": "collector",
+            "ACCOUNT_ID": {
+              "Ref": "AWS::AccountId"
+            }
+          }
+        }
+      }
+    },
+    "CollectorRetry": {
+      "Type": "AWS::Lambda::EventInvokeConfig",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "Collector"
+        },
+        "Qualifier": "$LATEST",
+        "MaximumRetryAttempts": 0,
+        "MaximumEventAgeInSeconds": 60
+      }
+    },
+    "CollectorSchedule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "rate(1 hour)",
+        "State": {
+          "Fn::If": [
+            "JobsEnabled",
+            "ENABLED",
+            "DISABLED"
+          ]
+        },
+        "Targets": [
+          {
+            "Id": "collector",
+            "Arn": {
+              "Fn::GetAtt": [
+                "Collector",
+                "Arn"
+              ]
+            },
+            "Input": "{\"job\": \"collector\"}",
+            "RetryPolicy": {
+              "MaximumRetryAttempts": 0,
+              "MaximumEventAgeInSeconds": 60
+            }
+          }
+        ]
+      }
+    },
+    "CollectorPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "Collector"
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "CollectorSchedule",
+            "Arn"
+          ]
+        },
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        }
+      }
+    },
+    "LearningLog": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${AWS::StackName}-learning"
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "LearningRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "BoundedProjectAccess",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "freetier:GetAccountPlanState",
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "${Data.Arn}/active/*"
+                    },
+                    {
+                      "Fn::Sub": "${Data.Arn}/history/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "${Data.Arn}/history/*"
+                    },
+                    {
+                      "Fn::Sub": "${Data.Arn}/candidates/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "dynamodb:ConditionCheckItem",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Control",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringEquals": {
+                      "dynamodb:LeadingKeys": [
+                        "control"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "dynamodb:PutItem",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Control",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "slot/learning/*"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "dynamodb:UpdateItem",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Control",
+                      "Arn"
+                    ]
+                  },
+                  "Condition": {
+                    "ForAllValues:StringLike": {
+                      "dynamodb:LeadingKeys": [
+                        "quota/learning/*"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "LearningLog",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "Learning": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": "LearningLog",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${AWS::StackName}-learning"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "LearningRole",
+            "Arn"
+          ]
+        },
+        "PackageType": "Image",
+        "Code": {
+          "ImageUri": {
+            "Ref": "ImageUri"
+          }
+        },
+        "Architectures": [
+          "x86_64"
+        ],
+        "Timeout": 900,
+        "MemorySize": 3008,
+        "EphemeralStorage": {
+          "Size": 1024
+        },
+        "ReservedConcurrentExecutions": {
+          "Fn::If": [
+            "JobsEnabled",
+            1,
+            0
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "DATA_BUCKET": {
+              "Ref": "Data"
+            },
+            "CONTROL_TABLE": {
+              "Ref": "Control"
+            },
+            "JOB": "learning",
+            "ACCOUNT_ID": {
+              "Ref": "AWS::AccountId"
+            }
+          }
+        }
+      }
+    },
+    "LearningRetry": {
+      "Type": "AWS::Lambda::EventInvokeConfig",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "Learning"
+        },
+        "Qualifier": "$LATEST",
+        "MaximumRetryAttempts": 0,
+        "MaximumEventAgeInSeconds": 60
+      }
+    },
+    "LearningSchedule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "cron(0 10 15 * ? *)",
+        "State": {
+          "Fn::If": [
+            "JobsEnabled",
+            "ENABLED",
+            "DISABLED"
+          ]
+        },
+        "Targets": [
+          {
+            "Id": "learning",
+            "Arn": {
+              "Fn::GetAtt": [
+                "Learning",
+                "Arn"
+              ]
+            },
+            "Input": "{\"job\": \"learning\"}",
+            "RetryPolicy": {
+              "MaximumRetryAttempts": 0,
+              "MaximumEventAgeInSeconds": 60
+            }
+          }
+        ]
+      }
+    },
+    "LearningPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "Learning"
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "LearningSchedule",
+            "Arn"
+          ]
+        },
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        }
+      }
+    },
+    "BudgetTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "Subscription": [
+          {
+            "Protocol": "email",
+            "Endpoint": {
+              "Ref": "ContactEmail"
+            }
+          }
+        ]
+      }
+    },
+    "BudgetTopicPolicy": {
+      "Type": "AWS::SNS::TopicPolicy",
+      "Properties": {
+        "Topics": [
+          {
+            "Ref": "BudgetTopic"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "budgets.amazonaws.com"
+              },
+              "Action": "sns:Publish",
+              "Resource": {
+                "Ref": "BudgetTopic"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": {
+                    "Ref": "AWS::AccountId"
+                  }
+                },
+                "ArnLike": {
+                  "aws:SourceArn": {
+                    "Fn::Sub": "arn:aws:budgets::${AWS::AccountId}:*"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "StopLog": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${AWS::StackName}-stop"
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "StopRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "BoundedProjectAccess",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "dynamodb:UpdateItem",
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Control",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "lambda:PutFunctionConcurrency",
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "Collector",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "Learning",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": "events:DisableRule",
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "CollectorSchedule",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "LearningSchedule",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "StopLog",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "Stop": {
+      "Type": "AWS::Lambda::Function",
+      "DependsOn": "StopLog",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${AWS::StackName}-stop"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "StopRole",
+            "Arn"
+          ]
+        },
+        "PackageType": "Image",
+        "Code": {
+          "ImageUri": {
+            "Ref": "ImageUri"
+          }
+        },
+        "ImageConfig": {
+          "Command": [
+            "stop.main"
+          ]
+        },
+        "Timeout": 30,
+        "MemorySize": 128,
+        "ReservedConcurrentExecutions": 1,
+        "Environment": {
+          "Variables": {
+            "CONTROL_TABLE": {
+              "Ref": "Control"
+            },
+            "BUDGET_TOPIC": {
+              "Ref": "BudgetTopic"
+            },
+            "WORKER_FUNCTIONS": {
+              "Fn::Join": [
+                "",
+                [
+                  "[\"",
+                  {
+                    "Ref": "Collector"
+                  },
+                  "\",\"",
+                  {
+                    "Ref": "Learning"
+                  },
+                  "\"]"
+                ]
+              ]
+            },
+            "WORKER_RULES": {
+              "Fn::Join": [
+                "",
+                [
+                  "[\"",
+                  {
+                    "Ref": "CollectorSchedule"
+                  },
+                  "\",\"",
+                  {
+                    "Ref": "LearningSchedule"
+                  },
+                  "\"]"
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "StopSubscription": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "Protocol": "lambda",
+        "TopicArn": {
+          "Ref": "BudgetTopic"
+        },
+        "Endpoint": {
+          "Fn::GetAtt": [
+            "Stop",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "StopPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Ref": "Stop"
+        },
+        "Principal": "sns.amazonaws.com",
+        "SourceArn": {
+          "Ref": "BudgetTopic"
+        },
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        }
+      }
+    },
+    "Budget": {
+      "Type": "AWS::Budgets::Budget",
+      "DependsOn": "BudgetTopicPolicy",
+      "Properties": {
+        "Budget": {
+          "BudgetName": {
+            "Fn::Sub": "${AWS::StackName}-early-stop"
+          },
+          "BudgetType": "COST",
+          "TimeUnit": "MONTHLY",
+          "BudgetLimit": {
+            "Amount": 8,
+            "Unit": "USD"
+          },
+          "CostTypes": {
+            "IncludeCredit": false,
+            "IncludeRefund": false,
+            "IncludeTax": true
+          }
+        },
+        "NotificationsWithSubscribers": [
+          {
+            "Notification": {
+              "NotificationType": "ACTUAL",
+              "ComparisonOperator": "GREATER_THAN",
+              "ThresholdType": "ABSOLUTE_VALUE",
+              "Threshold": 2
+            },
+            "Subscribers": [
+              {
+                "SubscriptionType": "EMAIL",
+                "Address": {
+                  "Ref": "ContactEmail"
+                }
+              }
+            ]
+          },
+          {
+            "Notification": {
+              "NotificationType": "ACTUAL",
+              "ComparisonOperator": "GREATER_THAN",
+              "ThresholdType": "ABSOLUTE_VALUE",
+              "Threshold": 4
+            },
+            "Subscribers": [
+              {
+                "SubscriptionType": "EMAIL",
+                "Address": {
+                  "Ref": "ContactEmail"
+                }
+              }
+            ]
+          },
+          {
+            "Notification": {
+              "NotificationType": "ACTUAL",
+              "ComparisonOperator": "GREATER_THAN",
+              "ThresholdType": "ABSOLUTE_VALUE",
+              "Threshold": 8
+            },
+            "Subscribers": [
+              {
+                "SubscriptionType": "EMAIL",
+                "Address": {
+                  "Ref": "ContactEmail"
+                }
+              },
+              {
+                "SubscriptionType": "SNS",
+                "Address": {
+                  "Ref": "BudgetTopic"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "RuntimeDeny": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Deny",
+              "Action": [
+                "s3:*",
+                "dynamodb:*"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      }
+    },
+    "BudgetActionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "budgets.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "BoundedProjectAccess",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "iam:AttachRolePolicy",
+                    "iam:DetachRolePolicy",
+                    "iam:ListAttachedRolePolicies"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "CollectorRole",
+                        "Arn"
+                      ]
+                    },
+                    {
+                      "Fn::GetAtt": [
+                        "LearningRole",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "BudgetAction": {
+      "Type": "AWS::Budgets::BudgetsAction",
+      "Properties": {
+        "BudgetName": {
+          "Ref": "Budget"
+        },
+        "ActionType": "APPLY_IAM_POLICY",
+        "ActionThreshold": {
+          "Type": "ABSOLUTE_VALUE",
+          "Value": 8
+        },
+        "ApprovalModel": "AUTOMATIC",
+        "NotificationType": "ACTUAL",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "BudgetActionRole",
+            "Arn"
+          ]
+        },
+        "Definition": {
+          "IamActionDefinition": {
+            "PolicyArn": {
+              "Ref": "RuntimeDeny"
+            },
+            "Roles": [
+              {
+                "Ref": "CollectorRole"
+              },
+              {
+                "Ref": "LearningRole"
+              }
+            ]
+          }
+        },
+        "Subscribers": [
+          {
+            "Type": "EMAIL",
+            "Address": {
+              "Ref": "ContactEmail"
+            }
+          }
+        ]
+      }
+    },
+    "OriginAccess": {
+      "Type": "AWS::CloudFront::OriginAccessControl",
+      "Properties": {
+        "OriginAccessControlConfig": {
+          "Name": {
+            "Fn::Sub": "${AWS::StackName}-private-data"
+          },
+          "OriginAccessControlOriginType": "s3",
+          "SigningBehavior": "always",
+          "SigningProtocol": "sigv4"
+        }
+      }
+    },
+    "PathGuard": {
+      "Type": "AWS::CloudFront::Function",
+      "Properties": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-public-paths"
+        },
+        "AutoPublish": true,
+        "FunctionConfig": {
+          "Comment": "Only bounded public data paths",
+          "Runtime": "cloudfront-js-2.0"
+        },
+        "FunctionCode": "function handler(event) {\n      var r=event.request, reject={statusCode:404,statusDescription:'Not Found'};\n      if (/^\\/(latest|airports)\\.json$/.test(r.uri)) return r;\n      var m=r.uri.match(/^\\/snapshots\\/(\\d{4})(\\d{2})(\\d{2})T(\\d{2})0000Z\\/(risk\\.json|evaluation\\.json|operations\\/(?:risk|evaluation|release)\\.json|stations\\/([A-Z0-9]{2})\\.json)$/);\n      if (!m) return reject;\n      var iso=m[1]+'-'+m[2]+'-'+m[3]+'T'+m[4]+':00:00Z', at=Date.parse(iso), now=Date.now();\n      if (!isFinite(at) || new Date(at).toISOString().slice(0,19)!==iso.slice(0,19) || at>now+3600000 || at<now-7*86400000) return reject;\n      var prefixes=[\"07\",\"K6\",\"K7\",\"KA\",\"KB\",\"KC\",\"KD\",\"KE\",\"KF\",\"KG\",\"KH\",\"KI\",\"KJ\",\"KK\",\"KL\",\"KM\",\"KN\",\"KO\",\"KP\",\"KR\",\"KS\",\"KT\",\"KU\",\"KV\",\"KW\",\"KX\",\"KY\",\"KZ\",\"NS\",\"PA\",\"PF\",\"PG\",\"PH\",\"PP\",\"TI\",\"TJ\"];\n      if (m[6] && prefixes.indexOf(m[6])<0) return reject;\n      return r;\n    }"
+      }
+    },
+    "PublicResponseHeaders": {
+      "Type": "AWS::CloudFront::ResponseHeadersPolicy",
+      "Properties": {
+        "ResponseHeadersPolicyConfig": {
+          "Name": {
+            "Fn::Sub": "${AWS::StackName}-public-cors"
+          },
+          "Comment": "Apply the allowed viewer origin even when S3 headers came from a different cached request",
+          "CorsConfig": {
+            "AccessControlAllowCredentials": false,
+            "AccessControlAllowHeaders": {
+              "Items": [
+                "*"
+              ]
+            },
+            "AccessControlAllowMethods": {
+              "Items": [
+                "GET",
+                "HEAD"
+              ]
+            },
+            "AccessControlAllowOrigins": {
+              "Items": [
+                "https://www.derekdevs.com",
+                "https://derekdevs.com",
+                "http://127.0.0.1:4321"
+              ]
+            },
+            "OriginOverride": true
+          },
+          "SecurityHeadersConfig": {
+            "ContentTypeOptions": {
+              "Override": true
+            }
+          }
+        }
+      }
+    },
+    "Distribution": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Enabled": {
+            "Fn::If": [
+              "DeliveryEnabled",
+              true,
+              false
+            ]
+          },
+          "Comment": "Requires ACTIVE FREE AWS account plan; no paid-plan upgrade",
+          "Origins": [
+            {
+              "Id": "data",
+              "DomainName": {
+                "Fn::GetAtt": [
+                  "Data",
+                  "RegionalDomainName"
+                ]
+              },
+              "OriginPath": "/public",
+              "OriginAccessControlId": {
+                "Fn::GetAtt": [
+                  "OriginAccess",
+                  "Id"
+                ]
+              },
+              "S3OriginConfig": {
+                "OriginAccessIdentity": ""
+              }
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "TargetOriginId": "data",
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "AllowedMethods": [
+              "GET",
+              "HEAD"
+            ],
+            "CachedMethods": [
+              "GET",
+              "HEAD"
+            ],
+            "Compress": true,
+            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "ResponseHeadersPolicyId": {
+              "Ref": "PublicResponseHeaders"
+            },
+            "FunctionAssociations": [
+              {
+                "EventType": "viewer-request",
+                "FunctionARN": {
+                  "Fn::GetAtt": [
+                    "PathGuard",
+                    "FunctionARN"
+                  ]
+                }
+              }
+            ]
+          },
+          "ViewerCertificate": {
+            "CloudFrontDefaultCertificate": true
+          },
+          "HttpVersion": "http2",
+          "IPV6Enabled": true
+        }
+      }
+    },
+    "BucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "Data"
+        },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudfront.amazonaws.com"
+              },
+              "Action": "s3:GetObject",
+              "Resource": {
+                "Fn::Sub": "${Data.Arn}/public/*"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "AWS:SourceArn": {
+                    "Fn::Sub": "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}"
+                  }
+                }
+              }
+            },
+            {
+              "Effect": "Deny",
+              "Principal": "*",
+              "Action": "s3:*",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "Data",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Sub": "${Data.Arn}/*"
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "Bucket": {
+      "Value": {
+        "Ref": "Data"
+      }
+    },
+    "ControlTable": {
+      "Value": {
+        "Ref": "Control"
+      }
+    },
+    "DistributionId": {
+      "Value": {
+        "Ref": "Distribution"
+      }
+    },
+    "DistributionArn": {
+      "Value": {
+        "Fn::Sub": "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}"
+      }
+    },
+    "DataUrl": {
+      "Value": {
+        "Fn::Sub": "https://${Distribution.DomainName}"
+      }
+    },
+    "BudgetName": {
+      "Value": {
+        "Ref": "Budget"
+      }
+    },
+    "BudgetTopic": {
+      "Value": {
+        "Ref": "BudgetTopic"
+      }
+    }
+  }
+}
