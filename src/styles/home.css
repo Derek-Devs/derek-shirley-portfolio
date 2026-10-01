@@ -26,8 +26,9 @@
   font-family: var(--font-editorial);
   font-size: clamp(2.65rem, 4.6vw, 3.75rem);
   font-weight: 400;
-  letter-spacing: -0.045em;
-  line-height: 1.1;
+  font-kerning: normal;
+  letter-spacing: 0.02em;
+  line-height: 1.18;
   text-wrap: balance;
 }
 
@@ -124,8 +125,9 @@
   font-family: var(--font-editorial);
   font-size: clamp(1.8rem, 2.8vw, 2.5rem);
   font-weight: 400;
-  letter-spacing: -0.035em;
-  line-height: 1.18;
+  font-kerning: normal;
+  letter-spacing: 0.01em;
+  line-height: 1.22;
   text-wrap: pretty;
 }
 
@@ -220,7 +222,7 @@
   font-family: var(--font-editorial);
   font-size: 2.6rem;
   font-weight: 400;
-  letter-spacing: -0.055em;
+  letter-spacing: 0;
   line-height: 1.15;
 }
 
@@ -563,6 +565,6 @@
   border: 1px solid var(--border);
 }
 .home-research-project > div { max-width: 48rem; }
-.home-research-project h3 { margin: .5rem 0; font-family: var(--font-editorial); font-size: 1.6rem; font-weight: 400; }
+.home-research-project h3 { margin: .5rem 0; font-family: var(--font-editorial); font-size: 1.6rem; font-weight: 400; letter-spacing: 0.01em; }
 .home-research-project h3 a { color: var(--text); text-decoration: none; }
 .home-research-project p:last-child { margin-bottom: 0; font-size: 1rem; }

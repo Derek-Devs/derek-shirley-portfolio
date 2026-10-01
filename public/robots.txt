@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /license
 
 Sitemap: https://www.derekdevs.com/sitemap-index.xml
