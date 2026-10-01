@@ -3,7 +3,7 @@
 .airport-page h1, .airport-page h2, .airport-page h3, .airport-page h4, .airport-page p { margin-top: 0; }
 .airport-intro { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 2rem; }
 .airport-back { color: var(--text-secondary); font-size: .875rem; text-decoration: none; }
-.airport-intro h1 { font-family: var(--font-editorial); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; line-height: 1.12; margin: .8rem 0; letter-spacing: -.025em; }
+.airport-intro h1 { font-family: var(--font-editorial); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; line-height: 1.2; margin: .8rem 0; font-kerning: normal; letter-spacing: 0.015em; }
 .airport-intro p { margin-bottom: 0; color: var(--text-secondary); }
 .airport-method-link { font-size: .875rem; white-space: nowrap; padding-bottom: .25rem; }
 .airport-tool { border: 1px solid var(--border); background: var(--elevated); border-radius: var(--radius); overflow: hidden; }
@@ -41,7 +41,7 @@
 .airport-loading { min-height: 22rem; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
 .airport-station + .airport-station { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); }
 .airport-station-heading { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-.airport-code { display: flex; align-items: center; justify-content: center; min-width: 6rem; min-height: 5.5rem; padding: .5rem; background: var(--accent-strong); color: var(--canvas); border-radius: var(--radius); font-family: var(--font-mono); font-size: 2rem; letter-spacing: -.06em; }
+.airport-code { display: flex; align-items: center; justify-content: center; min-width: 6rem; min-height: 5.5rem; padding: .5rem; background: var(--accent-strong); color: var(--canvas); border-radius: var(--radius); font-family: var(--font-mono); font-size: 2rem; letter-spacing: 0; }
 .airport-station-heading h2 { font-family: var(--font-editorial); font-size: 1.5rem; font-weight: 400; line-height: 1.2; margin-bottom: .2rem; }
 .airport-station-heading p:last-child { font-size: .9375rem; color: var(--text-secondary); margin-bottom: 0; }
 .airport-operations { margin: 1.5rem 0 2rem; }

@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../lib/site";
+---
+
+<BaseLayout
+  title="License"
+  description="Ownership, warranty, and liability notice for derekdevs.com."
+  noindex={true}
+>
+  <article class="site-shell legal-page">
+    <h1>License</h1>
+    <p class="meta">Last updated September 30, 2026</p>
+
+    <section>
+      <h2>Ownership</h2>
+      <p>
+        This website and its contents are owned by {site.name}, unless a page
+        says otherwise. All rights reserved. You may view the site for your own
+        personal, non-commercial use. Reproducing, republishing, or using the
+        material for any other purpose needs prior permission. Email{" "}
+        <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>No warranty</h2>
+      <p>
+        The site is provided as is and as available. Case studies, forecasts,
+        research, and other writing describe past work or experiments. They are
+        not legal, medical, financial, or other professional advice, and they
+        are not a promise that a method or result will apply to anyone else.
+      </p>
+    </section>
+
+    <section>
+      <h2>Liability</h2>
+      <p>
+        To the fullest extent the law allows, {site.name} is not liable for
+        damages of any kind arising out of your use of, or inability to use,
+        this website or its content. That includes claims that the content is
+        inaccurate, incomplete, or unsuitable for a particular purpose. This
+        notice does not limit any liability that applicable law does not allow
+        to be limited.
+      </p>
+      <p>
+        The <a href="/terms">Terms of Service</a> also apply, including their
+        choice of Texas law and Tarrant County venue.
+      </p>
+    </section>
+  </article>
+</BaseLayout>

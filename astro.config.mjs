@@ -5,7 +5,12 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://www.derekdevs.com",
   trailingSlash: "never",
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => !page.endsWith("/license"),
+    }),
+  ],
   vite: {
     // Cached research data and Python environments are not website source.
     server: { watch: { ignored: ["**/.airport-data/**"] } },
