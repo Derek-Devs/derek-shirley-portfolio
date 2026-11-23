@@ -1,6 +1,6 @@
 # Derek Shirley | Marketing Analytics & Growth Measurement
 
-**[View the live site](https://www.derekdevs.com)**
+**[View the live site](https://derekdevs.com)**
 
 Static professional portfolio for attribution, forecasting, commercial decision support, and analytics leadership.
 
