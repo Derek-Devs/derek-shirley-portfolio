@@ -1,11 +1,11 @@
 export const site = {
   name: "Derek Shirley",
   url: "https://www.derekdevs.com",
-  title: "Derek Shirley | Marketing Analytics & Growth Measurement",
+  title: "Derek Shirley | Marketing Measurement & Analytics Engineering",
   description:
-    "Derek Shirley builds the measurement marketing and growth teams use to decide where budget goes: attribution, marketing mix models, experiments and forecasts.",
+    "Derek Shirley builds the measurement teams use to decide where marketing budget goes: attribution, marketing mix models, experiments and forecasts on governed dbt and Snowflake models.",
   ogDescription:
-    "Marketing measurement work in attribution, marketing mix models, experiments, forecasting and analytics engineering.",
+    "Derek Shirley builds the measurement teams use to decide where marketing budget goes: attribution, marketing mix models, experiments and forecasts on governed dbt and Snowflake models.",
   email: "derek@derekdevs.com",
   location: "Dallas-Fort Worth, Texas",
   github: "https://github.com/Derek-Devs",
