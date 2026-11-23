@@ -47,7 +47,7 @@ export function privateWeather(station: Station | undefined, target: number, sna
     : 'This snapshot has no airport forecast or observation for this airport.' };
   const from = Date.parse(latest.validFrom); const to = Date.parse(latest.validTo);
   if (!(from <= target && target < to)) return { ...empty, status: 'outside-coverage', label: 'Outside forecast coverage',
-    detail: `${target >= to ? 'Latest forecast ends' : 'Latest forecast starts'} ${utcLabel(target >= to ? to : from)}; selected time is ${utcLabel(target)}. ${target >= to ? 'Try an earlier look-ahead or wait for a later forecast issue.' : 'Choose a time within this forecast’s valid period.'}` };
+    detail: `${target >= to ? 'Latest forecast ends' : 'Latest forecast starts'} ${utcLabel(target >= to ? to : from)}, and the selected time is ${utcLabel(target)}. ${target >= to ? 'Try an earlier look-ahead or wait for a later forecast issue.' : 'Choose a time within this forecast’s valid period.'}` };
   const periods = periodsAt(latest, target);
   const bases = periods.filter(p => !isConditional(p));
   const prevailing = bases.length === 1 && bases[0].change !== 'BECMG' ? bases[0] : undefined;
