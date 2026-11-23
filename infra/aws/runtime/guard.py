@@ -63,18 +63,40 @@ def validate_publication(files):
             raise ValueError('Unexpected public path')
 
 
-def require_free_account(plan, account_id, now=None):
-    """Validate AWS's live account-plan response; credits on a paid plan are insufficient."""
+def _exact_active_account(plan, account_id, plan_type):
+    return (isinstance(plan, dict) and isinstance(account_id, str) and len(account_id) == 12 and account_id.isdigit()
+            and plan.get('accountId') == account_id and plan.get('accountPlanType') == plan_type
+            and plan.get('accountPlanStatus') == 'ACTIVE')
+
+
+def _remaining_credits(plan):
+    """Return the remaining USD credit balance. A missing, malformed, or empty balance raises."""
     import math
-    now = now or datetime.now(timezone.utc)
-    if (not isinstance(account_id, str) or len(account_id) != 12 or not account_id.isdigit()
-            or plan.get('accountId') != account_id or plan.get('accountPlanType') != 'FREE'
-            or plan.get('accountPlanStatus') != 'ACTIVE'):
-        raise ValueError('The exact account must have an ACTIVE FREE account plan; paid plans require a new billing design')
-    credits = plan.get('accountPlanRemainingCredits', {})
-    amount = float(credits.get('amount', 0))
+    credits = plan.get('accountPlanRemainingCredits') or {}
+    try:
+        amount = float(credits.get('amount', 0))
+    except (TypeError, ValueError, AttributeError):
+        raise ValueError('Account credits are unreadable') from None
     if credits.get('unit') != 'USD' or not math.isfinite(amount) or amount <= 0:
-        raise ValueError('Free account credits are missing or exhausted')
+        raise ValueError('Account credits are missing or exhausted')
+    return amount
+
+
+def paid_credit_floor():
+    """The reviewed minimum credit balance for work on a paid plan. A bad setting stops work."""
+    import math
+    floor = LIMITS.get('minimumPaidCreditsUsd')
+    if isinstance(floor, bool) or not isinstance(floor, (int, float)) or not math.isfinite(floor) or floor <= 0:
+        raise ValueError('The paid-plan credit floor is missing or invalid')
+    return float(floor)
+
+
+def require_free_account(plan, account_id, now=None):
+    """Validate an ACTIVE FREE plan with credits and a future expiry, and return that expiry."""
+    now = now or datetime.now(timezone.utc)
+    if not _exact_active_account(plan, account_id, 'FREE'):
+        raise ValueError('The exact account must have an ACTIVE FREE account plan')
+    _remaining_credits(plan)
     expiry = plan.get('accountPlanExpirationDate')
     if isinstance(expiry, str):
         expiry = datetime.fromisoformat(expiry.replace('Z', '+00:00'))
@@ -83,9 +105,26 @@ def require_free_account(plan, account_id, now=None):
     return expiry
 
 
-def check_free_account(account_id):
+def require_billing_protection(plan, account_id, now=None):
+    """Validate AWS's live account-plan response before any work, deployment, or activation.
+
+    An ACTIVE FREE plan passes as before and returns its expiry. An ACTIVE PAID plan passes only
+    while AWS reports remaining credits at or above the reviewed floor in limits.json. It returns
+    None because a paid plan has no expiry. Credits pay first, and the separate early-stop budget
+    still measures usage before credits. Anything else, including an unreadable balance, raises.
+    """
+    if isinstance(plan, dict) and plan.get('accountPlanType') == 'PAID':
+        if not _exact_active_account(plan, account_id, 'PAID'):
+            raise ValueError('The exact account must have an ACTIVE account plan')
+        if _remaining_credits(plan) < paid_credit_floor():
+            raise ValueError('Paid account credits are below the reviewed floor')
+        return None
+    return require_free_account(plan, account_id, now)
+
+
+def check_billing_protection(account_id):
     import boto3
     from botocore.config import Config
     client = boto3.client('freetier', region_name='us-east-1',
                          config=Config(connect_timeout=5, read_timeout=10, retries={'total_max_attempts': 1}))
-    return require_free_account(client.get_account_plan_state(), account_id)
+    return require_billing_protection(client.get_account_plan_state(), account_id)

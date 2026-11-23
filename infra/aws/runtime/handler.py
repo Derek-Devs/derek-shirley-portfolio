@@ -118,9 +118,9 @@ def main(event, context):
     s3, ddb = clients()
     try:
         reserve(ddb, os.environ['CONTROL_TABLE'], job)
-        # A paid-plan upgrade must never silently authorize this Free-plan deployment.
-        from guard import check_free_account
-        check_free_account(os.environ['ACCOUNT_ID'])
+        # A paid plan authorizes work only while AWS reports credits at or above the reviewed floor.
+        from guard import check_billing_protection
+        check_billing_protection(os.environ['ACCOUNT_ID'])
     except Exception as error:
         # A missing, corrupt, exhausted or unreachable ledger disables work.
         print(json.dumps({'status': 'paused', 'reason': type(error).__name__, 'job': job}))
