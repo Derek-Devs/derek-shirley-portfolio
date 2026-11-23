@@ -106,7 +106,7 @@ function privateAirportSummary() {
     const time = anchor + h * 3600000;
     const summary = privateWeather(station, time, snapshot.generatedAt, now, loadError);
     return `<tr class="${h === horizon ? 'airport-selected-row' : ''}"><th scope="row">+${h}h</th><td>${e(utcLabel(time))}</td><td>${e(summary.label)}</td></tr>`;
-  }).join('')}</tbody></table><p class="airport-small">The map and selected airport use the same ${operation} time. Arrival and departure views share the airport forecast; this selection does not create a private-jet delay probability.</p>`;
+  }).join('')}</tbody></table><p class="airport-small">The map and selected airport use the same ${operation} time. Arrival and departure views share the airport forecast. This selection does not create a private-jet delay probability.</p>`;
 }
 
 function metrics(c: Conditions | undefined, temperature?: number | null) {
@@ -245,7 +245,7 @@ async function refresh() {
     setAirportGeneration(snapshot.dataPrefix);
     const c = snapshot.coverage;
     const majorCount = airports.filter(a => a.size === 'large_airport').length;
-    get("coverage-summary").textContent = `${airports.length.toLocaleString()} airports in the United States and U.S. territories, including ${majorCount} classified as large. ${c.airports === airports.length ? `${c.observations.toLocaleString()} have an observation and ${c.forecasts.toLocaleString()} have an airport forecast in this snapshot.` : 'U.S. weather is shown for each selection; aggregate weather counts will appear after the next U.S. collection.'} Weather availability does not establish model accuracy.`;
+    get("coverage-summary").textContent = `${airports.length.toLocaleString()} airports in the United States and U.S. territories, including ${majorCount} classified as large. ${c.airports === airports.length ? `${c.observations.toLocaleString()} have an observation and ${c.forecasts.toLocaleString()} have an airport forecast in this snapshot.` : 'U.S. weather is shown for each selection. Aggregate weather counts will appear after the next U.S. collection.'} Weather availability does not establish model accuracy.`;
     await refreshRisk(snapshot.generatedAt);
     if (horizon !== null) setHorizon(horizon);
     await showSelection();

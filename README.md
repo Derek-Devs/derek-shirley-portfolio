@@ -23,7 +23,7 @@ The airport project at `/work/airport-weather` reads static snapshots from a bou
 - `src/lib/site.ts`: shared metadata, contact details, and résumé URL.
 - `public/Derek_Shirley_Resume.pdf`: the one-page résumé download. Update the PDF and shared URL together when replacing it; preserve redirects for old public URLs in `netlify.toml`.
 
-Lark Health content stays at résumé level and matches `src/content/experience/lark-health.mdx`. Do not add Lark results, data, charts or partner names. Work in design or prototype remains labeled as such.
+Lark Health content stays at résumé level and uses only wording approved for public use. Do not add Lark charts or partner names other than Samsung. Work in design or prototype remains labeled as such.
 
 ## Visual design
 
