@@ -1,8 +1,8 @@
 ---
 import experiment from '../../public/data/airport-weather/experiments/traffic-proxy-v1.json';
 const periods = [
-  {name:'Winter · January–February 2026', result:experiment.summary.test},
-  {name:'Spring · March–June 2026', result:experiment.summary.previouslySeenStressTest},
+  {name:'Winter · January to February 2026', result:experiment.summary.test},
+  {name:'Spring · March to June 2026', result:experiment.summary.previouslySeenStressTest},
 ];
 const pp = (value: number) => `${(100 * value).toFixed(2)} pp`;
 ---
@@ -27,8 +27,8 @@ const pp = (value: number) => `${(100 * value).toFixed(2)} pp`;
   </div>
   <details class="airport-metric-details"><summary>How the traffic test avoids looking ahead</summary>
     <p>At each airport, older flight counts estimate typical arrivals and departures by local weekday and two-hour block. The profile uses up to 12 source months with a conservative 120-day publication lag. Missing source months are excluded, not counted as zero. Actual flight counts in the predicted window never become a predictor.</p>
-    <p>Calendar-only, calendar plus weather, and calendar plus weather plus traffic use the same fixed airport-local logistic learner, with separate probability and uncertainty calibration. Traffic features include typical demand, demand relative to historical peak periods, adjacent periods, and weather interactions. Historical peaks are not measured runway capacity.</p>
-    <p>Model fitting uses September 2023–June 2024, probability calibration July–December 2024, and uncertainty calibration January–September 2025. Both 2026 evaluation periods are retrospective. Their dates and connected outcomes have been seen before. The publication lag is assumed rather than reconstructed from historical data releases.</p>
+    <p>The calendar-only, calendar + weather and calendar + weather + traffic variants use the same fixed airport-local logistic learner, with separate probability and uncertainty calibration. Traffic features include typical demand, demand relative to historical peak periods, adjacent periods and weather interactions. Historical peaks are not measured runway capacity.</p>
+    <p>Model fitting uses September 2023 to June 2024. Probability calibration uses July to December 2024, and uncertainty calibration uses January to September 2025. Both 2026 evaluation periods are retrospective. Their dates and connected outcomes have been seen before. The publication lag is assumed rather than reconstructed from historical data releases.</p>
     <p>The tables average the matched airport/direction/horizon comparisons equally. Tests across horizons may contain different windows. The downloadable report also provides flight-weighted comparisons with shared calendar-block uncertainty. This experiment has different fitting dates and local comparators from the live model, so it is not a direct before/after production comparison.</p>
     <p><a href="/data/airport-weather/experiments/traffic-proxy-v1.json" download>Download protocol and airport results (JSON)</a> · <a href="/data/airport-weather/experiments/traffic-proxy-v1-full.json.gz" download>Full reproducibility report (compressed JSON)</a></p>
   </details>
