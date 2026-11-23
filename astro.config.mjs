@@ -21,5 +21,8 @@ export default defineConfig({
     "/customer-dashboard": { status: 301, destination: "/work" },
     "/videoGameSales": { status: 301, destination: "/work" },
     "/TTRPGSentiments": { status: 301, destination: "/work" },
+    "/work/lark-attribution": { status: 301, destination: "/work" },
+    "/work/lark-enrollment-forecasting": { status: 301, destination: "/work" },
+    "/work/lark-lifecycle": { status: 301, destination: "/work" },
   },
 });

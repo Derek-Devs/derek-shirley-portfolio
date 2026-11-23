@@ -10,7 +10,13 @@
 
 [[redirects]]
   from = "/Derek_Shirley_Resume_2025.pdf"
-  to = "/Derek_Shirley_Resume_2026.pdf"
+  to = "/Derek_Shirley_Resume.pdf"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/Derek_Shirley_Resume_2026.pdf"
+  to = "/Derek_Shirley_Resume.pdf"
   status = 301
   force = true
 
@@ -40,6 +46,24 @@
 
 [[redirects]]
   from = "/TTRPGSentiments"
+  to = "/work"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/work/lark-attribution"
+  to = "/work"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/work/lark-enrollment-forecasting"
+  to = "/work"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/work/lark-lifecycle"
   to = "/work"
   status = 301
   force = true

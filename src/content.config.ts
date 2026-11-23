@@ -15,6 +15,7 @@ const work = defineCollection({
     demo: z.string().optional(),
     featured: z.boolean().optional(),
     status: z.enum(["in-development"]).optional(),
+    draft: z.boolean().optional(),
     order: z.number(),
   }),
 });

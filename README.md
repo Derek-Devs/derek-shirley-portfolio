@@ -17,17 +17,17 @@ The airport project at `/work/airport-weather` reads static snapshots from a bou
 
 ## Content
 
-- `src/content/cases/`: full case studies, including attribution and partner enrollment forecasting.
-- `src/content/work/`: summaries and display order for the full work catalog.
+- `src/content/cases/`: full case studies.
+- `src/content/work/`: summaries and display order for the full work catalog. Set `draft: true` to keep an entry's source file without listing it.
 - `src/content/experience/`: role history, contributions, and leadership scope.
 - `src/lib/site.ts`: shared metadata, contact details, and résumé URL.
-- `public/Derek_Shirley_Resume_2026.pdf`: the one-page résumé download. Update the PDF and shared URL together when replacing it; preserve redirects for old public URLs in `netlify.toml`.
+- `public/Derek_Shirley_Resume.pdf`: the one-page résumé download. Update the PDF and shared URL together when replacing it; preserve redirects for old public URLs in `netlify.toml`.
 
-Forecast validation summaries are dated. Update them when new evidence is available, keeping the monthly, per-partner scope explicit. Work in design or prototype remains labeled as such.
+Lark Health content stays at résumé level and matches `src/content/experience/lark-health.mdx`. Do not add Lark results, data, charts or partner names. Work in design or prototype remains labeled as such.
 
 ## Visual design
 
-The homepage is an editorial selection in `src/pages/index.astro`, with its layout in `src/styles/home.css`. `DecisionGraphic.astro` contains three distinct, static figures for attribution, proposed budgets, and the forecasting workflow. Keep figure values and qualifications consistent with the corresponding case studies when updating them.
+The homepage is an editorial selection in `src/pages/index.astro`, with its layout in `src/styles/home.css`. `DecisionGraphic.astro` contains the static proposed-budget figure for the Dave & Buster’s story. Keep its values and qualifications consistent with that case study when updating it.
 
 Write copy in plain first-person language about Derek’s actual responsibilities, methods, and results. Use descriptive headings. Avoid slogans, stacked sentence fragments, generic claims about growth or decisions, and repeated summaries that add no information. Keep the distinction between attribution and causal lift, proposed and realized spend, and shipped work and prototypes clear.
 
