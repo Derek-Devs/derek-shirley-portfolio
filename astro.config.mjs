@@ -3,7 +3,7 @@ import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://www.derekdevs.com",
+  site: "https://derekdevs.com",
   trailingSlash: "never",
   integrations: [
     mdx(),

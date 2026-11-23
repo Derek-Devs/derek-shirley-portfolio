@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /license
 
-Sitemap: https://www.derekdevs.com/sitemap-index.xml
+Sitemap: https://derekdevs.com/sitemap-index.xml

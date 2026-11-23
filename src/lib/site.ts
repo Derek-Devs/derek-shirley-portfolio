@@ -1,6 +1,6 @@
 export const site = {
   name: "Derek Shirley",
-  url: "https://www.derekdevs.com",
+  url: "https://derekdevs.com",
   title: "Derek Shirley | Marketing Measurement & Analytics Engineering",
   description:
     "Derek Shirley helps marketing teams see what’s working and where to spend next, with attribution, mix models, experiments and forecasts on dbt and Snowflake.",
