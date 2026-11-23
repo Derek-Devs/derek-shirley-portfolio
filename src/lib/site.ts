@@ -3,14 +3,14 @@ export const site = {
   url: "https://www.derekdevs.com",
   title: "Derek Shirley | Marketing Analytics & Growth Measurement",
   description:
-    "Derek Shirley leads marketing analytics at Lark Health. Read about his work in attribution, enrollment forecasting, marketing budgets, and pricing analytics.",
+    "Derek Shirley builds the measurement marketing and growth teams use to decide where budget goes: attribution, marketing mix models, experiments and forecasts.",
   ogDescription:
-    "Marketing analytics at Lark Health, with projects in attribution, enrollment forecasting, and budget planning.",
+    "Marketing measurement work in attribution, marketing mix models, experiments, forecasting and analytics engineering.",
   email: "derek@derekdevs.com",
   location: "Dallas-Fort Worth, Texas",
   github: "https://github.com/Derek-Devs",
   linkedin: "https://www.linkedin.com/in/derekdevs/",
-  resume: "/Derek_Shirley_Resume_2026.pdf",
+  resume: "/Derek_Shirley_Resume.pdf",
   themeColor: "#f6f3ed",
   darkThemeColor: "#171c19",
 } as const;

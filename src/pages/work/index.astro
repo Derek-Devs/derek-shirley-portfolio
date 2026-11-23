@@ -3,7 +3,8 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import WorkRow from "../../components/WorkRow.astro";
 
-const work = await getCollection("work");
+// Drafts keep their source files but are not listed.
+const work = await getCollection("work", ({ data }) => !data.draft);
 const professional = work
   .filter((item) => item.data.kind === "professional")
   .sort((a, b) => a.data.order - b.data.order);
@@ -49,8 +50,8 @@ const independent = work
         Independent research
       </h2>
       <p class="section-lede">
-        I’m studying airport disruption forecasts alongside marketing
-        incrementality and budget allocation. These projects show the work as it develops.
+        I’m studying how much warning weather forecasts give about airport
+        delays and cancellations. This project shows the work as it develops.
       </p>
       <div class="work-list">
         {
