@@ -1,5 +1,33 @@
 # AWS operating plan and deployment runbook
 
+## November 23 paid-plan billing design
+
+AWS now reports this account on the paid plan, with $132.21 in credits remaining. The change happened around October 25, 2026, when fellstrike.com was registered through Route 53 in this account. That $16 registration also pushed October's reported usage to $16.73, past the $8 early stop. The stop fired on October 26 at 03:42 UTC. It disabled both schedules and set worker concurrency to zero. The operating lease had already ended on October 12 at 23:34 UTC. `manage.py pause` ran on November 23 so the stack parameters match the stopped state again.
+
+Before this change, every check required an ACTIVE FREE plan. The guard now accepts two account states:
+
+- An ACTIVE FREE plan with credits and a future expiry, as before.
+- An ACTIVE PAID plan with remaining credits at or above `minimumPaidCreditsUsd` in `limits.json`, currently $20.
+
+Anything else stops work, including a missing or unreadable credit balance or a bad floor setting. The workers, `manage.py`, `build_image.py`, and both deploy scripts use the same check. Credits pay for usage first. The $8 early-stop budget, its IAM deny action, and the stop function are unchanged. The budget measures usage before credits, so it still limits collector usage if a service is not covered by credits. A paid plan has no expiry, so `activate` grants at most 31 days.
+
+`activate` now reads the stack parameters, both schedules, both worker concurrency limits, and the worker role policies before it writes the control record. If the stack has jobs on but a schedule or worker concurrency is off, it stops and asks for `pause` first. It also stops while the budget deny policy is still attached to a worker role. When jobs are already on, it renews only the lease and skips the stack update, which CloudFormation would otherwise reject as having nothing to change.
+
+The early-stop budget covers the whole account, so fellstrike.com charges count toward it. The domain renews for $16 on October 24, 2027, which would trip the stop again. Moving the domain and its hosted zone to the fellstrike account avoids that.
+
+Measured collector usage before credits was $0.21 for September 11 to 30 and about $0.23 for October 1 to 12. All 744 hourly runs of the first lease published, with no Lambda errors or throttles. The no-allowance estimate below still applies as a ceiling.
+
+### Renewal sequence
+
+Run these from the checkout that holds `.airport-data`, after this change is in that checkout. Each command takes `--profile portfolio-airport --account-id 552969574724`.
+
+1. Rebuild the image so the workers carry the new guard. Run `build_image.py prepare --reuse-repository`, then `bootstrap --reuse-repository`. Wait for that stack, then run `start`, check `status` until it succeeds, and run `cleanup`.
+2. If the stack still has jobs on, run `manage.py pause` and wait for UPDATE_COMPLETE.
+3. Run `manage.py activate` and wait for UPDATE_COMPLETE.
+4. Run `deploy_operations.py runtime` right away and wait for UPDATE_COMPLETE. Until it finishes, the old image pauses each hour without doing work.
+5. After the next hourly run, use `deploy_operations.py verify`. It compares against the review that `runtime` just wrote. The `deploy_faa_model.py verify` command compares against the September release's control record and image, so it fails after any renewal.
+6. Every 31 days, review spend and quality, then run `manage.py activate` again.
+
 ## September 12 nationwide FAA model update
 
 The optional operations model adds recent FAA advisory history to locally fitted
@@ -80,12 +108,12 @@ The source of truth is `infra/aws/limits.json`; regenerate CloudFormation after 
 | Logs / candidates | Seven-day logs; 90-day candidate retention |
 | Initial activation | 31 days; no automatic renewal |
 | Budget notifications | $2 and $4; automatic worker stop after reported spend exceeds $8 |
-| Billing protection | AWS must report the exact account as **ACTIVE FREE**, with credits and a future expiry |
+| Billing protection | AWS must report the exact account as **ACTIVE FREE** with credits and a future expiry, or **ACTIVE PAID** with at least $20 in credits |
 | Build | One manually started small CodeBuild worker; ten-minute build timeout; no recurring build |
 
 Every job reserves quota in a DynamoDB transaction before data access. Disabled, expired, missing, corrupt, or unreachable control state prevents work. Reservations are not refunded after failure. Worker IAM permissions cannot reset the control switch or their counters. The two schedule targets are the only provisioned invocation permissions; there is no API Gateway, function URL, VM, NAT gateway, GPU, provisioned Lambda concurrency, model endpoint, or autoscaling service.
 
-After reserving quota, each worker checks `freetier:GetAccountPlanState`. Paid, expired, missing, exhausted, or unverifiable plan state prevents weather downloads, model fitting, and publication. Deployment, seeding, and activation also check the live API. Activation cannot extend past an hour before the Free plan expires. The workers have no permission to upgrade the account plan.
+After reserving quota, each worker checks `freetier:GetAccountPlanState`. An expired, missing, or unverifiable plan state prevents weather downloads, model fitting, and publication. So does a paid plan with credits below the reviewed floor. Deployment, seeding, and activation also check the live API. On the Free plan, activation cannot extend past an hour before the plan expires. The workers have no permission to upgrade the account plan.
 
 The budget stop disables both schedules, sets worker concurrency to zero, and turns off the persistent control switch. An independent AWS Budgets IAM action denies the worker roles access to S3 and DynamoDB. The stop is sticky; month rollover does not renew the activation lease or enable the control switch. Stopped data becomes visibly stale, and the website withholds old probabilities after 90 minutes. S3 retention and the small fixed DynamoDB allocation can still incur charges while workers are paused.
 
@@ -110,7 +138,7 @@ The usage estimates are not a permanent all-in bill ceiling. The current protect
 
 **The user's ongoing limit remains $20 maximum.** `manage.py` now verifies the live Free account plan rather than accepting a manual claim of billing protection. AWS Budgets reports can lag usage, so the $8 action remains an early stop, not a contractual $20 cap. [AWS Budgets timing](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html).
 
-Continuing beyond the trial requires a separate billing review and user decision. AWS's paid-project spend limit has a minimum of $20 and applies before tax, so it does not automatically satisfy a $20 all-in limit. The current scripts reject paid plans even if credits remain. Do not upgrade the project merely to keep the service running. [AWS project spend limits](https://docs.aws.amazon.com/accounts/latest/reference/create-spend-limit.html).
+Continuing beyond the trial requires a separate billing review and user decision. AWS's paid-project spend limit has a minimum of $20 and applies before tax, so it does not automatically satisfy a $20 all-in limit. Since November 23, the scripts accept a paid plan only while credits stay at or above the reviewed floor. See the paid-plan section at the top. Do not upgrade the project merely to keep the service running. [AWS project spend limits](https://docs.aws.amazon.com/accounts/latest/reference/create-spend-limit.html).
 
 The local Docker engine cannot start because WSL reports `HCS_E_HYPERV_NOT_INSTALLED`. No Windows features, BIOS settings, or restart were changed. `build_image.py` prepares an explicit source allowlist (Python tools, runtime, protocols, requirements, Dockerfile), excluding credentials, Git data, private archives, and the rest of the portfolio. Its temporary CodeBuild project permits one manually started small build, ten minutes maximum, with no webhook, schedule, fleet, or image server. A ten-minute general1.small build is at most $0.05 in base compute before allowances; the verified Free account plan covers charges. [CodeBuild pricing](https://aws.amazon.com/codebuild/pricing/).
 

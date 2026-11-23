@@ -1,7 +1,8 @@
 """Prepare/inspect the AWS deployment. Cloud writes always require an exact target account.
 
 No credentials are accepted as command arguments. Use a temporary-credential AWS profile.
-Cloud creation and activation require AWS to report an active Free account plan.
+Cloud creation and activation require AWS to report an active Free account plan, or an active
+paid plan with remaining credits at or above the reviewed floor in limits.json.
 """
 import argparse
 from datetime import datetime, timedelta, timezone
@@ -14,7 +15,7 @@ import zipfile
 HERE = Path(__file__).parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE / 'runtime'))
-from guard import LIMITS, validate_pair, require_free_account
+from guard import LIMITS, validate_pair, require_billing_protection
 from template import build
 
 
@@ -83,7 +84,7 @@ def account_plan(session, account_id):
     plan = session.client('freetier', region_name='us-east-1',
                           config=Config(retries={'total_max_attempts': 1})).get_account_plan_state()
     plan.pop('ResponseMetadata', None)
-    require_free_account(plan, account_id)
+    require_billing_protection(plan, account_id)
     return plan
 
 
@@ -92,7 +93,7 @@ def preflight(session, args):
     limits = session.client('lambda').get_account_settings()['AccountLimit']
     if limits['ConcurrentExecutions'] < 103:
         raise ValueError('Lambda quota must support three reserved executions plus the unreserved minimum')
-    print(json.dumps({'status': 'active-free-account-verified', 'region': LIMITS['region'],
+    print(json.dumps({'status': 'billing-protection-verified', 'region': LIMITS['region'],
                       'plan': plan, 'lambdaLimits': limits}, default=str))
     return plan
 
@@ -110,8 +111,40 @@ def inspect(session, args):
     budget = session.client('budgets').describe_budget(AccountId=args.account_id, BudgetName=out['BudgetName'])['Budget']
     if float(budget['BudgetLimit']['Amount']) > 8 or budget['BudgetLimit']['Unit'] != 'USD':
         raise ValueError('Early stop budget is missing or above $8')
-    print(json.dumps({'status': 'free-account-and-budget-checked', 'plan': plan, 'automaticPromotion': False, **out}, default=str))
+    print(json.dumps({'status': 'billing-protection-and-budget-checked', 'plan': plan, 'automaticPromotion': False, **out}, default=str))
     return out
+
+
+def jobs_state(parameters, rule_states, concurrency, deny_attached):
+    """Decide how activation reaches the enabled state.
+
+    'needs-update' when the stack parameters still have jobs or delivery off. 'current' when the
+    parameters and the live schedules and worker concurrency already agree that jobs run, so only
+    the lease needs renewing. Anything in between is drift, for example after a budget stop changed
+    live resources outside CloudFormation, and raises before any control write.
+    """
+    if deny_attached:
+        raise ValueError('The budget stop deny policy is still attached to a worker role. Wait for the budget period to reset')
+    if parameters.get('EnableJobs') != 'true' or parameters.get('EnableDelivery') != 'true':
+        return 'needs-update'
+    if rule_states and concurrency and all(s == 'ENABLED' for s in rule_states.values()) and all(c == 1 for c in concurrency.values()):
+        return 'current'
+    raise ValueError('The stack has jobs on, but a schedule or worker concurrency is off, for example after a budget stop. '
+                     'Run pause, wait for UPDATE_COMPLETE, then activate')
+
+
+def live_jobs_state(session, stack):
+    cf = session.client('cloudformation')
+    parameters = {p['ParameterKey']: p['ParameterValue'] for p in cf.describe_stacks(StackName=stack)['Stacks'][0]['Parameters']}
+    physical = lambda logical: cf.describe_stack_resource(StackName=stack, LogicalResourceId=logical)['StackResourceDetail']['PhysicalResourceId']
+    events, lam, iam = session.client('events'), session.client('lambda'), session.client('iam')
+    rule_states = {job: events.describe_rule(Name=physical(job + 'Schedule'))['State'] for job in ('Collector', 'Learning')}
+    concurrency = {job: lam.get_function_concurrency(FunctionName=physical(job)).get('ReservedConcurrentExecutions')
+                   for job in ('Collector', 'Learning')}
+    deny = physical('RuntimeDeny')
+    deny_attached = any(p['PolicyArn'] == deny for role in ('CollectorRole', 'LearningRole')
+                        for p in iam.list_attached_role_policies(RoleName=physical(role))['AttachedPolicies'])
+    return jobs_state(parameters, rule_states, concurrency, deny_attached)
 
 
 def main():
@@ -160,14 +193,21 @@ def main():
         raw = read(s3, out['Bucket'], 'active/model.json')
         validate_pair(json.loads(raw), json.loads(read(s3, out['Bucket'], 'active/evaluation.json')), raw)
         read(s3, out['Bucket'], 'history/index.json')
+        # Decide before any control write, so drift cannot leave a renewed lease with schedules off.
+        state = live_jobs_state(session, args.stack)
         now = datetime.now(timezone.utc)
-        until = min(now + timedelta(days=LIMITS['maximumActivationDays']),
-                    require_free_account(plan, args.account_id, now) - timedelta(hours=1))
+        until = now + timedelta(days=LIMITS['maximumActivationDays'])
+        plan_expiry = require_billing_protection(plan, args.account_id, now)
+        if plan_expiry is not None:
+            until = min(until, plan_expiry - timedelta(hours=1))
         if until <= now:
             raise ValueError('Free account plan expires too soon for safe activation')
         session.client('dynamodb').update_item(TableName=out['ControlTable'], Key={'id': {'S': 'control'}},
             UpdateExpression='SET enabled = :yes, authorizedUntil = :until', ConditionExpression='attribute_exists(id)',
             ExpressionAttributeValues={':yes': {'BOOL': True}, ':until': {'N': str(int(until.timestamp()))}})
+        if state == 'current':
+            # Jobs already run, so CloudFormation has nothing to change. Only the lease is renewed.
+            print(json.dumps({'status': 'lease-renewed', 'authorizedUntil': until.isoformat(), 'dataUrl': out['DataUrl'], 'stackUpdate': 'not-needed'})); return
         response = session.client('cloudformation').update_stack(StackName=args.stack, UsePreviousTemplate=True,
             Parameters=[{'ParameterKey': 'ImageUri', 'UsePreviousValue': True}, {'ParameterKey': 'ContactEmail', 'UsePreviousValue': True},
                         {'ParameterKey': 'EnableJobs', 'ParameterValue': 'true'}, {'ParameterKey': 'EnableDelivery', 'ParameterValue': 'true'}], Capabilities=['CAPABILITY_IAM'])
