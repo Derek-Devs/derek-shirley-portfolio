@@ -328,6 +328,26 @@
   line-height: 1.65;
 }
 
+.home-strengths {
+  padding-bottom: 3.5rem;
+}
+
+/* Same item styling as the management list, laid out side by side. */
+.leadership-evidence--columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+  padding-top: 0.6rem;
+}
+
+.leadership-evidence--columns > div + div {
+  margin-top: 0;
+  padding-top: 0;
+  padding-left: 2rem;
+  border-top: 0;
+  border-left: 1px solid var(--border);
+}
+
 .home-contact {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -415,6 +435,23 @@
   .home-leadership {
     margin-top: 2.5rem;
     padding-top: 2.5rem;
+  }
+
+  .home-strengths {
+    padding-bottom: 2.5rem;
+  }
+
+  .leadership-evidence--columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .leadership-evidence--columns > div + div {
+    margin-top: 1.4rem;
+    padding-top: 1.4rem;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    border-left: 0;
   }
 
   .home-leadership__intro {

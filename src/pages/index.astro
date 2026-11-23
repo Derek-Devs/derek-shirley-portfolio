@@ -9,13 +9,16 @@ import { site } from "../lib/site";
   <div class="site-shell editorial-home">
     <section class="home-intro" aria-labelledby="home-title">
       <div class="home-intro__copy">
-        <p class="eyebrow">Marketing analytics &amp; growth measurement</p>
+        <p class="eyebrow">Marketing measurement &amp; analytics engineering</p>
         <h1 id="home-title">
-          I build the measurement marketing and growth teams use to decide
-          where budget goes: attribution, marketing mix models, experiments
-          and forecasts, plus the governed dbt and Snowflake models underneath
-          them.
+          I build the measurement teams use to decide where marketing budget
+          goes.
         </h1>
+        <p class="home-intro__dek">
+          Attribution, marketing mix models, experiments and forecasts, built
+          on governed dbt and Snowflake models. I work with AI coding agents
+          and safety guardrails, which raised my delivery throughput 2.6x.
+        </p>
         <div class="home-intro__actions">
           <a class="button-primary" href="#selected-work">View my work <span aria-hidden="true">↓</span></a>
           <a class="text-link" href={site.resume} download>Résumé <span class="link-detail">PDF · one page</span></a>
@@ -31,10 +34,41 @@ import { site } from "../lib/site";
           decoding="async"
         />
         <figcaption>
-          <span>Based in Dallas–Fort Worth</span>
-          <span>Open to remote and hybrid roles</span>
+          <span>Based in Dallas-Fort Worth</span>
+          <span>Open to remote, hybrid and contract roles</span>
         </figcaption>
       </figure>
+    </section>
+
+    <section class="home-strengths" aria-labelledby="strengths-title">
+      <div class="section-heading">
+        <h2 class="eyebrow" id="strengths-title">What I bring</h2>
+      </div>
+      <dl class="leadership-evidence leadership-evidence--columns">
+        <div>
+          <dt>Marketing measurement</dt>
+          <dd>
+            Multi-touch attribution, marketing mix modeling in Google Meridian,
+            holdout and A/B test design, and partner enrollment forecasting.
+          </dd>
+        </div>
+        <div>
+          <dt>Analytics engineering</dt>
+          <dd>
+            Governed dbt models on Snowflake and Databricks, metric
+            definitions, and a semantic layer designed on dbt MetricFlow and
+            Lightdash.
+          </dd>
+        </div>
+        <div>
+          <dt>AI-assisted delivery</dt>
+          <dd>
+            Cursor and Claude agents with root-level safety hooks, used only in
+            dev environments and never on production data, for about 2.6x more
+            throughput.
+          </dd>
+        </div>
+      </dl>
     </section>
 
     <section class="selected-stories" id="selected-work" aria-labelledby="selected-work-title">
@@ -90,9 +124,8 @@ import { site } from "../lib/site";
         <p class="eyebrow">Management experience</p>
         <h2 id="leadership-title">Managing teams and mentoring analysts</h2>
         <p>
-          I’ve managed sales teams and established a pricing analytics
-          department. I’ve also helped select analysts and trained
-          colleagues at several companies.
+          I’ve managed a sales team, built a pricing analytics department, and
+          set team standards for analysts.
         </p>
         <a class="text-link arrow-link" href="/experience">Full experience <span aria-hidden="true">→</span></a>
       </div>
@@ -107,11 +140,11 @@ import { site } from "../lib/site";
           </dd>
         </div>
         <div>
-          <dt>Selecting and developing analysts</dt>
+          <dt>Setting team standards</dt>
           <dd>
-            At Dave &amp; Buster’s, I selected and recommended the analyst who
-            was hired, then trained the new hire. I’ve
-            also coached analysts at GameStop.
+            At Lark Health, I led 8 analytics initiatives, set up the new
+            team’s documentation and peer-review process within 48 hours, and
+            coached other analysts.
           </dd>
         </div>
         <div>

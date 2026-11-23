@@ -60,7 +60,7 @@ element("load-replay").addEventListener("click", async () => {
     data = await response.json();
     const represented = data.windows.reduce((sum, w) => sum + w.counts.scheduled, 0);
     const excludedTime = (data.qa.excluded_arrivals_time || 0) + (data.qa.excluded_departures_time || 0);
-    element("replay-audit").textContent = `${data.qa.dfwRows.toLocaleString()} DFW-related source records; ${represented.toLocaleString()} represented across ${data.windows.length} nonempty airport windows. ${data.qa.outsideLocalMonth || 0} fall outside the DFW local month; ${excludedTime} could not be placed in time; ${data.qa.duplicatesSkipped || 0} duplicates were excluded. ${data.forecastIssues} original forecast bulletins were checked. Windows without flights are not assigned a zero disruption rate.`;
+    element("replay-audit").textContent = `${data.qa.dfwRows.toLocaleString()} DFW-related source records, with ${represented.toLocaleString()} represented across ${data.windows.length} nonempty airport windows. ${data.qa.outsideLocalMonth || 0} fall outside the DFW local month, ${excludedTime} could not be placed in time, and ${data.qa.duplicatesSkipped || 0} duplicates were excluded. ${data.forecastIssues} original forecast bulletins were checked. Windows without flights are not assigned a zero disruption rate.`;
     element("replay-content").hidden = false;
     element("replay-error").hidden = true;
     button.hidden = true;

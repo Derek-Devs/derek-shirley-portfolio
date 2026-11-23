@@ -45,7 +45,7 @@ export function operationsPanel(airport: Airport, station: Station | undefined, 
       <div class="airport-operations-card airport-faa" data-faa-state="${state}">
         <h4>FAA restrictions & delays</h4><p class="airport-operations-status">${e(labels[state])}</p>
         <p class="airport-small">${faaTimes}</p>
-        ${state === 'stale' ? '<p class="airport-notice">The last report is old or its refresh failed. Notices below are historical context; current status is unknown.</p>' : ''}
+        ${state === 'stale' ? '<p class="airport-notice">The last report is old or its refresh failed. Notices below are historical context, and current status is unknown.</p>' : ''}
         ${events.length ? `<ul class="airport-notices">${events.map(event => `<li><strong>${e(titles[event.type] ?? 'FAA notice')}</strong>
           ${['ground-stop', 'ground-delay'].includes(event.type) ? '<p class="airport-small">Can hold flights bound for this airport at their departure airports.</p>' : ''}
           <p class="airport-faa-reason">${e(event.reason || 'Reason not supplied')}</p>
