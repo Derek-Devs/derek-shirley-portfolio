@@ -10,12 +10,12 @@ import { site } from "../lib/site";
     <section class="home-intro" aria-labelledby="home-title">
       <div class="home-intro__copy">
         <p class="eyebrow">Marketing analytics &amp; growth measurement</p>
-        <h1 id="home-title">I lead marketing analytics at Lark Health.</h1>
-        <p class="home-intro__dek">
-          I build attribution models and enrollment forecasts used to plan
-          marketing spend. I also develop the data systems and reporting
-          the team relies on.
-        </p>
+        <h1 id="home-title">
+          I build the measurement marketing and growth teams use to decide
+          where budget goes: attribution, marketing mix models, experiments
+          and forecasts, plus the governed dbt and Snowflake models underneath
+          them.
+        </h1>
         <div class="home-intro__actions">
           <a class="button-primary" href="#selected-work">View my work <span aria-hidden="true">↓</span></a>
           <a class="text-link" href={site.resume} download>Résumé <span class="link-detail">PDF · one page</span></a>
@@ -32,7 +32,7 @@ import { site } from "../lib/site";
         />
         <figcaption>
           <span>Based in Dallas–Fort Worth</span>
-          <span>Working remotely</span>
+          <span>Open to remote and hybrid roles</span>
         </figcaption>
       </figure>
     </section>
@@ -44,49 +44,34 @@ import { site } from "../lib/site";
 
       <article class="lead-story">
         <div class="lead-story__copy">
-          <p class="story-context">Lark Health <span>Attribution</span></p>
-          <h3><a href="/work/lark-attribution">Correcting direct-mail attribution</a></h3>
+          <p class="story-context">Lark Health <span>November 2025 to November 2026</span></p>
+          <h3><a href="/experience#lark-health">Marketing attribution and measurement</a></h3>
           <p>
-            Direct mail, a channel with <strong>$550K in annual spend</strong>,
-            was going to be discontinued. I rebuilt the acquisition
-            measurement, recovered its attributed enrollments, and reversed
-            that decision.
+            Led marketing analytics, attribution and measurement for partner
+            programs and direct-to-consumer growth at an AI health coaching
+            company.
           </p>
-          <p class="lead-story__support">
-            Across the trailing 365-day view around March 2026, unknown
-            enrollment attribution also fell from about <strong>42% to 8%</strong>.
-          </p>
-          <a class="text-link arrow-link" href="/work/lark-attribution">Read the attribution case <span aria-hidden="true">↗</span></a>
+          <a class="text-link arrow-link" href="/experience#lark-health">Read the Lark Health summary <span aria-hidden="true">→</span></a>
         </div>
-        <DecisionGraphic kind="attribution" />
+        <ul class="story-points">
+          <li>Rebuilt marketing attribution across web, paid media, direct mail, partner and enrollment channels in governed Snowflake/dbt models.</li>
+          <li>Built the measurement layer for the Samsung Health partnership launch, from metric definitions and first- and last-touch attribution to launch-day reporting.</li>
+          <li>Built 12-month partner enrollment forecasts that guided send volumes and direct-mail budgets, and designed a randomized direct-mail holdout test.</li>
+        </ul>
       </article>
 
       <div class="supporting-stories">
         <article class="supporting-story">
           <div class="supporting-story__copy">
-            <p class="story-context">Dave &amp; Buster’s <span>Investment planning</span></p>
+            <p class="story-context">Dave &amp; Buster’s <span>Marketing planning and web analysis</span></p>
             <h3><a href="/work/dnb-marketing-ecosystem">A $6.9M Q4 budget recommendation</a></h3>
             <p>
               On a three-hour deadline, I built the media-contribution model
               used to recommend a $6.9M Q4 budget to the CEO and CMO.
             </p>
-            <a class="text-link arrow-link" href="/work/dnb-marketing-ecosystem">Read the planning case <span aria-hidden="true">↗</span></a>
+            <a class="text-link arrow-link" href="/work/dnb-marketing-ecosystem">Read the case study <span aria-hidden="true">↗</span></a>
           </div>
-          <DecisionGraphic kind="budget" />
-        </article>
-
-        <article class="supporting-story">
-          <div class="supporting-story__copy">
-            <p class="story-context">Lark Health <span>Enrollment forecasting</span></p>
-            <h3><a href="/work/lark-enrollment-forecasting">Enrollment forecasts for three Lark partners</a></h3>
-            <p>
-              I built and shipped forecasts for Carelon, BCBSAL, and MMO to
-              guide send volumes and direct-mail budgets, with email costs
-              considered too.
-            </p>
-            <a class="text-link arrow-link" href="/work/lark-enrollment-forecasting">Read the forecasting case <span aria-hidden="true">↗</span></a>
-          </div>
-          <DecisionGraphic kind="forecast" />
+          <DecisionGraphic />
         </article>
       </div>
       <a class="text-link arrow-link all-work-link" href="/work">All work &amp; research <span aria-hidden="true">→</span></a>
@@ -126,7 +111,7 @@ import { site } from "../lib/site";
           <dd>
             At Dave &amp; Buster’s, I selected and recommended the analyst who
             was hired, then trained the new hire. I’ve
-            also coached analysts at GameStop and Lark.
+            also coached analysts at GameStop.
           </dd>
         </div>
         <div>
@@ -134,7 +119,6 @@ import { site } from "../lib/site";
           <dd>
             At Park West, I managed up to five salespeople and coordinated
             staff from other departments for art movement and auction setup.
-            Today, I’m Lark’s sole owner of marketing analytics.
           </dd>
         </div>
       </dl>
@@ -143,7 +127,12 @@ import { site } from "../lib/site";
     <section class="home-contact" aria-labelledby="home-contact-title">
       <div>
         <h2 id="home-contact-title">Contact</h2>
-        <p>I’m interested in remote roles leading marketing analytics and growth measurement.</p>
+        <p>
+          Open to staff, lead and senior IC roles and analytics leadership in
+          marketing measurement, growth analytics and analytics engineering.
+          Full-time remote, or hybrid in Dallas-Fort Worth, and open to
+          relocating. Available now for contract work too.
+        </p>
       </div>
       <div class="home-contact__actions">
         <a class="button-primary" href={"mailto:" + site.email}>Email me <span aria-hidden="true">↗</span></a>
