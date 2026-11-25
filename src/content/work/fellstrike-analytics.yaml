@@ -1,0 +1,8 @@
+title: "Game analytics on one set of checked metrics"
+organization: Fellstrike
+kind: independent
+summary: An analytics stack for Fellstrike, a browser game I make. Every metric is defined once in dbt and MetricFlow, and Lightdash dashboards, an AI agent and an A/B test readout all use those same definitions.
+impact: 118 of 118 metric values match plain SQL, and 848 of 848 dashboard values match the semantic layer. The AI agent answered 20 of 20 test questions correctly, twice. All results come from 1,200 simulated players.
+href: /work/fellstrike-analytics
+github: https://github.com/Derek-Devs/fellstrike-analytics
+order: 0

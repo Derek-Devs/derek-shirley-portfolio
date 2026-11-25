@@ -483,3 +483,21 @@
 .home-research-project h3 { margin: .5rem 0; font-family: var(--font-editorial); font-size: 1.6rem; font-weight: 400; letter-spacing: 0.01em; }
 .home-research-project h3 a { color: var(--text); text-decoration: none; }
 .home-research-project p:last-child { margin-bottom: 0; font-size: 1rem; }
+
+/* Two independent projects side by side, below the professional stories. */
+.home-research-projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.home-research-projects .home-research-project {
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 0;
+}
+.home-research-projects .home-research-project h3 { font-size: 1.4rem; }
+
+@media (max-width: 48rem) {
+  .home-research-projects { grid-template-columns: minmax(0, 1fr); }
+}

@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CaseSection from "../../components/CaseSection.astro";
 import ConsequenceFigure from "../../components/ConsequenceFigure.astro";
+import ScreenshotFigure from "../../components/ScreenshotFigure.astro";
 import SystemFigure from "../../components/SystemFigure.astro";
 
 export async function getStaticPaths() {
@@ -53,6 +54,7 @@ const timeframe = entry.data.timeframe ?? entry.data.year;
       components={{
         CaseSection,
         ConsequenceFigure,
+        ScreenshotFigure,
         SystemFigure,
       }}
     />

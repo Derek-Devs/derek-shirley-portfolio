@@ -17,7 +17,13 @@ const Heading = headingLevel;
   <p class="meta work-row__context">
     {item.data.organization}
     <span class="work-row__kind">
-      {item.data.status === "in-development" ? "In development" : "Professional work"}
+      {
+        item.data.status === "in-development"
+          ? "In development"
+          : item.data.kind === "independent"
+            ? "Independent project"
+            : "Professional work"
+      }
     </span>
   </p>
   <div>

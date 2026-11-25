@@ -1,0 +1,117 @@
+---
+title: Game analytics on one set of checked metrics
+kicker: Independent project / Fellstrike
+organization: Fellstrike
+role: Sole builder. Event tracking, warehouse, dbt models, semantic layer, dashboards, AI agent and experiment design
+year: "2026"
+summary: I built an analytics stack for Fellstrike, a browser game I make. Every metric is defined once and checked, and the dashboards, an AI agent and an A/B test all use those same definitions.
+question: Learn when players come back, where they give up and whether a new opening would help. Every tool should give the same answer to the same question.
+impact: 118 of 118 metric values match plain SQL. 848 of 848 dashboard values match the semantic layer. The AI agent answered 20 of 20 test questions correctly, twice. All results come from 1,200 simulated players.
+methods: JSON Schema event contract, Postgres 16, dbt Core, MetricFlow semantic layer, Lightdash, MCP agent server, A/B test design with hash assignment and an A/A check.
+seoTitle: Game analytics on one set of checked metrics | Fellstrike
+seoDescription: How Derek Shirley built dbt models, a MetricFlow semantic layer, Lightdash dashboards, an AI agent limited to defined metrics and an A/B test for a browser game.
+---
+
+<CaseSection number="01" kicker="Problem" title="Different tools, different numbers">
+
+Fellstrike is a browser tactics game I make. I wanted to know how people play its Endless mode: when they come back, where they give up, and whether a change to how a run opens would help. The game only sent a report at the end of each battle. That works for balancing, but it can’t show a session, a turn or the moment a player quits.
+
+The bigger problem is one most companies have. When dashboards, ad hoc SQL and AI tools each calculate a metric their own way, teams get different answers to the same question and argue about which is right. I wanted every metric defined once, used the same way by every tool, and checked.
+
+</CaseSection>
+
+<CaseSection number="02" kicker="System" title="One set of definitions behind every answer" rail="65 metrics, defined once">
+
+- **Events with a contract.** Twelve kinds of event share one JSON Schema. The game’s tests, the server and the simulator all check every event against it. Tracking keeps nothing that identifies a person, and turning it off deletes everything.
+- **dbt models.** 34 models with 163 tests turn events into sessions, runs, battles and retention. Every rate is built from a yes or no flag, so every metric is a simple sum or a ratio of two sums.
+- **A semantic layer.** 65 metrics live in MetricFlow. Lightdash and the AI agent both read those definitions, so neither one writes its own version of a metric.
+- **An AI agent with no SQL tool.** It can list, describe and query the defined metrics, and nothing else. Every answer names its metric, its data source and the SQL that ran.
+
+Everything runs on one PC at no cost, apart from a small endpoint on the game’s existing server.
+
+<SystemFigure
+  caption="Fellstrike analytics, from play events to answers"
+  stages={[
+    { title: "Events", items: ["Game tracker with a JSON Schema contract", "Simulated players on the game’s own rules", "Postgres 16 warehouse"] },
+    { title: "dbt and MetricFlow", items: ["34 models, 163 tests", "65 metrics on 11 semantic models", "Real and simulated data kept apart"] },
+    { title: "Answers", items: ["Lightdash: 4 dashboards, 26 charts", "AI agent limited to defined metrics", "A/B test readout"] },
+  ]}
+/>
+
+</CaseSection>
+
+<CaseSection number="03" kicker="Data" title="Simulated players, kept apart from real ones" rail="1,200 simulated players">
+
+Real play data isn’t flowing yet, because tracking stays off until launch. So I wrote a simulator. Bots play by the game’s real rules, and written assumptions decide when they come back, how long they think and when they quit. It produced 2.3 million events from 1,200 players.
+
+Every table keeps real and simulated rows apart in a source column, from the first model to the last chart. No number ever adds the two together. Every result on this page comes from the simulated players.
+
+</CaseSection>
+
+<ScreenshotFigure
+  src="/images/fellstrike/players-and-retention.webp"
+  width={1800}
+  height={1175}
+  alt="Lightdash dashboard titled Players and retention, labeled as simulated data. Four tiles read D1 retention 37.3%, D7 retention 21.4%, 4.13 runs per player and a 68.6% run completion rate, above charts of weekly active players and new and returning players by week."
+  caption="Figure 1 · The Players and retention dashboard in Lightdash. Simulated data from 1,200 bot players."
+  href="https://github.com/Derek-Devs/fellstrike-analytics/blob/main/docs/screenshots/players-and-retention.png"
+/>
+
+<CaseSection number="04" kicker="Checks" title="Every tool gives the same number" rail="118 of 118 and 848 of 848">
+
+A shared definition only helps if every tool returns the same value. I checked each layer against the one below it.
+
+- **The semantic layer against plain SQL.** I wrote each metric again in plain SQL. 118 of 118 values match.
+- **The dashboards against the semantic layer.** By source and by week, 848 of 848 Lightdash values match MetricFlow.
+- **The AI agent against known answers.** I asked it 20 questions and scored its answers against plain SQL. It got 20 of 20 right on two separate runs. Four questions asked for data the project doesn’t have, such as revenue or which marketing campaign brought in the most players. It said so each time instead of guessing.
+
+</CaseSection>
+
+<CaseSection number="05" kicker="Experiment" title="An A/B test that can’t be peeked at" rail="A/A split 602 to 598">
+
+I planned an experiment on how a run opens, and wrote the plan before launch: the metrics, the sample sizes and the dates. The readout shows only player counts until the planned end date, so nobody can stop the test early on a lucky result.
+
+Each player’s group comes from a hash of their player ID, so the browser, the simulator and the warehouse all agree on who is in which group. In an A/A test, both groups get the same game. It split 602 to 598 players and found no difference on any metric. Over 1,000 reshuffled A/A splits, 5.4% showed a false difference, close to the 5% that chance predicts.
+
+The change the experiment will test isn’t in the game yet, so today the readout shows only the A/A test.
+
+</CaseSection>
+
+<ScreenshotFigure
+  src="/images/fellstrike/experiment-readout.webp"
+  width={1800}
+  height={722}
+  alt="Lightdash table titled Experiment readout. Six simulated A/A rows show 602 control and 598 treatment players with no clear difference on any metric. Six rows for the real experiment show zero players and the verdict Not started."
+  caption="Figure 2 · The experiment readout. The simulated A/A test shows no difference, and the real experiment has not started."
+  href="https://github.com/Derek-Devs/fellstrike-analytics/blob/main/docs/screenshots/experiment-readout.png"
+/>
+
+<CaseSection number="06" kicker="Decisions" title="Three decisions worth explaining">
+
+**I changed the primary metric before launch.** Players giving up in the opening is the outcome I care about most. But only 1.85% of first runs end that way, so seeing that rate halved would take about 2,500 players per group. The change is meant to cut empty turns, where a player has nothing useful to do, and a 10-point drop there needs only about 41 players per group. Empty turns became the primary metric. Giving up stays as a secondary metric, reported as an estimate.
+
+**Data source became one shared dimension.** At first each table had its own source column. A query that mixed two tables by month quietly added real and simulated numbers together. Pointing every table at one shared source table fixed it for every metric at once.
+
+**Lightdash’s limits shaped the models.** Lightdash reads only simple metrics and ratios within one table. Instead of defining some metrics twice, I moved the logic into the tables as flags. That also made every metric easier to test.
+
+</CaseSection>
+
+<CaseSection number="07" kicker="Mistakes" title="What went wrong">
+
+- The simulator’s player IDs collided, because two random number streams overlapped. The loader’s row counts and dbt’s relationship tests caught it.
+- A weekly chart dropped sharply in its last week, which held only a few hours of data. Every test had passed. Now I look at every chart before calling it done.
+- My grading script marked a correct agent answer wrong. I fixed the script, noted when, and kept both scores on record.
+
+</CaseSection>
+
+<CaseSection number="08" kicker="Limits" title="What this does and doesn’t show">
+
+Every number here comes from simulated players, so it describes the game’s rules and my assumptions, not real people. So far there’s one real player: me, testing the pipeline end to end. When the experiment goes live, it will be a 28-day pilot with about 20 players per group. Its results will be estimates with wide ranges, and I’ll report them that way.
+
+What the project does show is the method. Each metric has one definition, each layer is checked against the one below it, the AI agent can only use defined metrics, and the experiment is held to its plan.
+
+The code, the design and every check are [on GitHub](https://github.com/Derek-Devs/fellstrike-analytics). You can play the game at [fellstrike.com](https://fellstrike.com).
+
+Built with dbt Core, MetricFlow, Postgres 16, Lightdash, the MCP Python SDK, Claude Code, Docker, TypeScript and Python.
+
+</CaseSection>
