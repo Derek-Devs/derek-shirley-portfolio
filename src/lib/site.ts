@@ -22,9 +22,15 @@ export function formatDateRange(
   return end ? `${start.label} to ${end.label}` : `${start.label} to present`;
 }
 
+// The page's public path. The build writes /work.html, so Astro.url.pathname
+// ends in .html, but the site serves and links to /work.
+export function pagePath(pathname: string) {
+  return pathname.replace(/(?:\/index)?\.html$/, "").replace(/\/$/, "") || "/";
+}
+
 export function canonicalUrl(pathname: string) {
-  const path = pathname === "/" ? "" : pathname.replace(/\/$/, "");
-  return `${site.url}${path}`;
+  const path = pagePath(pathname);
+  return `${site.url}${path === "/" ? "" : path}`;
 }
 
 export function workHref(item: {

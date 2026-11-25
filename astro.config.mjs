@@ -5,6 +5,9 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://derekdevs.com",
   trailingSlash: "never",
+  // Build /work.html, not /work/index.html. Netlify redirects a folder URL to
+  // its trailing-slash form, which would contradict the canonical URLs.
+  build: { format: "file" },
   integrations: [
     mdx(),
     sitemap({
