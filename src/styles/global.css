@@ -555,6 +555,7 @@ textarea:focus-visible,
 }
 
 .case-section__body p + p,
+.case-section__body ul + p,
 .prose-copy p + p {
   margin-top: 0.9rem;
 }
@@ -617,6 +618,35 @@ textarea:focus-visible,
   color: var(--text-secondary);
   font-family: var(--font-mono);
   font-size: 0.8rem;
+}
+
+/* Dashboard screenshots sit between case sections at full width so their text stays legible. */
+.screenshot-figure {
+  margin: 0;
+  padding: clamp(2.25rem, 4vw, 3.25rem) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.screenshot-figure a {
+  display: block;
+}
+
+.screenshot-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #ffffff;
+}
+
+.screenshot-figure figcaption {
+  max-width: var(--measure);
+  margin: 0.75rem 0 0;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
 }
 
 .section-lede {
