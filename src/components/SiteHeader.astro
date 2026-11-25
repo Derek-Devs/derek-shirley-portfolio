@@ -1,5 +1,7 @@
 ---
-const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+import { pagePath } from "../lib/site";
+
+const path = pagePath(Astro.url.pathname);
 const links = [
   { href: "/work", label: "Work" },
   { href: "/experience", label: "Experience" },
